@@ -1,0 +1,49 @@
+{
+  "name": "spectacle-visual-editor",
+  "version": "0.0.1",
+  "description": "Spectacle Visual Editor",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "webpack serve --mode=development --open --hot",
+    "build": "webpack --mode=production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Carlos Kelly",
+  "license": "MIT",
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.5.0",
+    "assert": "^2.0.0",
+    "evergreen-ui": "^5.1.2",
+    "process": "^0.11.10",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
+    "setimmediate": "^1.0.5",
+    "spectacle": "^7.0.1",
+    "styled-components": "^4.3.2",
+    "styled-system": "^5.1.5",
+    "util": "^0.12.3",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.13",
+    "@babel/preset-env": "^7.12.13",
+    "@babel/preset-react": "^7.12.13",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.0.1",
+    "eslint": "^7.19.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "html-webpack-plugin": "^5.0.0",
+    "prettier": "^2.2.1",
+    "prop-types": "^15.7.2",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.20.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
+  }
+}

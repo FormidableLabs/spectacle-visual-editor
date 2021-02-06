@@ -1,14 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { background, color, space } from 'styled-system';
 
-const SlideScaleWrapper = styled.div(({ containerStyles }) => [
-  containerStyles,
-  {
-    overflow: 'hidden'
-  }
-]);
+const SlideScaleWrapper = styled.div(({ containerStyle }) => [containerStyle]);
 
 const SlideWrapper = styled('div')(
   color,
@@ -35,19 +30,28 @@ const ContentWrapper = styled('div')(
     flex-direction: column;
     justify-content: flex-start;
     transform-origin: left top;
+    overflow: hidden;
   `
 );
 
 export const Slide = ({
+  id,
   children,
   scale,
   backgroundColor,
   textColor,
   padding,
-  containerStyles
+  slideProps = {}
 }) => {
+  const { containerStyle, handleKeyPress, onSlideClick, ...rest } = slideProps;
+
   return (
-    <SlideScaleWrapper containerStyles={containerStyles}>
+    <SlideScaleWrapper
+      containerStyle={containerStyle}
+      onClick={() => onSlideClick?.(id)}
+      onKeyDown={(event) => handleKeyPress?.(event, id)}
+      {...rest}
+    >
       <SlideWrapper
         backgroundColor={backgroundColor}
         color={textColor}
@@ -60,7 +64,8 @@ export const Slide = ({
 };
 
 Slide.propTypes = {
-  containerStyles: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+  id: PropTypes.string,
+  slideProps: PropTypes.object,
   backgroundColor: PropTypes.string,
   scale: PropTypes.number,
   textColor: PropTypes.string,

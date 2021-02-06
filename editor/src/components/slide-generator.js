@@ -12,7 +12,7 @@ import {
 } from 'spectacle';
 import { Slide } from './slide';
 
-const SPECTACLE_OBJECT_MAP = {
+const SPECTACLE_INTERNAL_OBJECT_MAP = {
   Slide,
   FlexBox,
   Heading,
@@ -36,11 +36,11 @@ const SPECTACLE_OBJECT_MAP = {
 export const generateSlideTree = ({ component, props, id, children }) =>
   React.createElement(
     /* Determine if the component is a Spectacle component or HTML primitive  */
-    component in SPECTACLE_OBJECT_MAP
-      ? SPECTACLE_OBJECT_MAP[component]
+    component in SPECTACLE_INTERNAL_OBJECT_MAP
+      ? SPECTACLE_INTERNAL_OBJECT_MAP[component]
       : component,
-    /* Ensure the key and any props are included in the React node */
-    { key: id, ...props },
+    /* Ensure the id and any props are included in the React node */
+    { id, ...props, key: id },
     /* If the child is an array recursively call this function to render all children */
     children instanceof Array ? children.map(generateSlideTree) : children
   );

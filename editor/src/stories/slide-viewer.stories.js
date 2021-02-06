@@ -11,7 +11,7 @@ export default {
 
 export const Primary = ({ scale }) => (
   <SlideViewer scale={scale}>
-    <Slide>
+    <Slide id="abc-123">
       <Heading>Hello World, Spectacle ✨</Heading>
     </Slide>
   </SlideViewer>

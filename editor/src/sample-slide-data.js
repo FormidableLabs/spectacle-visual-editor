@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 export const sampleSlideData = [
   {
     component: 'Slide',
-    id: 'A',
+    id: v4(),
     children: [
       {
         component: 'FlexBox',
@@ -36,6 +36,39 @@ export const sampleSlideData = [
             }
           }
         ]
+      }
+    ]
+  },
+  {
+    component: 'Slide',
+    id: v4(),
+    children: [
+      {
+        component: 'Heading',
+        id: v4(),
+        children: 'Second Slide'
+      }
+    ]
+  },
+  {
+    component: 'Slide',
+    id: v4(),
+    children: [
+      {
+        component: 'Heading',
+        id: v4(),
+        children: 'Third Slide'
+      }
+    ]
+  },
+  {
+    component: 'Slide',
+    id: v4(),
+    children: [
+      {
+        component: 'Heading',
+        id: v4(),
+        children: 'Fourth Slide'
       }
     ]
   }

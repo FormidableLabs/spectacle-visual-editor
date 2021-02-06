@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { background, color, space } from 'styled-system';
 
-const SlideScaleWrapper = styled.div`
-  overflow: hidden;
-  margin: 5px;
-`;
+const SlideScaleWrapper = styled.div(({ containerStyles }) => [
+  containerStyles,
+  {
+    overflow: 'hidden'
+  }
+]);
 
 const SlideWrapper = styled('div')(
   color,
@@ -36,10 +38,16 @@ const ContentWrapper = styled('div')(
   `
 );
 
-export const Slide = (props) => {
-  const { children, scale, backgroundColor, textColor, padding } = props;
+export const Slide = ({
+  children,
+  scale,
+  backgroundColor,
+  textColor,
+  padding,
+  containerStyles
+}) => {
   return (
-    <SlideScaleWrapper>
+    <SlideScaleWrapper containerStyles={containerStyles}>
       <SlideWrapper
         backgroundColor={backgroundColor}
         color={textColor}
@@ -52,6 +60,7 @@ export const Slide = (props) => {
 };
 
 Slide.propTypes = {
+  containerStyles: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   backgroundColor: PropTypes.string,
   scale: PropTypes.number,
   textColor: PropTypes.string,

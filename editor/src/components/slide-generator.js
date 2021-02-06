@@ -12,7 +12,7 @@ import {
 } from 'spectacle';
 import { Slide } from './slide';
 
-const OBJECT_MAP = {
+const SPECTACLE_OBJECT_MAP = {
   Slide,
   FlexBox,
   Heading,
@@ -25,9 +25,22 @@ const OBJECT_MAP = {
   UnorderedList
 };
 
+/**
+ * Creates a React node tree of slide and slide elements based on the JSON format.
+ * @param component Either an HTML primitive or string that maps to a Spectacle component
+ * @param props Any properties required to render the component
+ * @param id A unique identifier that serves as the key in the tree
+ * @param children Any elements that are rendered inside of this component
+ * @returns {React.DetailedReactHTMLElement<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>}
+ */
 export const generateSlideTree = ({ component, props, id, children }) =>
   React.createElement(
-    component in OBJECT_MAP ? OBJECT_MAP[component] : component,
+    /* Determine if the component is a Spectacle component or HTML primitive  */
+    component in SPECTACLE_OBJECT_MAP
+      ? SPECTACLE_OBJECT_MAP[component]
+      : component,
+    /* Ensure the key and any props are included in the React node */
     { key: id, ...props },
+    /* If the child is an array recursively call this function to render all children */
     children instanceof Array ? children.map(generateSlideTree) : children
   );

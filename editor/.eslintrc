@@ -1,7 +1,12 @@
 {
   "root": true,
   "parser": "babel-eslint",
-  "extends": ["prettier", "prettier/react", "plugin:react/recommended"],
+  "extends": [
+    "prettier",
+    "prettier/react",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
   "plugins": ["prettier", "react-hooks"],
   "env": {
     "browser": true,
@@ -29,6 +34,10 @@
   },
   "rules": {
     "prettier/prettier": ["error"],
-    "quotes": ["error", "single", { "allowTemplateLiterals": true }]
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+    "no-unused-vars": [
+      "error",
+      { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }
+    ]
   }
 }

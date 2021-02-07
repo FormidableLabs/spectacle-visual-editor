@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { v4 } from 'uuid';
 import { SlideViewer, AppBodyStyle, SlideTimeline } from './components';
 import { generateSlideTree } from './components/slide-generator';
@@ -15,7 +15,6 @@ export const VisualEditor = () => {
   const dispatch = useDispatch();
   const slideJson = useSelector(slidesSelector);
   const activeSlideJson = useSelector(activeSlideSelector);
-  const [showPreview, setShowPreview] = useState(false);
 
   const slideNodes = useMemo(() => slideJson.map(generateSlideTree), [
     slideJson
@@ -27,7 +26,7 @@ export const VisualEditor = () => {
 
   useEffect(() => {
     dispatch(deckSlice.actions.deckLoaded(sampleSlideData));
-  }, []);
+  }, [dispatch]);
 
   return (
     <div>

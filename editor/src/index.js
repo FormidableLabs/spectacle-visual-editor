@@ -1,10 +1,11 @@
 import 'setimmediate';
 import React from 'react';
 import { render } from 'react-dom';
-import { VisualEditor } from './visual-editor';
 import { configureStore } from '@reduxjs/toolkit';
-import { deckSlice } from './slices/deck-slice';
 import { Provider } from 'react-redux';
+import { Router } from '@reach/router';
+import { deckSlice } from './slices/deck-slice';
+import { VisualEditor } from './visual-editor';
 
 const store = configureStore({
   reducer: {
@@ -14,7 +15,9 @@ const store = configureStore({
 
 render(
   <Provider store={store}>
-    <VisualEditor />
+    <Router>
+      <VisualEditor path="/" />
+    </Router>
   </Provider>,
   document.getElementById('root')
 );

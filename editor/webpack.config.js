@@ -26,6 +26,9 @@ export default {
       }
     ]
   },
+  devServer: {
+    historyApiFallback: true
+  },
   plugins: [
     new webpack.ProvidePlugin({
       process: 'process/browser'

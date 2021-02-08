@@ -3468,7 +3468,7 @@ braces@^3.0.1, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
-broadcast-channel@^3.2.0:
+broadcast-channel@^3.1.0, broadcast-channel@^3.2.0:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/broadcast-channel/-/broadcast-channel-3.4.1.tgz#65b63068d0a5216026a19905c9b2d5e9adf0928a"
   integrity sha512-VXYivSkuBeQY+pL5hNQQNvBdKKQINBAROm4G8lAbWQfOZ7Yn4TMcgLNlJyEqlkxy5G8JJBsI3VJ1u8FUTOROcg==
@@ -9486,6 +9486,13 @@ recursive-readdir@2.2.2:
   integrity sha512-nRCcW9Sj7NuZwa2XvH9co8NPeXUBhZP7CRKJtU+cS6PW9FpCIFoI5ib0NT1ZrbNuPoRy0ylyCaUL8Gih4LSyFg==
   dependencies:
     minimatch "3.0.4"
+
+redux-state-sync@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/redux-state-sync/-/redux-state-sync-3.1.2.tgz#3f9dcd48d89eac85b45552cbcd31834d85e591d6"
+  integrity sha512-HJtyqckwb56iE2OvNOLwjW+Qnn7xA/R+jqP4mdYnSREk0bKVs4gVbE4bsiUZGOw5DzXlz5jHozg1x38gggWArQ==
+  dependencies:
+    broadcast-channel "^3.1.0"
 
 redux-thunk@^2.3.0:
   version "2.3.0"

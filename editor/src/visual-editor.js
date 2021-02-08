@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { v4 } from 'uuid';
 import { SlideViewer, AppBodyStyle, SlideTimeline } from './components';
-import { generateSlideTree } from './components/slide-generator';
+import { generateInternalSlideTree } from './components/slide-generator';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'evergreen-ui';
 import { sampleSlideData } from './sample-slide-data';
@@ -16,11 +16,11 @@ export const VisualEditor = () => {
   const slideJson = useSelector(slidesSelector);
   const activeSlideJson = useSelector(activeSlideSelector);
 
-  const slideNodes = useMemo(() => slideJson.map(generateSlideTree), [
+  const slideNodes = useMemo(() => slideJson.map(generateInternalSlideTree), [
     slideJson
   ]);
   const activeSlideNode = useMemo(
-    () => (activeSlideJson ? generateSlideTree(activeSlideJson) : []),
+    () => (activeSlideJson ? generateInternalSlideTree(activeSlideJson) : []),
     [activeSlideJson]
   );
 

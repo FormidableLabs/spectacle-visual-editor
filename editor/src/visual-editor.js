@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { v4 } from 'uuid';
+import { navigate } from '@reach/router';
 import { SlideViewer, AppBodyStyle, SlideTimeline } from './components';
 import { generateInternalSlideTree } from './components/slide-generator';
 import { useSelector, useDispatch } from 'react-redux';
@@ -19,14 +20,23 @@ export const VisualEditor = () => {
   const slideNodes = useMemo(() => slideJson.map(generateInternalSlideTree), [
     slideJson
   ]);
+
   const activeSlideNode = useMemo(
     () => (activeSlideJson ? generateInternalSlideTree(activeSlideJson) : []),
     [activeSlideJson]
   );
 
+  const handleOpenPreviewWindow = useCallback(async () => {
+    const index = slideJson.indexOf(activeSlideJson);
+    await navigate(`/preview-deck?slideIndex=${index}&stepIndex=0`);
+  }, [activeSlideJson, slideJson]);
+
   useEffect(() => {
+    if (Array.isArray(slideNodes) && slideNodes.length > 0) {
+      return;
+    }
     dispatch(deckSlice.actions.deckLoaded(sampleSlideData));
-  }, [dispatch]);
+  }, [dispatch, slideNodes]);
 
   return (
     <div>
@@ -34,6 +44,7 @@ export const VisualEditor = () => {
       <Button onClick={() => dispatch(deckSlice.actions.newSlideAdded())}>
         Add New Slide
       </Button>
+      <Button onClick={handleOpenPreviewWindow}>Preview</Button>
       <Button
         onClick={() => {
           dispatch(

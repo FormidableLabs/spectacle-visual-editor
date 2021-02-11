@@ -15,13 +15,15 @@ const slideContainerStyle = css`
   margin: 5px 0 5px 5px;
   user-select: none;
   cursor: pointer;
-  box-sizing: border-box;
 
   &:last-child {
     margin-right: 5px;
   }
   &:focus {
-    outline: #ee5396 2px solid;
+    outline: #ee5396 solid 2px;
+    div {
+      overflow: hidden;
+    }
   }
 `;
 

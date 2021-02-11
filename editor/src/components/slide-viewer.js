@@ -20,7 +20,11 @@ export const SlideViewer = ({ children, scale, slideProps }) => {
     >
       <ThemeProvider theme={defaultTheme}>
         {slides.map((slide) =>
-          React.cloneElement(slide, { scale, slideProps, key: slide.props.id })
+          React.cloneElement(slide, {
+            scale,
+            slideProps,
+            key: slide.props.id
+          })
         )}
       </ThemeProvider>
     </SlideContext.Provider>

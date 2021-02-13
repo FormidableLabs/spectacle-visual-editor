@@ -1,35 +1,21 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { v4 } from 'uuid';
-import { navigate } from '@reach/router';
-import { SlideViewer, AppBodyStyle, SlideTimeline } from './components';
-import { generateInternalSlideTree } from './components/slide-generator';
-import { useSelector, useDispatch } from 'react-redux';
-import { Button } from 'evergreen-ui';
-import { sampleSlideData } from './sample-slide-data';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import {
-  activeSlideSelector,
-  deckSlice,
-  slidesSelector
-} from './slices/deck-slice';
+  SlideViewer,
+  AppBodyStyle,
+  SlideTimeline,
+  EditorBody,
+  EditorContent,
+  MenuBar,
+  EditorCanvas
+} from './components';
+import { sampleSlideData } from './sample-slide-data';
+import { deckSlice } from './slices/deck-slice';
+import { useSlideNodes } from './hooks';
 
 export const VisualEditor = () => {
   const dispatch = useDispatch();
-  const slideJson = useSelector(slidesSelector);
-  const activeSlideJson = useSelector(activeSlideSelector);
-
-  const slideNodes = useMemo(() => slideJson.map(generateInternalSlideTree), [
-    slideJson
-  ]);
-
-  const activeSlideNode = useMemo(
-    () => (activeSlideJson ? generateInternalSlideTree(activeSlideJson) : []),
-    [activeSlideJson]
-  );
-
-  const handleOpenPreviewWindow = useCallback(async () => {
-    const index = slideJson.indexOf(activeSlideJson);
-    await navigate(`/preview-deck?slideIndex=${index}&stepIndex=0`);
-  }, [activeSlideJson, slideJson]);
+  const { activeSlideNode, slideNodes } = useSlideNodes();
 
   useEffect(() => {
     if (Array.isArray(slideNodes) && slideNodes.length > 0) {
@@ -39,28 +25,14 @@ export const VisualEditor = () => {
   }, [dispatch, slideNodes]);
 
   return (
-    <div>
+    <EditorBody>
       <AppBodyStyle />
-      <Button onClick={() => dispatch(deckSlice.actions.newSlideAdded())}>
-        Add New Slide
-      </Button>
-      <Button onClick={handleOpenPreviewWindow}>Preview</Button>
-      <Button
-        onClick={() => {
-          dispatch(
-            deckSlice.actions.elementAddedToActiveSlide({
-              id: v4(),
-              component: 'Heading',
-              children: 'Oh Hello There'
-            })
-          );
-        }}
-      >
-        Add New Text Box
-      </Button>
-      <div style={{ overflow: 'hidden' }}>
-        <SlideViewer scale={0.35}>{activeSlideNode}</SlideViewer>
-      </div>
+      <MenuBar />
+      <EditorContent>
+        <EditorCanvas>
+          <SlideViewer scale={0.45}>{activeSlideNode}</SlideViewer>
+        </EditorCanvas>
+      </EditorContent>
       <SlideTimeline
         onSlideClick={(id) =>
           dispatch(deckSlice.actions.activeSlideWasChanged(id))
@@ -68,6 +40,6 @@ export const VisualEditor = () => {
       >
         {slideNodes}
       </SlideTimeline>
-    </div>
+    </EditorBody>
   );
 };

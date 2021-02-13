@@ -12,14 +12,16 @@ export const EditorBody = styled.div`
 `;
 
 export const EditorContent = styled.div`
+  display: flex;
   flex: 1 0 auto;
+  flex-direction: row;
 `;
 
 export const EditorCanvas = styled.div`
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
-  height: 100%;
 
   ${SlideScaleWrapper} {
     box-shadow: 1px 2px 5px hsla(0, 0%, 0%, 0.5);

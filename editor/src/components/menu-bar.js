@@ -85,13 +85,6 @@ export const MenuBar = () => {
               <Menu.Item onSelect={() => {}}>List</Menu.Item>
               <Menu.Item onSelect={() => {}}>Code Pane</Menu.Item>
             </Menu.Group>
-            <Menu.Divider />
-            <Menu.Group>
-              <Menu.Item onSelect={() => {}}>Box</Menu.Item>
-              <Menu.Item onSelect={() => {}}>Horizontal Layout</Menu.Item>
-              <Menu.Item onSelect={() => {}}>Vertical Layout</Menu.Item>
-              <Menu.Item onSelect={() => {}}>Grid</Menu.Item>
-            </Menu.Group>
           </Menu>
         )}
       >

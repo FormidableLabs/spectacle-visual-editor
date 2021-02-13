@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { SlideViewer } from './slide-viewer';
 
 const Container = styled.div`
-  background: #726e6e;
+  background: #cac5c4;
+  border-top: 1px #ada8a8 solid;
   display: flex;
   flex-direction: row;
   overflow-x: scroll;

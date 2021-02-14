@@ -20,19 +20,15 @@ export const sampleSlideData = [
               margin: 10,
               fontSize: 'h2'
             },
-            children: [
-              {
-                component: 'div',
-                id: v4(),
-                children: 'Spectacle'
-              }
-            ]
+            children: 'Spectacle'
           },
           {
-            component: 'SpectacleLogo',
+            component: 'Box',
             id: v4(),
             props: {
-              size: 400
+              backgroundColor: 'yellowgreen',
+              width: 100,
+              height: 100
             }
           }
         ]

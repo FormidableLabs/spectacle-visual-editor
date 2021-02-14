@@ -12,6 +12,7 @@ import {
   UnorderedList
 } from 'spectacle';
 import { Slide as InternalSlide } from './slide';
+import { SelectionFrame } from './selection-frame';
 
 export const SPECTACLE_INTERNAL_OBJECT_MAP = {
   Slide: InternalSlide,
@@ -37,7 +38,7 @@ export const SPECTACLE_PREVIEW_OBJECT_MAP = {
  * @returns {function({component: *, props: *, id?: *, children: *}):
  *  React.DetailedReactHTMLElement<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>}
  */
-export const generateSlideTreeFromMap = (map) => {
+export const generateSlideTreeFromMap = (map, editable = false) => {
   /**
    * Creates a React node tree of slide and slide elements based on the JSON format.
    * @param component Either an HTML primitive or string that maps to a Spectacle component
@@ -47,19 +48,27 @@ export const generateSlideTreeFromMap = (map) => {
    * @returns {React.DetailedReactHTMLElement<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>}
    */
   return function generateSlideTree({ component, props, id, children }) {
-    return React.createElement(
+    const newElement = React.createElement(
       /* Determine if the component is a Spectacle component or HTML primitive  */
       component in map ? map[component] : component,
       /* Ensure the id and any props are included in the React node */
-      { id, ...props, key: id },
+      { id, ...props, key: id, type: component },
       /* If the child is an array recursively call this function to render all children */
       children instanceof Array ? children.map(generateSlideTree) : children
     );
+    if (!editable || component === 'Slide') {
+      return newElement;
+    }
+    return <SelectionFrame key={`${id}-frame`}>{newElement}</SelectionFrame>;
   };
 };
 
 export const generateInternalSlideTree = generateSlideTreeFromMap(
   SPECTACLE_INTERNAL_OBJECT_MAP
+);
+export const generateInternalEditableSlideTree = generateSlideTreeFromMap(
+  SPECTACLE_INTERNAL_OBJECT_MAP,
+  true
 );
 export const generatePreviewSlideTree = generateSlideTreeFromMap(
   SPECTACLE_PREVIEW_OBJECT_MAP

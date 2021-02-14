@@ -1,5 +1,8 @@
 import { useMemo } from 'react';
-import { generateInternalSlideTree } from '../components/slide-generator';
+import {
+  generateInternalEditableSlideTree,
+  generateInternalSlideTree
+} from '../components/slide-generator';
 import { useSelector } from 'react-redux';
 import { activeSlideSelector, slidesSelector } from '../slices/deck-slice';
 
@@ -12,7 +15,8 @@ export const useSlideNodes = () => {
   ]);
 
   const activeSlideNode = useMemo(
-    () => (activeSlideJson ? generateInternalSlideTree(activeSlideJson) : []),
+    () =>
+      activeSlideJson ? generateInternalEditableSlideTree(activeSlideJson) : [],
     [activeSlideJson]
   );
 

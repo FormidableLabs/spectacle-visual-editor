@@ -9,7 +9,7 @@ export const usePreviewWindow = () => {
 
   const handleOpenPreviewWindow = useCallback(async () => {
     const index = slideJson.indexOf(activeSlideJson);
-    await navigate(`/preview-deck?slideIndex=${index}&stepIndex=0`);
+    await navigate(`/preview-deck?slideIndex=${0}&stepIndex=0`);
   }, [activeSlideJson, slideJson]);
 
   return { handleOpenPreviewWindow };

@@ -16,12 +16,21 @@ export const SelectionFrame = ({ children }) => {
   const editableElementId = useSelector(editableElementIdSelector);
   const [target, setTarget] = useState();
 
-  const handleClick = useCallback(
+  const handleOnResize = useCallback((event) => {
+    event.target.style.width = `${event.width}px`;
+    event.target.style.height = `${event.height}px`;
+  }, []);
+
+  const handleOnResizeEnd = useCallback(
     (event) => {
-      event.stopPropagation();
-      dispatch(deckSlice.actions.editableElementSelected(children.props.id));
+      dispatch(
+        deckSlice.actions.editableElementChanged({
+          width: event.target.style.width,
+          height: event.target.style.height
+        })
+      );
     },
-    [children, dispatch]
+    [dispatch]
   );
 
   useEffect(() => {
@@ -34,26 +43,13 @@ export const SelectionFrame = ({ children }) => {
 
   return (
     <>
-      {cloneElement(children, {
-        ref,
-        onClick: handleClick
-      })}
+      {cloneElement(children, { ref })}
       <Moveable
         target={target}
         origin={false}
         resizable={children.props.type === 'Box'}
-        onResize={(e) => {
-          e.target.style.width = `${e.width}px`;
-          e.target.style.height = `${e.height}px`;
-        }}
-        onResizeEnd={(e) => {
-          dispatch(
-            deckSlice.actions.editableElementChanged({
-              width: e.target.style.width,
-              height: e.target.style.height
-            })
-          );
-        }}
+        onResize={handleOnResize}
+        onResizeEnd={handleOnResizeEnd}
       />
     </>
   );

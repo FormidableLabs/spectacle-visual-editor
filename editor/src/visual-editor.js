@@ -12,11 +12,15 @@ import {
 } from './components';
 import { sampleSlideData } from './sample-slide-data';
 import { deckSlice } from './slices/deck-slice';
-import { useSlideNodes } from './hooks';
+import { useElementSelection, useSlideNodes } from './hooks';
 
 export const VisualEditor = () => {
   const dispatch = useDispatch();
   const { activeSlideNode, slideNodes } = useSlideNodes();
+  const {
+    handleContentMouseDown,
+    handleCanvasMouseDown
+  } = useElementSelection();
 
   useEffect(() => {
     if (Array.isArray(slideNodes) && slideNodes.length > 0) {
@@ -29,8 +33,8 @@ export const VisualEditor = () => {
     <EditorBody>
       <AppBodyStyle />
       <MenuBar />
-      <EditorContent>
-        <EditorCanvas>
+      <EditorContent onMouseDown={handleContentMouseDown}>
+        <EditorCanvas onMouseDown={handleCanvasMouseDown}>
           <SlideViewer scale={0.45}>{activeSlideNode}</SlideViewer>
         </EditorCanvas>
         <Inspector />

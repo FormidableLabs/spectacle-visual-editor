@@ -1,16 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { v4 } from 'uuid';
-import { Button, Menu, Popover, Position } from 'evergreen-ui';
+import { Button, defaultTheme, Menu, Popover, Position } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch } from 'react-redux';
 import { deckSlice } from '../slices/deck-slice';
 import { usePreviewWindow } from '../hooks';
+import { ELEMENTS } from './elements';
 
 const MenuBarContainer = styled.div`
   width: 100%;
-  background: #e5e0df;
-  border-bottom: #cac5c4 1px solid;
+  background: ${defaultTheme.scales.neutral.N3};
+  border-bottom: ${defaultTheme.scales.neutral.N6} 1px solid;
   display: flex;
   align-items: center;
 `;
@@ -70,11 +70,9 @@ export const MenuBar = () => {
               <Menu.Item
                 onSelect={() => {
                   dispatch(
-                    deckSlice.actions.elementAddedToActiveSlide({
-                      id: v4(),
-                      component: 'Heading',
-                      children: 'Oh Hello There'
-                    })
+                    deckSlice.actions.elementAddedToActiveSlide(
+                      ELEMENTS.HEADING
+                    )
                   );
                   close();
                 }}
@@ -84,6 +82,16 @@ export const MenuBar = () => {
               <Menu.Item onSelect={() => {}}>Image</Menu.Item>
               <Menu.Item onSelect={() => {}}>List</Menu.Item>
               <Menu.Item onSelect={() => {}}>Code Pane</Menu.Item>
+              <Menu.Item
+                onSelect={() => {
+                  dispatch(
+                    deckSlice.actions.elementAddedToActiveSlide(ELEMENTS.BOX)
+                  );
+                  close();
+                }}
+              >
+                Box
+              </Menu.Item>
             </Menu.Group>
           </Menu>
         )}

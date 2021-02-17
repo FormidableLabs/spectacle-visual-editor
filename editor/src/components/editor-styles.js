@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import { SlideScaleWrapper } from './slide';
+import { defaultTheme } from 'evergreen-ui';
 
 export const EditorBody = styled.div`
-  background: #f7f3f2;
+  background: ${defaultTheme.scales.neutral.N5};
   width: 100vw;
   height: 100vh;
   overflow: hidden;
@@ -24,6 +25,6 @@ export const EditorCanvas = styled.div`
   justify-content: center;
 
   ${SlideScaleWrapper} {
-    box-shadow: 1px 2px 5px hsla(0, 0%, 0%, 0.5);
+    box-shadow: 1px 2px 5px ${defaultTheme.scales.neutral.N8A};
   }
 `;

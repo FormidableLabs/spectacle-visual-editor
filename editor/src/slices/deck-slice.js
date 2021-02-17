@@ -1,5 +1,7 @@
-import { createSlice, current } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
+import { CONTAINER_ELEMENTS } from '../components/elements';
+import { searchTreeForNode } from '../components/node-search';
 
 export const deckSlice = createSlice({
   name: 'deck',
@@ -29,41 +31,48 @@ export const deckSlice = createSlice({
       if (!state.activeSlide) {
         return;
       }
-      state.activeSlide.children.push(action.payload);
+
+      let node = null;
+      const newElementId = v4();
+      const newElement = { id: newElementId, ...action.payload };
+
+      if (state.editableElementId) {
+        const potentialNode = searchTreeForNode(
+          state.activeSlide.children,
+          state.editableElementId
+        );
+        if (CONTAINER_ELEMENTS.includes(potentialNode.component)) {
+          node = potentialNode;
+        } else {
+          node = state.activeSlide;
+        }
+      } else {
+        node = state.activeSlide;
+      }
+
+      if ('children' in node) {
+        node.children.push(newElement);
+      } else {
+        node.children = [newElement];
+      }
 
       const index = state.slides.findIndex(
         ({ id }) => id === state.activeSlide.id
       );
+
       state.slides[index] = state.activeSlide;
-      state.editableElementId = action.payload.id;
+      state.editableElementId = newElementId;
     },
     editableElementSelected: (state, action) => {
       state.editableElementId = action.payload;
     },
     editableElementChanged: (state, action) => {
-      const searchChildrenForId = (tree, id) => {
-        let found = false;
-        for (const [index] of current(tree).entries()) {
-          const node = tree[index];
-          const dataNode = current(node);
-          if (dataNode.id === id) {
-            node.props = { ...node.props, ...action.payload };
-            found = true;
-          }
-          if (!found && 'children' in dataNode && Array.isArray(dataNode)) {
-            searchChildrenForId(node.children, id);
-          } else if (
-            !found &&
-            'children' in dataNode &&
-            Array.isArray(dataNode.children)
-          ) {
-            searchChildrenForId(node.children, id);
-          } else if (found) {
-            break;
-          }
-        }
-      };
-      searchChildrenForId(state.activeSlide.children, state.editableElementId);
+      const node = searchTreeForNode(
+        state.activeSlide.children,
+        state.editableElementId
+      );
+      node.props = { ...node.props, ...action.payload };
+
       const index = state.slides.findIndex(
         ({ id }) => id === state.activeSlide.id
       );

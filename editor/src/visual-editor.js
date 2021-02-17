@@ -12,15 +12,16 @@ import {
 } from './components';
 import { sampleSlideData } from './sample-slide-data';
 import { deckSlice } from './slices/deck-slice';
-import { useElementSelection, useSlideNodes } from './hooks';
+import { useEditorActions, useSlideNodes } from './hooks';
 
 export const VisualEditor = () => {
   const dispatch = useDispatch();
   const { activeSlideNode, slideNodes } = useSlideNodes();
   const {
     handleContentMouseDown,
-    handleCanvasMouseDown
-  } = useElementSelection();
+    handleCanvasMouseDown,
+    handleSlideSelected
+  } = useEditorActions();
 
   useEffect(() => {
     if (Array.isArray(slideNodes) && slideNodes.length > 0) {
@@ -39,11 +40,7 @@ export const VisualEditor = () => {
         </EditorCanvas>
         <Inspector />
       </EditorContent>
-      <SlideTimeline
-        onSlideClick={(id) =>
-          dispatch(deckSlice.actions.activeSlideWasChanged(id))
-        }
-      >
+      <SlideTimeline onSlideClick={handleSlideSelected}>
         {slideNodes}
       </SlideTimeline>
     </EditorBody>

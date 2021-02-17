@@ -2,10 +2,11 @@ import React, { useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { SlideViewer } from './slide-viewer';
+import { defaultTheme } from 'evergreen-ui';
 
 const Container = styled.div`
-  background: #cac5c4;
-  border-top: 1px #ada8a8 solid;
+  background: ${defaultTheme.scales.neutral.N6};
+  border-top: 1px ${defaultTheme.scales.neutral.N7} solid;
   display: flex;
   flex-direction: row;
   overflow-x: scroll;

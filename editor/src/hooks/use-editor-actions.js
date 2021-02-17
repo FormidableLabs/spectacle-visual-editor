@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { deckSlice } from '../slices/deck-slice';
 import { useDispatch } from 'react-redux';
 
-export const useElementSelection = () => {
+export const useEditorActions = () => {
   const dispatch = useDispatch();
 
   const handleContentMouseDown = useCallback(
@@ -28,5 +28,11 @@ export const useElementSelection = () => {
     },
     [dispatch]
   );
-  return { handleCanvasMouseDown, handleContentMouseDown };
+
+  const handleSlideSelected = useCallback(
+    (id) => dispatch(deckSlice.actions.activeSlideWasChanged(id)),
+    [dispatch]
+  );
+
+  return { handleCanvasMouseDown, handleContentMouseDown, handleSlideSelected };
 };

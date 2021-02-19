@@ -28,6 +28,7 @@
     "spectacle": "^7.0.1",
     "styled-components": "^4.3.2",
     "styled-system": "^5.1.5",
+    "use-mousetrap": "^1.0.4",
     "util": "^0.12.3",
     "uuid": "^8.3.2"
   },

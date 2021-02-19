@@ -41,6 +41,14 @@ export const MenuBar = () => {
               >
                 Add Slide
               </Menu.Item>
+              <Menu.Item
+                onSelect={() => {
+                  dispatch(deckSlice.actions.deleteSlide());
+                  close();
+                }}
+              >
+                Delete Slide
+              </Menu.Item>
             </Menu.Group>
             <Menu.Divider />
             <Menu.Group>

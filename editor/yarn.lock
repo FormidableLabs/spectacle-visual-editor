@@ -2143,6 +2143,11 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
+"@types/mousetrap@^1.6.4":
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/@types/mousetrap/-/mousetrap-1.6.5.tgz#e95569aa6273dbe0ed1814f86287547cc06e93c9"
+  integrity sha512-OwVhKFim9Y/MprzCe4I6a59p31pMy8+LrtP6qS7J0kaOxYmW6VVJPBw5NYm+g7nSbgPUz22FvqU1F1hC5YGTfg==
+
 "@types/node-fetch@^2.5.4":
   version "2.5.8"
   resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.5.8.tgz#e199c835d234c7eb0846f6618012e558544ee2fb"
@@ -11394,6 +11399,14 @@ use-latest@^1.0.0:
   integrity sha512-d2TEuG6nSLKQLAfW3By8mKr8HurOlTkul0sOpxbClIv4SQ4iOd7BYr7VIzdbktUCnv7dua/60xzd8igMU6jmyw==
   dependencies:
     use-isomorphic-layout-effect "^1.0.0"
+
+use-mousetrap@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/use-mousetrap/-/use-mousetrap-1.0.4.tgz#9ec635821140e702cc873f41880a5cbd46d1d09a"
+  integrity sha512-+limiYsm2e1Xs/tnwfEqSCcvh6XTcfLTpCoJFA+mu+btInnlrkFkZ48DLwVGejJdvP5H3Ge79t0bcRKepncvbQ==
+  dependencies:
+    "@types/mousetrap" "^1.6.4"
+    mousetrap "^1.6.5"
 
 use-resize-observer@^6.1.0:
   version "6.1.0"

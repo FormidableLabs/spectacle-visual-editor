@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
 import { CONTAINER_ELEMENTS } from '../components/elements';
 import { searchTreeForNode } from '../components/node-search';
@@ -106,3 +106,12 @@ export const slidesSelector = (state) => state.deck.slides;
 export const activeSlideSelector = (state) => state.deck.activeSlide;
 export const editableElementIdSelector = (state) =>
   state.deck.editableElementId;
+export const selectedElementSelector = (state) => {
+  if (!state.deck.activeSlide?.children || !state.deck.editableElementId) {
+    return null;
+  }
+  return searchTreeForNode(
+    state.deck.activeSlide.children,
+    state.deck.editableElementId
+  );
+};

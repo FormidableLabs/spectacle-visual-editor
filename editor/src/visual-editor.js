@@ -7,21 +7,17 @@ import {
   EditorBody,
   EditorContent,
   MenuBar,
-  EditorCanvas,
-  Inspector
+  EditorCanvas
 } from './components';
 import { sampleSlideData } from './sample-slide-data';
 import { deckSlice } from './slices/deck-slice';
 import { useEditorActions, useSlideNodes } from './hooks';
+import { Inspector } from './inspector';
 
 export const VisualEditor = () => {
   const dispatch = useDispatch();
   const { activeSlideNode, slideNodes } = useSlideNodes();
-  const {
-    handleContentMouseDown,
-    handleCanvasMouseDown,
-    handleSlideSelected
-  } = useEditorActions();
+  const { handleCanvasMouseDown, handleSlideSelected } = useEditorActions();
 
   useEffect(() => {
     if (Array.isArray(slideNodes) && slideNodes.length > 0) {
@@ -34,7 +30,7 @@ export const VisualEditor = () => {
     <EditorBody>
       <AppBodyStyle />
       <MenuBar />
-      <EditorContent onMouseDown={handleContentMouseDown}>
+      <EditorContent>
         <EditorCanvas onMouseDown={handleCanvasMouseDown}>
           <SlideViewer scale={0.45}>{activeSlideNode}</SlideViewer>
         </EditorCanvas>

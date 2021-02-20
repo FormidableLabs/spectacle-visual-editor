@@ -5,21 +5,12 @@ import { useDispatch } from 'react-redux';
 export const useEditorActions = () => {
   const dispatch = useDispatch();
 
-  const handleContentMouseDown = useCallback(
-    (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (event.target.classList.contains('moveable-control')) {
-        return;
-      }
-      dispatch(deckSlice.actions.editableElementSelected(null));
-    },
-    [dispatch]
-  );
-
   const handleCanvasMouseDown = useCallback(
     (event) => {
-      if (!event.target.id) {
+      if (event.target.classList.contains('moveable-control')) {
+        return;
+      } else if (!event.target.id) {
+        dispatch(deckSlice.actions.editableElementSelected(null));
         return;
       }
       event.preventDefault();
@@ -34,5 +25,5 @@ export const useEditorActions = () => {
     [dispatch]
   );
 
-  return { handleCanvasMouseDown, handleContentMouseDown, handleSlideSelected };
+  return { handleCanvasMouseDown, handleSlideSelected };
 };

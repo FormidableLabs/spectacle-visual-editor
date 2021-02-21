@@ -1,4 +1,4 @@
-import { createSlice, current } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
 import { CONTAINER_ELEMENTS } from '../components/elements';
 import { searchTreeForNode } from '../components/node-search';

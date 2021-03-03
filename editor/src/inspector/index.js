@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { InspectorContainer } from './inspector-styles';
 import { Tab, Tablist } from 'evergreen-ui';
 import { FormatInspector } from './format-inspector';
+import { DocumentInspector } from './document-inspector';
 
 const tabs = ['Document', 'Format', 'Layout'];
 
 export const Inspector = () => {
-  const [tabIndex, setTabIndex] = useState(1);
+  const [tabIndex, setTabIndex] = useState(0);
   return (
     <InspectorContainer>
       <div>
@@ -24,6 +25,7 @@ export const Inspector = () => {
           ))}
         </Tablist>
       </div>
+      {tabIndex === 0 && <DocumentInspector />}
       {tabIndex === 1 && <FormatInspector />}
     </InspectorContainer>
   );

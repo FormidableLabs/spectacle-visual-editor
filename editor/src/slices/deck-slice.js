@@ -2,13 +2,15 @@ import { createSlice } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
 import { CONTAINER_ELEMENTS } from '../components/elements';
 import { searchTreeForNode } from '../components/node-search';
+import defaultTheme from 'spectacle/es/theme/default-theme';
 
 export const deckSlice = createSlice({
   name: 'deck',
   initialState: {
     slides: [],
     activeSlide: null,
-    editableElementId: null
+    editableElementId: null,
+    theme: defaultTheme
   },
   reducers: {
     deckLoaded: (state, action) => {
@@ -98,6 +100,10 @@ export const deckSlice = createSlice({
 
       state.slides = updatedSlides;
       state.activeSlide = state.slides[0];
+    },
+
+    updateThemeColors: (state, action) => {
+      state.theme.colors = { ...state.theme.colors, ...action.payload };
     }
   }
 });
@@ -106,6 +112,7 @@ export const slidesSelector = (state) => state.deck.slides;
 export const activeSlideSelector = (state) => state.deck.activeSlide;
 export const editableElementIdSelector = (state) =>
   state.deck.editableElementId;
+export const themeSelector = (state) => state.deck.theme;
 export const selectedElementSelector = (state) => {
   if (!state.deck.activeSlide?.children || !state.deck.editableElementId) {
     return null;

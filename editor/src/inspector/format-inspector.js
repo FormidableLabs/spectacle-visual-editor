@@ -3,10 +3,7 @@ import { Pane } from './inspector-styles';
 import { TextInputField } from 'evergreen-ui';
 import { useDispatch, useSelector } from 'react-redux';
 import { deckSlice, selectedElementSelector } from '../slices/deck-slice';
-import { isValidColorName, isValidHSL, isValidRGB } from 'is-valid-css-color';
-
-const isValidCSSColor = (color) =>
-  isValidColorName(color) || isValidHSL(color) || isValidRGB(color);
+import { isValidCSSColor } from '../util/is-valid-css-color';
 
 export const FormatInspector = () => {
   const dispatch = useDispatch();

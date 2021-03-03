@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'styled-components';
-import defaultTheme from 'spectacle/es/theme/default-theme';
 import { SlideContext } from 'spectacle/es/components/slide/slide';
+import { useSelector } from 'react-redux';
+import { themeSelector } from '../slices/deck-slice';
 
 /**
  * SlideViewer is an un-styled wrapper that provides the context data
@@ -13,12 +14,13 @@ import { SlideContext } from 'spectacle/es/components/slide/slide';
  * @returns {JSX.Element}
  */
 export const SlideViewer = ({ children, scale, slideProps }) => {
+  const theme = useSelector(themeSelector);
   const slides = (children instanceof Array ? children : [children]).flat();
   return (
     <SlideContext.Provider
       value={{ activeStepIndex: 0, activationThresholds: [] }}
     >
-      <ThemeProvider theme={defaultTheme}>
+      <ThemeProvider theme={theme}>
         {slides.map((slide) =>
           React.cloneElement(slide, {
             scale,

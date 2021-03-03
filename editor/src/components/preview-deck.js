@@ -4,7 +4,7 @@ import { navigate } from '@reach/router';
 import { Deck } from 'spectacle';
 import { generatePreviewSlideTree } from './slide-generator';
 import { useSelector } from 'react-redux';
-import { slidesSelector } from '../slices/deck-slice';
+import { slidesSelector, themeSelector } from '../slices/deck-slice';
 
 const Message = styled.div`
   position: sticky;
@@ -15,6 +15,7 @@ const Message = styled.div`
 export const PreviewDeck = () => {
   const [slideNodes, setSlideNodes] = useState();
   const slideJson = useSelector(slidesSelector);
+  const theme = useSelector(themeSelector);
 
   useEffect(() => {
     try {
@@ -38,7 +39,7 @@ export const PreviewDeck = () => {
   return (
     <div>
       <Message>Press Esc to quit the presentation preview.</Message>
-      {slideNodes ? <Deck>{slideNodes}</Deck> : null}
+      {slideNodes ? <Deck theme={theme}>{slideNodes}</Deck> : null}
     </div>
   );
 };

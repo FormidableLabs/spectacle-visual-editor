@@ -1,39 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Pane } from './inspector-styles';
-import { TextInputField } from 'evergreen-ui';
 import { useDispatch, useSelector } from 'react-redux';
 import { deckSlice, selectedElementSelector } from '../slices/deck-slice';
-import { isValidCSSColor } from '../util/is-valid-css-color';
+import { BoxFormatControls } from './box-format-controls';
+import { isBoxElement } from './validators';
 
 export const FormatInspector = () => {
   const dispatch = useDispatch();
-  const [backgroundColor, setBackgroundColor] = useState('');
   const selectedElement = useSelector(selectedElementSelector);
-
-  useEffect(() => {
-    const selectedBackgroundColor = selectedElement?.props?.backgroundColor;
-    setBackgroundColor(selectedBackgroundColor || '');
-  }, [selectedElement]);
+  const handleElementChanged = useCallback(
+    (sender) => dispatch(deckSlice.actions.editableElementChanged(sender)),
+    [dispatch]
+  );
 
   return (
     <Pane>
-      <TextInputField
-        label="Background Color"
-        inputHeight={24}
-        disabled={!selectedElement?.props?.backgroundColor}
-        value={backgroundColor}
-        onChange={(e) => {
-          setBackgroundColor(e.target.value);
-          if (!isValidCSSColor(e.target.value)) {
-            return;
-          }
-          dispatch(
-            deckSlice.actions.editableElementChanged({
-              backgroundColor: e.target.value
-            })
-          );
-        }}
-      />
+      {isBoxElement(selectedElement) && (
+        <BoxFormatControls
+          editableElementChanged={handleElementChanged}
+          selectedElement={selectedElement}
+        />
+      )}
     </Pane>
   );
 };

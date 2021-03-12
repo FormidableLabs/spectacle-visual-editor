@@ -1,5 +1,4 @@
 import 'regenerator-runtime';
-import 'setimmediate';
 import React from 'react';
 import { render } from 'react-dom';
 import { configureStore } from '@reduxjs/toolkit';

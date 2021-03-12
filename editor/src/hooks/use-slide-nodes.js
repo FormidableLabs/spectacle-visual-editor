@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import {
   generateInternalEditableSlideTree,
   generateInternalSlideTree
-} from '../components/slide-generator';
+} from '../components';
 import { useSelector } from 'react-redux';
 import { activeSlideSelector, slidesSelector } from '../slices/deck-slice';
 

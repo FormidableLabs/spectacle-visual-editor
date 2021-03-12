@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { Button, defaultTheme, Menu, Popover, Position } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch } from 'react-redux';
-import { deckSlice } from '../slices/deck-slice';
-import { usePreviewWindow } from '../hooks';
-import { ELEMENTS } from './elements';
+import { deckSlice } from '../../slices/deck-slice';
+import { usePreviewWindow } from '../../hooks';
+import { ELEMENTS } from '../slide/elements';
 
 const MenuBarContainer = styled.div`
   width: 100%;

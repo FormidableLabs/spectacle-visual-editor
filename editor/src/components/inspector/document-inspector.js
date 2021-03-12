@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Pane } from './inspector-styles';
 import { TextInputField } from 'evergreen-ui';
-import { deckSlice, themeSelector } from '../slices/deck-slice';
-import { isValidCSSColor } from '../util/is-valid-css-color';
+import { deckSlice, themeSelector } from '../../slices/deck-slice';
+import { isValidCSSColor } from '../../util/is-valid-css-color';
 
 export const DocumentInspector = () => {
   const dispatch = useDispatch();

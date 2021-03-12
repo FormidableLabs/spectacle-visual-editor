@@ -4,7 +4,7 @@ import { navigate } from '@reach/router';
 import { Deck } from 'spectacle';
 import { generatePreviewSlideTree } from './slide-generator';
 import { useSelector } from 'react-redux';
-import { slidesSelector, themeSelector } from '../slices/deck-slice';
+import { slidesSelector, themeSelector } from '../../slices/deck-slice';
 
 const Message = styled.div`
   position: sticky;

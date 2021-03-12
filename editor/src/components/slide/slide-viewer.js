@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { ThemeProvider } from 'styled-components';
 import { SlideContext } from 'spectacle/es/components/slide/slide';
 import { useSelector } from 'react-redux';
-import { themeSelector } from '../slices/deck-slice';
+import { themeSelector } from '../../slices/deck-slice';
 
 /**
  * SlideViewer is an un-styled wrapper that provides the context data

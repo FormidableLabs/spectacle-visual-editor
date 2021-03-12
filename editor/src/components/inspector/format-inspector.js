@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Pane } from './inspector-styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { deckSlice, selectedElementSelector } from '../slices/deck-slice';
+import { deckSlice, selectedElementSelector } from '../../slices/deck-slice';
 import { BoxFormatControls } from './box-format-controls';
 import { isBoxElement } from './validators';
 

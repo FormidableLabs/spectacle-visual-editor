@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { Router } from '@reach/router';
 import { deckSlice } from './slices/deck-slice';
 import { VisualEditor } from './visual-editor';
-import { PreviewDeck } from './components/preview-deck';
+import { PreviewDeck } from './components';
 
 const store = configureStore({
   reducer: {

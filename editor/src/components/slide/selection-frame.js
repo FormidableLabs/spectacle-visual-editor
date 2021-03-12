@@ -8,7 +8,7 @@ import React, {
 import Moveable from 'react-moveable';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { deckSlice, editableElementIdSelector } from '../slices/deck-slice';
+import { deckSlice, editableElementIdSelector } from '../../slices/deck-slice';
 
 export const SelectionFrame = ({ children }) => {
   const ref = useRef();

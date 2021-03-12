@@ -7,12 +7,12 @@ import {
   EditorBody,
   EditorContent,
   MenuBar,
-  EditorCanvas
+  EditorCanvas,
+  Inspector
 } from './components';
 import { sampleSlideData } from './sample-slide-data';
 import { deckSlice } from './slices/deck-slice';
 import { useEditorActions, useSlideNodes } from './hooks';
-import { Inspector } from './inspector';
 
 export const VisualEditor = () => {
   const dispatch = useDispatch();

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { SlideScaleWrapper } from './slide';
+import { SlideScaleWrapper } from '../slide/slide';
 import { defaultTheme } from 'evergreen-ui';
 
 export const EditorBody = styled.div`

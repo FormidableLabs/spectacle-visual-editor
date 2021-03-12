@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
-import { CONTAINER_ELEMENTS } from '../components/elements';
-import { searchTreeForNode } from '../components/node-search';
+import { CONTAINER_ELEMENTS } from '../components';
 import defaultTheme from 'spectacle/es/theme/default-theme';
+import { searchTreeForNode } from '../util/node-search';
 
 export const deckSlice = createSlice({
   name: 'deck',

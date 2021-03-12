@@ -13,6 +13,7 @@ export { SpectacleLogo } from './user-interface/logo';
 /**
  * Slide and Spectacle Components
  */
+export { Slide } from './slide/slide';
 export { SlideTimeline } from './slide/slide-timeline';
 export { SlideViewer } from './slide/slide-viewer';
 export { ELEMENTS, CONTAINER_ELEMENTS } from './slide/elements';

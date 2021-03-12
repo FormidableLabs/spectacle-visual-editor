@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { TextInputField } from 'evergreen-ui';
-import { isValidCSSColor } from './validators';
+import { ColorPickerInput } from '../inputs/color';
 
 export const BoxFormatControls = ({
   selectedElement,
@@ -16,20 +15,17 @@ export const BoxFormatControls = ({
 
   return (
     <>
-      <TextInputField
-        label="Background Color"
-        inputHeight={24}
+      <ColorPickerInput
         disabled={!selectedElement?.props?.backgroundColor}
-        value={backgroundColor}
-        onChange={(e) => {
-          setBackgroundColor(e.target.value);
-          if (!isValidCSSColor(e.target.value)) {
-            return;
-          }
+        onChangeInput={setBackgroundColor}
+        label="Background Color"
+        onUpdateValue={(value) =>
           editableElementChanged({
-            backgroundColor: e.target.value
-          });
-        }}
+            backgroundColor: value
+          })
+        }
+        validValue={selectedElement?.props?.backgroundColor}
+        value={backgroundColor}
       />
     </>
   );

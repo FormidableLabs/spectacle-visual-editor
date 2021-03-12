@@ -4,6 +4,7 @@ import { Pane } from './inspector-styles';
 import { TextInputField } from 'evergreen-ui';
 import { deckSlice, themeSelector } from '../../slices/deck-slice';
 import { isValidCSSColor } from '../../util/is-valid-css-color';
+import { ColorPickerInput } from '../inputs/color';
 
 export const DocumentInspector = () => {
   const dispatch = useDispatch();
@@ -20,47 +21,32 @@ export const DocumentInspector = () => {
 
   return (
     <Pane>
-      <TextInputField
+      <ColorPickerInput
+        onChangeInput={setPrimaryColor}
         label="Primary Theme Value"
-        inputHeight={24}
+        onUpdateValue={(value) =>
+          dispatch(deckSlice.actions.updateThemeColors({ primary: value }))
+        }
+        validValue={theme?.colors?.primary}
         value={primaryColor}
-        onChange={(e) => {
-          setPrimaryColor(e.target.value);
-          if (!isValidCSSColor(e.target.value)) {
-            return;
-          }
-          dispatch(
-            deckSlice.actions.updateThemeColors({ primary: e.target.value })
-          );
-        }}
       />
-      <TextInputField
+      <ColorPickerInput
+        onChangeInput={setSecondaryColor}
         label="Secondary Theme Value"
-        inputHeight={24}
+        onUpdateValue={(value) =>
+          dispatch(deckSlice.actions.updateThemeColors({ secondary: value }))
+        }
+        validValue={theme?.colors?.secondary}
         value={secondaryColor}
-        onChange={(e) => {
-          setSecondaryColor(e.target.value);
-          if (!isValidCSSColor(e.target.value)) {
-            return;
-          }
-          dispatch(
-            deckSlice.actions.updateThemeColors({ secondary: e.target.value })
-          );
-        }}
       />
-      <TextInputField
+      <ColorPickerInput
+        onChangeInput={setTertiaryColor}
         label="Tertiary Theme Value"
-        inputHeight={24}
+        onUpdateValue={(value) =>
+          dispatch(deckSlice.actions.updateThemeColors({ tertiary: value }))
+        }
+        validValue={theme?.colors?.tertiary}
         value={tertiaryColor}
-        onChange={(e) => {
-          setTertiaryColor(e.target.value);
-          if (!isValidCSSColor(e.target.value)) {
-            return;
-          }
-          dispatch(
-            deckSlice.actions.updateThemeColors({ tertiary: e.target.value })
-          );
-        }}
       />
     </Pane>
   );

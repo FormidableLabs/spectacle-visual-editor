@@ -8,21 +8,26 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+
+  div {
+    flex: 1;
+  }
 `;
 
 const ColorSwatch = styled.span`
   display: inline-block;
-  border: 1px solid #111;
-  border-radius: 24px;
+  border: 1px solid hsla(0, 0%, 0%, 0.5);
+  border-radius: 20px;
   margin-left: 8px;
   box-shadow: inset 0 0 0 1px white;
   background: ${({ color }) => color};
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 `;
 
 export const ColorPickerInput = ({
   label,
+  disabled,
   onChangeInput,
   value,
   onUpdateValue,
@@ -31,9 +36,10 @@ export const ColorPickerInput = ({
   return (
     <Container>
       <TextInputField
-        label={label}
         inputHeight={24}
+        label={label}
         value={value}
+        disabled={disabled}
         onBlur={(e) => {
           const currentValue = e.target.value;
           if (!isValidCSSColor(currentValue)) {
@@ -49,12 +55,13 @@ export const ColorPickerInput = ({
           onUpdateValue(updatedValue);
         }}
       />
-      <ColorSwatch color={validValue} />
+      <ColorSwatch color={validValue || ''} />
     </Container>
   );
 };
 
 ColorPickerInput.propTypes = {
+  disabled: PropTypes.bool,
   label: PropTypes.string.isRequired,
   /**
    * onChangeInput is when any text is updated inside the input field.
@@ -68,7 +75,7 @@ ColorPickerInput.propTypes = {
   onUpdateValue: PropTypes.func.isRequired,
   value: PropTypes.string.isRequired,
   /**
-   * This is the last known valid color value, required for the preview.
+   * This is the last known valid color value used for the preview.
    */
-  validValue: PropTypes.string.isRequired
+  validValue: PropTypes.string
 };

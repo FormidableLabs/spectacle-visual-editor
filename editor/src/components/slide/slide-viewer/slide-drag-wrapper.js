@@ -5,6 +5,9 @@ import PropTypes from 'prop-types';
 /**
  * Slides in the Timeline can be dragged to reorder the slides in the deck.
  * This component contains the logic needed for DnD functionality.
+ *
+ * - This is based off of the example in: https://react-dnd.github.io/react-dnd/examples/sortable/simple
+ *
  * @param children Slide element to be rendered
  * @param index The index of the slide within the list of slides.
  * @param moveItem Method that's called when item is dragged to new position
@@ -39,21 +42,23 @@ export const SlideDragWrapper = ({ children, index, moveItem, onDrop }) => {
       }
       // Determine rectangle on screen
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
-      // Get vertical middle
+      // Get horizontal middle
       const hoverMiddleX =
         (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
       // Determine mouse position
       const clientOffset = monitor.getClientOffset();
-      // Get pixels to the top
+      // Get pixels to the left
       const hoverClientX = clientOffset.x - hoverBoundingRect.left;
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-      // Dragging downwards
+      // Only perform the move when the mouse has crossed half of the items width
+      // When dragging right, only move when the cursor is past 50%
+      // When dragging left, only move when the cursor is before 50%
+
+      // Dragging right
       if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
         return;
       }
-      // Dragging upwards
+
+      // Dragging right
       if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
         return;
       }
@@ -61,10 +66,6 @@ export const SlideDragWrapper = ({ children, index, moveItem, onDrop }) => {
       // Time to actually perform the action
       moveItem(dragIndex, hoverIndex);
 
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
       item.index = hoverIndex;
     }
   });

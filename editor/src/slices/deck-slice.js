@@ -106,6 +106,11 @@ export const deckSlice = createSlice({
       state.theme.colors = { ...state.theme.colors, ...action.payload };
     },
 
+    /**
+     * Reorder the slides given an array of IDs for the new order
+     * @param state The draft state
+     * @param action Array of IDs
+     */
     reorderSlides: (state, action) => {
       if (!Array.isArray(action.payload)) {
         return;

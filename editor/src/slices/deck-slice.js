@@ -104,6 +104,17 @@ export const deckSlice = createSlice({
 
     updateThemeColors: (state, action) => {
       state.theme.colors = { ...state.theme.colors, ...action.payload };
+    },
+
+    reorderSlides: (state, action) => {
+      if (!Array.isArray(action.payload)) {
+        return;
+      }
+
+      const oldSlides = [...state.slides];
+      state.slides = action.payload.map((id) =>
+        oldSlides.find((s) => s.id === id)
+      );
     }
   }
 });

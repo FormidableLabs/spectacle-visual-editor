@@ -1,13 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ThemeProvider } from 'styled-components';
+import { css, ThemeProvider } from 'styled-components';
 import { SlideContext } from 'spectacle/es/components/slide/slide';
 import { useDispatch, useSelector } from 'react-redux';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { deckSlice, themeSelector } from '../../slices/deck-slice';
 
+const activeSlideContainerStyle = css`
+  outline: #ee5396 solid 2px;
+
+  div {
+    overflow: hidden;
+  }
+`;
+
 /**
+ * S TODO: Update this doc
  * SlideViewer is an un-styled wrapper that provides the context data
  * required for rendering slide components.
  * @param children An array of slides or single slide
@@ -15,8 +24,16 @@ import { deckSlice, themeSelector } from '../../slices/deck-slice';
  * @param slideProps Any props passed to each Slide component
  * @returns {JSX.Element}
  */
-export const SlideViewer = ({ children, scale, slideProps }) => {
+export const SlideViewer = ({
+  children,
+  scale,
+  slideProps,
+  isInTimeline = false
+}) => {
   const theme = useSelector(themeSelector);
+  const activeSlideId = useSelector(
+    (state) => state.deck.activeSlide?.id || ''
+  );
   const dispatch = useDispatch();
   const [localSlides, setLocalSlides] = React.useState([]);
 
@@ -24,14 +41,26 @@ export const SlideViewer = ({ children, scale, slideProps }) => {
   const slides = React.useMemo(() => {
     const slideEls = (children instanceof Array ? children : [children]).flat();
 
-    return slideEls.map((slide) =>
-      React.cloneElement(slide, {
+    return slideEls.map((slide) => {
+      return React.cloneElement(slide, {
         scale,
-        slideProps,
+        slideProps: {
+          ...slideProps,
+          containerStyle: (() => {
+            if (activeSlideId === slide?.props?.id && isInTimeline) {
+              return [
+                ...(slideProps?.containerStyle || []),
+                activeSlideContainerStyle
+              ];
+            }
+
+            return slideProps?.containerStyle || [];
+          })()
+        },
         key: slide.props.id
-      })
-    );
-  }, [children, scale, slideProps]);
+      });
+    });
+  }, [activeSlideId, children, isInTimeline, scale, slideProps]);
 
   // Keep local slides in sync with actual slides
   React.useEffect(() => {
@@ -86,7 +115,8 @@ export const SlideViewer = ({ children, scale, slideProps }) => {
 SlideViewer.propTypes = {
   slideProps: PropTypes.object,
   scale: PropTypes.number.isRequired,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
+  isInTimeline: PropTypes.bool
 };
 
 const DraggableItem = ({ children, index, moveItem, onDrop }) => {

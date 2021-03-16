@@ -22,12 +22,6 @@ const slideContainerStyle = css`
   &:last-child {
     margin-right: 5px;
   }
-  &:focus {
-    outline: #ee5396 solid 2px;
-    div {
-      overflow: hidden;
-    }
-  }
 `;
 
 /**
@@ -46,6 +40,7 @@ export const SlideTimeline = ({ onSlideClick, children }) => {
     },
     [onSlideClick]
   );
+
   return (
     <Container>
       <SlideViewer
@@ -57,6 +52,7 @@ export const SlideTimeline = ({ onSlideClick, children }) => {
           role: 'button'
         }}
         scale={0.1}
+        isInTimeline
       >
         {children}
       </SlideViewer>

@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { background, color, space } from 'styled-system';
 
-export const SlideScaleWrapper = styled.div(({ containerStyle }) => [
-  containerStyle
-]);
+export const SlideScaleWrapper = styled.div(({ containerStyle }) =>
+  Array.isArray(containerStyle) ? containerStyle : [containerStyle]
+);
 
 const SlideWrapper = styled('div')(
   color,

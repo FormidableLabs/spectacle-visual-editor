@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import { SlideViewer } from './slide-viewer/slide-viewer';
 import { defaultTheme } from 'evergreen-ui';
 import { TimelineSlideViewer } from './slide-viewer/timeline-slide-viewer';
 

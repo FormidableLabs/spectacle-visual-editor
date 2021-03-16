@@ -31,6 +31,7 @@ export const TimelineSlideViewer = ({ children, scale, slideProps }) => {
         scale,
         slideProps: {
           ...slideProps,
+          // Hi-jack containerStyle to add active style for active slide
           containerStyle: (() => {
             if (activeSlideId === slide?.props?.id) {
               return [

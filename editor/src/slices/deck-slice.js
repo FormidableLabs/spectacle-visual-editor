@@ -116,9 +116,8 @@ export const deckSlice = createSlice({
         return;
       }
 
-      const oldSlides = [...state.slides];
       state.slides = action.payload.map((id) =>
-        oldSlides.find((s) => s.id === id)
+        state.slides.find((s) => s.id === id)
       );
     }
   }

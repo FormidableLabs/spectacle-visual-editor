@@ -18,7 +18,7 @@ describe('searchForTree', () => {
     expect(searchTreeForNode(tree, 456)?.color).toBe('yellow');
   });
 
-  test('should not find nested object in tree', () => {
-    expect(searchTreeForNode(tree, 789)?.color).toBeFalsy();
+  test('should return null if object not in tree', () => {
+    expect(searchTreeForNode(tree, 789)).toBeNull();
   });
 });

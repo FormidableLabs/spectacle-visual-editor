@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import { SlideViewer } from './slide-viewer';
 import { defaultTheme } from 'evergreen-ui';
+import { TimelineSlideViewer } from './slide-viewer/timeline-slide-viewer';
 
 const Container = styled.div`
   background: ${defaultTheme.scales.neutral.N6};
@@ -22,12 +22,6 @@ const slideContainerStyle = css`
   &:last-child {
     margin-right: 5px;
   }
-  &:focus {
-    outline: #ee5396 solid 2px;
-    div {
-      overflow: hidden;
-    }
-  }
 `;
 
 /**
@@ -46,9 +40,10 @@ export const SlideTimeline = ({ onSlideClick, children }) => {
     },
     [onSlideClick]
   );
+
   return (
     <Container>
-      <SlideViewer
+      <TimelineSlideViewer
         slideProps={{
           containerStyle: slideContainerStyle,
           tabIndex: 0,
@@ -59,7 +54,7 @@ export const SlideTimeline = ({ onSlideClick, children }) => {
         scale={0.1}
       >
         {children}
-      </SlideViewer>
+      </TimelineSlideViewer>
     </Container>
   );
 };

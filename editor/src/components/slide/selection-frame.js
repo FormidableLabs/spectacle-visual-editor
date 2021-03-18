@@ -15,9 +15,13 @@ const Wrapper = styled.div`
   display: contents;
 
   > div {
-    outline: ${(props) => (props.isSelected ? '2px solid red' : '')};
+    outline: ${(props) =>
+      props.isSelected ? `2px solid ${props.theme.colors.secondary}` : ''};
     &:hover {
-      background: rgba(0, 0, 0, 0.2);
+      outline: ${(props) =>
+        props.isSelected
+          ? `2px solid ${props.theme.colors.secondary}`
+          : `1px solid ${props.theme.colors.primary}`};
     }
   }
 `;
@@ -58,7 +62,6 @@ export const SelectionFrame = ({ children }) => {
   return (
     <>
       <Wrapper
-        ref={ref}
         onClick={(e) => {
           e.stopPropagation();
           dispatch(
@@ -67,7 +70,7 @@ export const SelectionFrame = ({ children }) => {
         }}
         isSelected={isSelected}
       >
-        {cloneElement(children)}
+        {cloneElement(children, { ref })}
       </Wrapper>
       <Moveable
         target={target}

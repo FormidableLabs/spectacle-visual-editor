@@ -47,7 +47,6 @@ export const SelectionFrame = ({ children }) => {
 
   useEffect(() => {
     if (editableElementId === children.props.id) {
-      console.log('setting target');
       setTarget(ref.current);
     } else {
       setTarget(null);
@@ -55,8 +54,6 @@ export const SelectionFrame = ({ children }) => {
   }, [children, editableElementId]);
 
   const isSelected = editableElementId === children.props.id;
-
-  console.log(isSelected);
 
   return (
     <>

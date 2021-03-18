@@ -97,7 +97,16 @@ export const MenuBar = () => {
                 Text Box
               </Menu.Item>
               <Menu.Item onSelect={() => {}}>Image</Menu.Item>
-              <Menu.Item onSelect={() => {}}>List</Menu.Item>
+              <Menu.Item
+                onSelect={() => {
+                  dispatch(
+                    deckSlice.actions.elementAddedToActiveSlide(ELEMENTS.LIST)
+                  );
+                  close();
+                }}
+              >
+                List
+              </Menu.Item>
               <Menu.Item onSelect={() => {}}>Code Pane</Menu.Item>
               <Menu.Item
                 onSelect={() => {

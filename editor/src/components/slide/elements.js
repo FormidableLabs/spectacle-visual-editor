@@ -7,6 +7,10 @@ export const ELEMENTS = {
     component: 'Markdown',
     children: 'I am text'
   },
+  LIST: {
+    component: 'Markdown',
+    children: `- one\n- two\n- three`
+  },
   BOX: {
     component: 'Box',
     props: { backgroundColor: 'limegreen', height: 100, width: 200 },

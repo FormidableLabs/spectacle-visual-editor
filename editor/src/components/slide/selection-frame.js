@@ -5,10 +5,22 @@ import React, {
   useRef,
   useState
 } from 'react';
+import styled from 'styled-components';
 import Moveable from 'react-moveable';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { deckSlice, editableElementIdSelector } from '../../slices/deck-slice';
+
+const Wrapper = styled.div`
+  display: contents;
+
+  > div {
+    outline: ${(props) => (props.isSelected ? '2px solid red' : '')};
+    &:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+  }
+`;
 
 export const SelectionFrame = ({ children }) => {
   const ref = useRef();
@@ -35,15 +47,31 @@ export const SelectionFrame = ({ children }) => {
 
   useEffect(() => {
     if (editableElementId === children.props.id) {
+      console.log('setting target');
       setTarget(ref.current);
     } else {
       setTarget(null);
     }
   }, [children, editableElementId]);
 
+  const isSelected = editableElementId === children.props.id;
+
+  console.log(isSelected);
+
   return (
     <>
-      {cloneElement(children, { ref })}
+      <Wrapper
+        ref={ref}
+        onClick={(e) => {
+          e.stopPropagation();
+          dispatch(
+            deckSlice.actions.editableElementSelected(children.props.id)
+          );
+        }}
+        isSelected={isSelected}
+      >
+        {cloneElement(children)}
+      </Wrapper>
       <Moveable
         target={target}
         origin={false}

@@ -74,13 +74,22 @@ export const MenuBar = () => {
         content={({ close }) => (
           <Menu>
             <Menu.Group>
-              <Menu.Item onSelect={() => {}}>Heading</Menu.Item>
               <Menu.Item
                 onSelect={() => {
                   dispatch(
                     deckSlice.actions.elementAddedToActiveSlide(
                       ELEMENTS.HEADING
                     )
+                  );
+                  close();
+                }}
+              >
+                Heading
+              </Menu.Item>
+              <Menu.Item
+                onSelect={() => {
+                  dispatch(
+                    deckSlice.actions.elementAddedToActiveSlide(ELEMENTS.TEXT)
                   );
                   close();
                 }}

@@ -27,7 +27,7 @@
     "react-moveable": "^0.26.2",
     "react-redux": "^7.2.2",
     "regenerator-runtime": "^0.13.7",
-    "spectacle": "^7.0.4",
+    "spectacle": "^7.1.0",
     "styled-components": "^4.3.2",
     "styled-system": "^5.1.5",
     "use-mousetrap": "^1.0.4",

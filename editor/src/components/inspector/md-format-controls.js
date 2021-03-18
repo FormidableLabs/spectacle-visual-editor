@@ -9,7 +9,7 @@ export const MdFormatControls = ({
   return (
     <React.Fragment>
       <MdInput
-        label="Text Content"
+        label="Content"
         value={String(selectedElement?.children)}
         onValueChange={(val) => editableElementChanged({ children: val })}
       />

@@ -15,13 +15,7 @@ const TabsList = Object.values(TABS);
 
 export const Inspector = () => {
   const [activeTab, setActiveTab] = useState(TABS.DOCUMENT);
-  const selectedElement = useSelector(selectedElementSelector);
-
-  React.useEffect(() => {
-    if (selectedElement) {
-      setActiveTab(TABS.FORMAT);
-    }
-  }, [selectedElement]);
+  useSwitchToFormatInspectorOnElementSelected({ setActiveTab });
 
   return (
     <InspectorContainer>
@@ -49,4 +43,14 @@ export const Inspector = () => {
       })()}
     </InspectorContainer>
   );
+};
+
+const useSwitchToFormatInspectorOnElementSelected = ({ setActiveTab }) => {
+  const selectedElement = useSelector(selectedElementSelector);
+
+  React.useEffect(() => {
+    if (selectedElement) {
+      setActiveTab(TABS.FORMAT);
+    }
+  }, [selectedElement, setActiveTab]);
 };

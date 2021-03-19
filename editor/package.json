@@ -2,7 +2,7 @@
   "name": "spectacle-visual-editor",
   "version": "0.0.1",
   "description": "Spectacle Visual Editor",
-  "main": "src/index.tsx",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "start": "webpack serve --mode=development --open --hot",

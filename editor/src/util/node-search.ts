@@ -1,5 +1,10 @@
-export const searchTreeForNode = (tree, value) => {
-  let foundNode = null;
+import { DeckElement } from '../../types';
+
+export const searchTreeForNode = (
+  tree: DeckElement[],
+  value: string
+): DeckElement | null => {
+  let foundNode: DeckElement | null = null;
 
   for (let leaf of tree) {
     if (leaf.id === value) {
@@ -10,11 +15,7 @@ export const searchTreeForNode = (tree, value) => {
 
   if (foundNode === null) {
     for (let leaf of tree) {
-      if (
-        'children' in leaf &&
-        Array.isArray(leaf.children) &&
-        leaf.children.length > 0
-      ) {
+      if (Array.isArray(leaf.children) && leaf.children.length > 0) {
         foundNode = searchTreeForNode(leaf.children, value);
       }
     }

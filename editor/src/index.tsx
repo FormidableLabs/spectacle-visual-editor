@@ -1,23 +1,21 @@
 import 'regenerator-runtime';
 import React from 'react';
 import { render } from 'react-dom';
-import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { Router } from '@reach/router';
-import { deckSlice } from './slices/deck-slice';
 import { VisualEditor } from './visual-editor';
 import { PreviewDeck } from './components';
+import { store } from './store';
 
-const store = configureStore({
-  reducer: {
-    deck: deckSlice.reducer
-  }
-});
-
+/**
+ * TODO: remove @ts-ignores
+ */
 render(
   <Provider store={store}>
     <Router>
+      {/* @ts-ignore */}
       <VisualEditor path="/" />
+      {/* @ts-ignore */}
       <PreviewDeck path="/preview-deck" />
     </Router>
   </Provider>,

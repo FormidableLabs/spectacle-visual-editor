@@ -1,7 +1,9 @@
-export const ELEMENTS = {
+import { DeckElement } from '../../../types';
+
+export const ELEMENTS: { [key: string]: Partial<DeckElement> } = {
   HEADING: {
-    component: 'Heading',
-    children: 'Oh Hello There'
+    component: 'Markdown',
+    children: '# Oh Hello There'
   },
   BOX: {
     component: 'Box',

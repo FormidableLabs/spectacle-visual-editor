@@ -8,6 +8,7 @@
     "start": "webpack serve --mode=development --open --hot",
     "build": "webpack --mode=production",
     "test": "jest",
+    "lint": "eslint --ext .ts,.tsx,.js ./src",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },

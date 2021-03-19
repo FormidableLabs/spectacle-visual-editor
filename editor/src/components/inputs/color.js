@@ -4,7 +4,7 @@ import { TextInputField } from 'evergreen-ui';
 import PropTypes from 'prop-types';
 import { isValidCSSColor } from '../../util/is-valid-css-color';
 
-const Container = styled.div`
+export const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;

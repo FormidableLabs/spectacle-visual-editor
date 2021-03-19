@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { deckSlice, themeSelector } from '../../slices/deck-slice';
 import { ColorPickerInput } from '../inputs/color';
-import { SpectacleTheme } from '../../types/theme';
+import { useRootSelector } from '../../store';
 
 const Container = styled.div`
   display: grid;
@@ -14,7 +14,7 @@ const Container = styled.div`
 
 export const ThemeValues = () => {
   const dispatch = useDispatch();
-  const themeValues = useSelector<{}, SpectacleTheme>(themeSelector);
+  const themeValues = useRootSelector(themeSelector);
   const [inputState, setInputState] = useState(themeValues);
 
   return (

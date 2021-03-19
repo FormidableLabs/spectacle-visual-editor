@@ -1,18 +1,11 @@
 import 'regenerator-runtime';
 import React from 'react';
 import { render } from 'react-dom';
-import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { Router } from '@reach/router';
-import { deckSlice } from './slices/deck-slice';
 import { VisualEditor } from './visual-editor';
 import { PreviewDeck } from './components';
-
-const store = configureStore({
-  reducer: {
-    deck: deckSlice.reducer
-  }
-});
+import { store } from './store';
 
 render(
   <Provider store={store}>

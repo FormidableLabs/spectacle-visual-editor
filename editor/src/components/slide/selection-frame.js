@@ -62,7 +62,11 @@ export const SelectionFrame = ({ children }) => {
   return (
     <>
       <Wrapper
-        onClick={(e) => {
+        onMouseDown={(e) => {
+          if (e.target.classList.contains('moveable-control')) {
+            return;
+          }
+
           e.stopPropagation();
           dispatch(
             deckSlice.actions.editableElementSelected(children.props.id)

@@ -11876,10 +11876,10 @@ spdy@^4.0.2:
     select-hose "^2.0.0"
     spdy-transport "^3.0.0"
 
-spectacle@^7.0.4:
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/spectacle/-/spectacle-7.0.4.tgz#56d5fcfcca3d666755ec9ed5ece7c476a5507864"
-  integrity sha512-ZE0ozzQ35QK/5yHQHvq7fsko+GXZNuRiA7cLR60r5v9YmxhSbpeA7cmXehD0qALIarCsfvcXUsxtlOqnUYFbJA==
+spectacle@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/spectacle/-/spectacle-7.1.0.tgz#6b0af94b7a42535592755a2404399e40229f77f6"
+  integrity sha512-U0HmI5jr+4ARa1YTypTcrhpKWdc+H9Br4wfQ97w+raNFcozt0EuzfoYtrepycDrGnWE/vpV/x5joJcxJKES0kQ==
   dependencies:
     broadcast-channel "^3.2.0"
     broadcastchannel-polyfill "^1.0.0"

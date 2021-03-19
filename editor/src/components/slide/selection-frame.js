@@ -5,10 +5,26 @@ import React, {
   useRef,
   useState
 } from 'react';
+import styled from 'styled-components';
 import Moveable from 'react-moveable';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { deckSlice, editableElementIdSelector } from '../../slices/deck-slice';
+
+const Wrapper = styled.div`
+  display: contents;
+
+  > div {
+    outline: ${(props) =>
+      props.isSelected ? `2px solid ${props.theme.colors.secondary}` : ''};
+    &:hover {
+      outline: ${(props) =>
+        props.isSelected
+          ? `2px solid ${props.theme.colors.secondary}`
+          : `1px solid ${props.theme.colors.primary}`};
+    }
+  }
+`;
 
 export const SelectionFrame = ({ children }) => {
   const ref = useRef();
@@ -41,9 +57,25 @@ export const SelectionFrame = ({ children }) => {
     }
   }, [children, editableElementId]);
 
+  const isSelected = editableElementId === children.props.id;
+
   return (
     <>
-      {cloneElement(children, { ref })}
+      <Wrapper
+        onMouseDown={(e) => {
+          if (e.target.classList.contains('moveable-control')) {
+            return;
+          }
+
+          e.stopPropagation();
+          dispatch(
+            deckSlice.actions.editableElementSelected(children.props.id)
+          );
+        }}
+        isSelected={isSelected}
+      >
+        {cloneElement(children, { ref })}
+      </Wrapper>
       <Moveable
         target={target}
         origin={false}

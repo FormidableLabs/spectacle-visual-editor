@@ -74,7 +74,6 @@ export const MenuBar = () => {
         content={({ close }) => (
           <Menu>
             <Menu.Group>
-              <Menu.Item onSelect={() => {}}>Heading</Menu.Item>
               <Menu.Item
                 onSelect={() => {
                   dispatch(
@@ -85,10 +84,29 @@ export const MenuBar = () => {
                   close();
                 }}
               >
+                Heading
+              </Menu.Item>
+              <Menu.Item
+                onSelect={() => {
+                  dispatch(
+                    deckSlice.actions.elementAddedToActiveSlide(ELEMENTS.TEXT)
+                  );
+                  close();
+                }}
+              >
                 Text Box
               </Menu.Item>
               <Menu.Item onSelect={() => {}}>Image</Menu.Item>
-              <Menu.Item onSelect={() => {}}>List</Menu.Item>
+              <Menu.Item
+                onSelect={() => {
+                  dispatch(
+                    deckSlice.actions.elementAddedToActiveSlide(ELEMENTS.LIST)
+                  );
+                  close();
+                }}
+              >
+                List
+              </Menu.Item>
               <Menu.Item onSelect={() => {}}>Code Pane</Menu.Item>
               <Menu.Item
                 onSelect={() => {

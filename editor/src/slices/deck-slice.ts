@@ -4,7 +4,7 @@ import { CONTAINER_ELEMENTS } from '../components';
 // @ts-ignore
 import defaultTheme from 'spectacle/es/theme/default-theme';
 import { searchTreeForNode } from '../util/node-search';
-import { DeckElement, DeckSlide } from '../../types';
+import { DeckElement, DeckSlide } from '../types/deck-elements';
 import { RootState } from '../store';
 
 type DeckState = {

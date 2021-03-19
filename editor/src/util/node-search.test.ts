@@ -1,5 +1,5 @@
 import { searchTreeForNode } from './node-search';
-import { DeckTree } from '../../types';
+import { DeckTree } from '../types/deck-elements';
 
 describe('searchForTree', () => {
   const tree: DeckTree = [

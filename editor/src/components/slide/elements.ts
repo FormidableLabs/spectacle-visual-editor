@@ -1,4 +1,4 @@
-import { DeckElement } from '../../../types';
+import { DeckElement } from '../../types/deck-elements';
 
 export const ELEMENTS: { [key: string]: Partial<DeckElement> } = {
   HEADING: {

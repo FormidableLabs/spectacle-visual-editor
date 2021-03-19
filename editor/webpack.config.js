@@ -10,10 +10,16 @@ export default {
     filename: 'app.js'
   },
   resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
     modules: [path.join(__dirname, 'src'), 'node_modules']
   },
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      },
       {
         test: /\.js/,
         exclude: /node_modules/,

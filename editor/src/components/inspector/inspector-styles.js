@@ -13,4 +13,5 @@ export const Pane = styled.div`
   flex: 1;
   z-index: 1;
   padding: 10px;
+  overflow-y: scroll;
 `;

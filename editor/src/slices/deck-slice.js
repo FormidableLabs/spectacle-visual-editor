@@ -78,7 +78,13 @@ export const deckSlice = createSlice({
         state.activeSlide.children,
         state.editableElementId
       );
-      node.props = { ...node.props, ...action.payload };
+
+      const { children: incomingChildren, ...incomingProps } = action.payload;
+
+      node.props = { ...node.props, ...incomingProps };
+      if (incomingChildren !== undefined) {
+        node.children = incomingChildren;
+      }
 
       const index = state.slides.findIndex(
         ({ id }) => id === state.activeSlide.id

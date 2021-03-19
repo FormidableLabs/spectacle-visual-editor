@@ -14,13 +14,14 @@ export const sampleSlideData = [
         },
         children: [
           {
-            component: 'Heading',
+            component: 'Markdown',
             id: v4(),
             props: {
-              margin: 10,
-              fontSize: 'h2'
+              componentProps: {
+                margin: 10
+              }
             },
-            children: 'Spectacle'
+            children: '## Spectacle'
           },
           {
             component: 'Box',
@@ -40,9 +41,9 @@ export const sampleSlideData = [
     id: v4(),
     children: [
       {
-        component: 'Heading',
+        component: 'Markdown',
         id: v4(),
-        children: 'Second Slide'
+        children: '# Second Slide'
       }
     ]
   },
@@ -51,9 +52,9 @@ export const sampleSlideData = [
     id: v4(),
     children: [
       {
-        component: 'Heading',
+        component: 'Markdown',
         id: v4(),
-        children: 'Third Slide'
+        children: '# Third Slide'
       }
     ]
   },
@@ -62,9 +63,9 @@ export const sampleSlideData = [
     id: v4(),
     children: [
       {
-        component: 'Heading',
+        component: 'Markdown',
         id: v4(),
-        children: 'Fourth Slide'
+        children: '# Fourth Slide'
       }
     ]
   }

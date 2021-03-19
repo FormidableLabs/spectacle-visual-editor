@@ -6,5 +6,8 @@ export const isValidCSSColor = (color) =>
 export const isBoxElement = (element) =>
   Boolean(element?.component?.includes('Box'));
 
+export const isMdElement = (element) =>
+  Boolean(element?.component?.includes('Markdown'));
+
 export const isTextElement = (element) =>
   Boolean(['Heading', 'Text'].includes(element?.component));

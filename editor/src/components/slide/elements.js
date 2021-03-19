@@ -1,7 +1,15 @@
 export const ELEMENTS = {
   HEADING: {
-    component: 'Heading',
-    children: 'Oh Hello There'
+    component: 'Markdown',
+    children: '# Oh Hello There'
+  },
+  TEXT: {
+    component: 'Markdown',
+    children: 'I am text'
+  },
+  LIST: {
+    component: 'Markdown',
+    children: `- one\n- two\n- three`
   },
   BOX: {
     component: 'Box',

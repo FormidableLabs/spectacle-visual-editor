@@ -13,5 +13,3 @@ export type DeckSlide = DeckElement & {
   component: 'Slide';
   children: DeckElement[];
 };
-
-export type DeckTree = DeckElement[];

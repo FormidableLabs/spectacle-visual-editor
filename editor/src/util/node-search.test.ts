@@ -1,8 +1,8 @@
 import { searchTreeForNode } from './node-search';
-import { DeckTree } from '../types/deck-elements';
+import { DeckElement } from '../types/deck-elements';
 
 describe('searchForTree', () => {
-  const tree: DeckTree = [
+  const tree: DeckElement[] = [
     {
       component: 'Slide',
       id: '123',

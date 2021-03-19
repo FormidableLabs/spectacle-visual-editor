@@ -16,12 +16,4 @@ describe('isValidCSSColor', () => {
   test('is false for an invalid color', () => {
     expect(isValidCSSColor('milo')).toBeFalsy();
   });
-
-  test('is false for undefined', () => {
-    expect(isValidCSSColor()).toBeFalsy();
-  });
-
-  test('is false for not a string', () => {
-    expect(isValidCSSColor([1])).toBeFalsy();
-  });
 });

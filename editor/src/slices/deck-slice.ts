@@ -6,12 +6,13 @@ import defaultTheme from 'spectacle/es/theme/default-theme';
 import { searchTreeForNode } from '../util/node-search';
 import { DeckElement, DeckSlide } from '../types/deck-elements';
 import { RootState } from '../store';
+import { SpectacleTheme } from '../types/theme';
 
 type DeckState = {
   slides: DeckSlide[];
   activeSlide: DeckSlide;
   editableElementId: null | string;
-  theme: any;
+  theme: SpectacleTheme;
 };
 
 const initialState: DeckState = {

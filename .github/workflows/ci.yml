@@ -1,8 +1,8 @@
 name: CI
 
 # Runs build and test on:
-#   every push that has a change in a file not in the docs folder
-#   every pull request with main branch as the base that has a change in a file not in the docs folder
+#   every push that has a change in a file in the editor folder
+#   every pull request with main branch as the base that has a change in a file in the editor folder
 on:
   push:
     branches:
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x, 15.x]
+        node-version: [15.x]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2

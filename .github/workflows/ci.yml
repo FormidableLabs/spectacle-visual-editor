@@ -1,5 +1,9 @@
 name: CI
 
+defaults:
+  run:
+    working-directory: ./editor
+
 # Runs build and test on:
 #   every push that has a change in a file in the editor folder
 #   every pull request with main branch as the base that has a change in a file in the editor folder
@@ -8,12 +12,12 @@ on:
     branches:
       - main
     paths:
-      - '!editor/**'
+      - 'editor/**'
   pull_request:
     branches:
       - main
     paths:
-      - '!editor/**'
+      - 'editor/**'
 
 jobs:
   build:

@@ -78,8 +78,10 @@ export const TimelineSlideViewer: React.FC<Props> = ({
 
   // Commit changes
   const commitChangedOrder = React.useCallback(() => {
-    const currentIds = slides?.map((slide) => slide?.props?.id) || [];
-    const newIds = localSlides?.map((slide) => slide?.props?.id) || [];
+    const currentIds =
+      slides?.map((slide: React.ReactElement) => slide?.props?.id) || [];
+    const newIds =
+      localSlides?.map((slide: React.ReactElement) => slide?.props?.id) || [];
 
     if (currentIds.join(',') !== newIds.join(',')) {
       dispatch(deckSlice.actions.reorderSlides(newIds));

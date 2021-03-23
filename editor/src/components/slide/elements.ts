@@ -1,6 +1,6 @@
 import { DeckElement } from '../../types/deck-elements';
 
-export const ELEMENTS: Record<string, Partial<DeckElement>> = {
+export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
   HEADING: {
     component: 'Markdown',
     children: '# Oh Hello There'

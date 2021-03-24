@@ -11,4 +11,8 @@ export const isMdElement = (element: DeckElement | null) =>
   Boolean(element?.component?.includes('Markdown'));
 
 export const isTextElement = (element: DeckElement | null) =>
+<<<<<<< HEAD
   Boolean(element && ['Heading', 'Text'].includes(element?.component));
+=======
+  element && Boolean(['Heading', 'Text'].includes(element?.component));
+>>>>>>> Updated more files

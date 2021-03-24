@@ -1,21 +1,26 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import PropTypes from 'prop-types';
 
 /**
  * Slides in the Timeline can be dragged to reorder the slides in the deck.
  * This component contains the logic needed for DnD functionality.
  *
  * - This is based off of the example in: https://react-dnd.github.io/react-dnd/examples/sortable/simple
- *
- * @param children Slide element to be rendered
- * @param index The index of the slide within the list of slides.
- * @param moveItem Method that's called when item is dragged to new position
- * @param onDrop Method called when element is dropped
- * @returns {JSX.Element}
  */
-export const SlideDragWrapper = ({ children, index, moveItem, onDrop }) => {
-  const ref = React.useRef(null);
+
+interface Props {
+  index: number;
+  moveItem(dragIndex: number, hoverIndex: number): void;
+  onDrop(): void;
+}
+
+export const SlideDragWrapper: React.FC<Props> = ({
+  children,
+  index,
+  moveItem,
+  onDrop
+}) => {
+  const ref = React.useRef<HTMLDivElement>(null);
 
   const [{ handlerId }, drop] = useDrop({
     accept: 'Slide',
@@ -30,7 +35,7 @@ export const SlideDragWrapper = ({ children, index, moveItem, onDrop }) => {
       onDrop();
     },
 
-    hover(item, monitor) {
+    hover(item: { index: number }, monitor) {
       if (!ref.current) {
         return;
       }
@@ -48,7 +53,7 @@ export const SlideDragWrapper = ({ children, index, moveItem, onDrop }) => {
       // Determine mouse position
       const clientOffset = monitor.getClientOffset();
       // Get pixels to the left
-      const hoverClientX = clientOffset.x - hoverBoundingRect.left;
+      const hoverClientX = (clientOffset?.x || 0) - hoverBoundingRect.left;
       // Only perform the move when the mouse has crossed half of the items width
       // When dragging right, only move when the cursor is past 50%
       // When dragging left, only move when the cursor is before 50%
@@ -73,7 +78,7 @@ export const SlideDragWrapper = ({ children, index, moveItem, onDrop }) => {
   const [{ isDragging }, drag] = useDrag({
     type: 'Slide',
     item: () => {
-      return { id: children.key, index };
+      return { id: (children as React.ReactElement).props.id, index };
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
@@ -92,11 +97,4 @@ export const SlideDragWrapper = ({ children, index, moveItem, onDrop }) => {
       {children}
     </div>
   );
-};
-
-SlideDragWrapper.propTypes = {
-  children: PropTypes.node.isRequired,
-  index: PropTypes.number.isRequired,
-  moveItem: PropTypes.func.isRequired,
-  onDrop: PropTypes.func.isRequired
 };

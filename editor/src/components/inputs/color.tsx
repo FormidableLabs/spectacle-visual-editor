@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { ChangeEvent, FocusEvent } from 'react';
 import styled from 'styled-components';
 import { TextInputField } from 'evergreen-ui';
-import PropTypes from 'prop-types';
 import { isValidCSSColor } from '../../util/is-valid-css-color';
 
 export const Container = styled.div`
@@ -25,7 +24,27 @@ const ColorSwatch = styled.span`
   height: 20px;
 `;
 
-export const ColorPickerInput = ({
+interface Props {
+  disabled: boolean;
+  label: string;
+  /**
+   * onChangeInput is when any text is updated inside the input field.
+   * This is to ensure the controlled field is in sync, usually using a setState setter.
+   */
+  onChangeInput(value: string): void;
+  /**
+   * onUpdateValue is when any text is updated _and_ the value is valid.
+   * This is to ensure no invalid values could break the slide or element props.
+   */
+  onUpdateValue(value: string): void;
+  value?: string;
+  /**
+   * This is the last known valid color value used for the preview.
+   */
+  validValue: string;
+}
+
+export const ColorPickerInput: React.FC<Props> = ({
   label,
   disabled,
   onChangeInput,
@@ -40,13 +59,13 @@ export const ColorPickerInput = ({
         label={label}
         value={value}
         disabled={disabled}
-        onBlur={(e) => {
+        onBlur={(e: FocusEvent<HTMLInputElement>) => {
           const currentValue = e.target.value;
           if (!isValidCSSColor(currentValue)) {
             onChangeInput(validValue);
           }
         }}
-        onChange={(e) => {
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
           const updatedValue = e.target.value;
           onChangeInput(updatedValue);
           if (!isValidCSSColor(updatedValue)) {
@@ -58,24 +77,4 @@ export const ColorPickerInput = ({
       <ColorSwatch color={validValue || ''} />
     </Container>
   );
-};
-
-ColorPickerInput.propTypes = {
-  disabled: PropTypes.bool,
-  label: PropTypes.string.isRequired,
-  /**
-   * onChangeInput is when any text is updated inside the input field.
-   * This is to ensure the controlled field is in sync, usually using a setState setter.
-   */
-  onChangeInput: PropTypes.func.isRequired,
-  /**
-   * onUpdateValue is when any text is updated _and_ the value is valid.
-   * This is to ensure no invalid values could break the slide or element props.
-   */
-  onUpdateValue: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
-  /**
-   * This is the last known valid color value used for the preview.
-   */
-  validValue: PropTypes.string
 };

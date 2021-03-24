@@ -1,13 +1,29 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import styled, { css } from 'styled-components';
-import { background, color, space } from 'styled-system';
+import styled, { css, InterpolationValue } from 'styled-components';
+import {
+  background,
+  color,
+  space,
+  BackgroundColorProps,
+  PaddingProps,
+  SpaceProps
+} from 'styled-system';
 
-export const SlideScaleWrapper = styled.div(({ containerStyle }) =>
+export const SlideScaleWrapper = styled.div<{
+  containerStyle: InterpolationValue;
+}>(({ containerStyle }) =>
   Array.isArray(containerStyle) ? containerStyle : [containerStyle]
 );
 
-const SlideWrapper = styled('div')(
+interface SlideWrapperProps
+  extends SpaceProps,
+    BackgroundColorProps,
+    SpaceProps,
+    PaddingProps {
+  scale: number;
+}
+
+const SlideWrapper = styled('div')<SlideWrapperProps>(
   color,
   space,
   background,
@@ -24,7 +40,7 @@ const SlideWrapper = styled('div')(
   })
 );
 
-const ContentWrapper = styled('div')(
+const ContentWrapper = styled('div')<SpaceProps>(
   space,
   css`
     flex: 1;
@@ -36,7 +52,21 @@ const ContentWrapper = styled('div')(
   `
 );
 
-export const Slide = ({
+interface Props {
+  id: string;
+  slideProps: {
+    containerStyle: InterpolationValue;
+    onSlideClick?(id: string): void;
+    handleKeyPress?(event: React.KeyboardEvent, id: string): void;
+  };
+  backgroundColor: string;
+  backgroundPosition: string;
+  scale: number;
+  textColor: string;
+  padding: number | string;
+}
+
+export const Slide: React.FC<Props> = ({
   id,
   children,
   scale,
@@ -64,17 +94,6 @@ export const Slide = ({
     </SlideScaleWrapper>
   );
 };
-
-Slide.propTypes = {
-  id: PropTypes.string,
-  slideProps: PropTypes.object,
-  backgroundColor: PropTypes.string,
-  scale: PropTypes.number,
-  textColor: PropTypes.string,
-  padding: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  children: PropTypes.node
-};
-
 Slide.defaultProps = {
   textColor: 'primary',
   backgroundColor: 'tertiary',

@@ -34,7 +34,7 @@ export const SPECTACLE_PREVIEW_OBJECT_MAP = {
   Slide
 };
 
-interface GenerateOptions {
+export interface GenerateOptions {
   component: string;
   props: Record<string, any>;
   id: string;

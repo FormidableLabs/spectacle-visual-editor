@@ -25,7 +25,7 @@ const ColorSwatch = styled.span`
 `;
 
 interface Props {
-  disabled: boolean;
+  disabled?: boolean;
   label: string;
   /**
    * onChangeInput is when any text is updated inside the input field.

@@ -109,7 +109,7 @@ export const deckSlice = createSlice({
 
     editableElementChanged: (
       state,
-      action: PayloadAction<Partial<DeckElement>>
+      action: PayloadAction<Partial<DeckElement> | { [key: string]: unknown }>
     ) => {
       if (!state.editableElementId) {
         return;
@@ -127,7 +127,7 @@ export const deckSlice = createSlice({
 
       node.props = { ...node.props, ...incomingProps };
       if (incomingChildren !== undefined) {
-        node.children = incomingChildren;
+        node.children = incomingChildren as DeckElement[];
       }
 
       const index = state.slides.findIndex(

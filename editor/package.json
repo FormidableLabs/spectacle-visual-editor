@@ -12,6 +12,7 @@
     "check": "yarn lint && yarn prettier-check && yarn test && yarn typecheck",
     "check-ci": "yarn run check",
     "test": "jest",
+    "test:watch": "jest --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --ext .ts,.tsx,.js ./src",
     "storybook": "start-storybook -p 6006",

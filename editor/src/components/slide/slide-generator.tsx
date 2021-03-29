@@ -62,19 +62,35 @@ export const generateSlideTreeFromMap = (
     id,
     children
   }: GenerateOptions) {
-    const newElement = React.createElement(
-      /* Determine if the component is a Spectacle component or HTML primitive  */
-      component in map ? (map[component] as React.ComponentClass) : component,
-      /* Ensure the id and any props are included in the React node */
-      { id, ...props, key: id, type: component } as Attributes,
-      /* If the child is an array recursively call this function to render all children */
+    /* Ensure the id and any props are included in the React node */
+    const newElementProps = {
+      id,
+      ...props,
+      key: id,
+      type: component,
+      animateListItems: editable ? false : props?.animateListItems
+    } as Attributes;
+
+    /* Determine if the component is a Spectacle component or HTML primitive  */
+    const newElementComponentType =
+      component in map ? (map[component] as React.ComponentClass) : component;
+
+    /* If the child is an array recursively call this function to render all children */
+    const newElementChildren =
       children instanceof Array
         ? (children as GenerateOptions[]).map(generateSlideTree)
-        : children
+        : children;
+
+    const newElement = React.createElement(
+      newElementComponentType,
+      newElementProps,
+      newElementChildren
     ) as React.ReactElement;
+
     if (!editable || component === 'Slide') {
       return newElement;
     }
+
     return <SelectionFrame key={`${id}-frame`}>{newElement}</SelectionFrame>;
   };
 };

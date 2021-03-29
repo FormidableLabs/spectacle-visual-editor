@@ -110,7 +110,12 @@ export const deckSlice = createSlice({
 
     editableElementChanged: (
       state,
-      action: PayloadAction<Partial<DeckElement> | { [key: string]: unknown }>
+      action: PayloadAction<
+        | (Partial<DeckElement['props']> & {
+            children?: DeckElement['children'];
+          })
+        | { [key: string]: unknown }
+      >
     ) => {
       if (!state.editableElementId) {
         return;

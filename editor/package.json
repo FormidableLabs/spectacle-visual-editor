@@ -9,9 +9,10 @@
     "build": "webpack --mode=production",
     "prettier-check": "yarn prettier --check src/**",
     "prettier-fix": "yarn prettier --write src/**",
-    "check": "yarn lint && yarn prettier-check && yarn test",
+    "check": "yarn lint && yarn prettier-check && yarn test && yarn typecheck",
     "check-ci": "yarn run check",
     "test": "jest",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint --ext .ts,.tsx,.js ./src",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"

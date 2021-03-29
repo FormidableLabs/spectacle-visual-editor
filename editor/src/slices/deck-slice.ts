@@ -162,6 +162,10 @@ export const deckSlice = createSlice({
       state.theme.colors = { ...state.theme.colors, ...action.payload };
     },
 
+    updateThemeFontSizes: (state, action) => {
+      state.theme.fontSizes = { ...state.theme.fontSizes, ...action.payload };
+    },
+
     /**
      * Reorder the slides given an array of IDs for the new order
      * @param state The draft state

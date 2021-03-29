@@ -7,6 +7,7 @@ import { searchTreeForNode } from '../util/node-search';
 import { DeckElement, DeckSlide } from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
+import { isDeckElementChildren } from '../util/is-deck-element';
 
 type DeckState = {
   slides: DeckSlide[];
@@ -126,8 +127,8 @@ export const deckSlice = createSlice({
       const { children: incomingChildren, ...incomingProps } = action.payload;
 
       node.props = { ...node.props, ...incomingProps };
-      if (incomingChildren !== undefined) {
-        node.children = incomingChildren as DeckElement[];
+      if (isDeckElementChildren(incomingChildren)) {
+        node.children = incomingChildren;
       }
 
       const index = state.slides.findIndex(

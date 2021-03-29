@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface Props {
-  size: number;
+  size?: number;
 }
 
 export const SpectacleLogo: React.FC<Props> = ({ size = 100 }) => (

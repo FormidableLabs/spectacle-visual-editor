@@ -7,6 +7,7 @@ import { searchTreeForNode } from '../util/node-search';
 import { DeckElement, DeckSlide } from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
+import { isDeckElementChildren } from '../util/is-deck-element';
 
 type DeckState = {
   slides: DeckSlide[];
@@ -109,7 +110,7 @@ export const deckSlice = createSlice({
 
     editableElementChanged: (
       state,
-      action: PayloadAction<Partial<DeckElement>>
+      action: PayloadAction<Partial<DeckElement> | { [key: string]: unknown }>
     ) => {
       if (!state.editableElementId) {
         return;
@@ -126,7 +127,7 @@ export const deckSlice = createSlice({
       const { children: incomingChildren, ...incomingProps } = action.payload;
 
       node.props = { ...node.props, ...incomingProps };
-      if (incomingChildren !== undefined) {
+      if (isDeckElementChildren(incomingChildren)) {
         node.children = incomingChildren;
       }
 

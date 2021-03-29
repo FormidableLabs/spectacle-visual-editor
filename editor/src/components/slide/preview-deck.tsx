@@ -5,6 +5,8 @@ import { Deck } from 'spectacle';
 import { generatePreviewSlideTree } from './slide-generator';
 import { useSelector } from 'react-redux';
 import { slidesSelector, themeSelector } from '../../slices/deck-slice';
+import { useRootSelector } from '../../store';
+import { DeckSlide } from '../../types/deck-elements';
 
 const Message = styled.div`
   position: sticky;
@@ -13,19 +15,21 @@ const Message = styled.div`
 `;
 
 export const PreviewDeck = () => {
-  const [slideNodes, setSlideNodes] = useState();
-  const slideJson = useSelector(slidesSelector);
+  const [slideNodes, setSlideNodes] = useState<React.ReactNode>();
+  const slideJson = useRootSelector(slidesSelector);
   const theme = useSelector(themeSelector);
 
   useEffect(() => {
     try {
-      const slideTree = slideJson.map(generatePreviewSlideTree);
+      const slideTree = slideJson.map(
+        generatePreviewSlideTree as (opt: DeckSlide) => React.ReactElement
+      );
       setSlideNodes(slideTree);
     } catch (e) {}
   }, [slideJson]);
 
   useEffect(() => {
-    const handleKeyDown = async (event) => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
       if (event.code.toLowerCase() === 'escape') {
         await navigate('/');
       }

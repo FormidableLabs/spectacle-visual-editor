@@ -3,25 +3,18 @@ import { InspectorContainer } from './inspector-styles';
 import { Tab, Tablist } from 'evergreen-ui';
 import { FormatInspector } from './format-inspector';
 import { DocumentInspector } from './document-inspector';
-import { useSelector } from 'react-redux';
-import { selectedElementSelector } from '../../slices/deck-slice';
-
-const TABS = {
-  DOCUMENT: 'Document',
-  FORMAT: 'Format',
-  LAYOUT: 'Layout'
-};
-const TabsList = Object.values(TABS);
+import { InspectorTab, TabValuesList } from '../../types/inspector-tabs';
+import { useSwitchToFormatInspectorOnElementSelected } from '../../hooks/use-switch-to-inspector';
 
 export const Inspector = () => {
-  const [activeTab, setActiveTab] = useState(TABS.DOCUMENT);
+  const [activeTab, setActiveTab] = useState(InspectorTab.Document);
   useSwitchToFormatInspectorOnElementSelected({ setActiveTab });
 
   return (
     <InspectorContainer>
       <div>
         <Tablist margin={5} flexBasis={300}>
-          {TabsList.map((tab) => (
+          {TabValuesList.map((tab) => (
             <Tab
               key={tab}
               id={tab}
@@ -35,22 +28,12 @@ export const Inspector = () => {
         </Tablist>
       </div>
       {(() => {
-        if (activeTab === TABS.DOCUMENT) {
+        if (activeTab === InspectorTab.Document) {
           return <DocumentInspector />;
-        } else if (activeTab === TABS.FORMAT) {
+        } else if (activeTab === InspectorTab.Format) {
           return <FormatInspector />;
         }
       })()}
     </InspectorContainer>
   );
-};
-
-const useSwitchToFormatInspectorOnElementSelected = ({ setActiveTab }) => {
-  const selectedElement = useSelector(selectedElementSelector);
-
-  React.useEffect(() => {
-    if (selectedElement) {
-      setActiveTab(TABS.FORMAT);
-    }
-  }, [selectedElement, setActiveTab]);
 };

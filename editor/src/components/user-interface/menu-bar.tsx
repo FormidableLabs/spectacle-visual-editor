@@ -43,7 +43,7 @@ export const MenuBar = () => {
               </Menu.Item>
               <Menu.Item
                 onSelect={() => {
-                  dispatch(deckSlice.actions.deleteSlide());
+                  dispatch(deckSlice.actions.deleteSlide(null));
                   close();
                 }}
               >
@@ -52,7 +52,7 @@ export const MenuBar = () => {
             </Menu.Group>
             <Menu.Divider />
             <Menu.Group>
-              <Menu.Item onSelect={() => {}} secondaryText="⌘S">
+              <Menu.Item onSelect={() => {}} secondaryText={<span>⌘S</span>}>
                 Save
               </Menu.Item>
               <Menu.Item

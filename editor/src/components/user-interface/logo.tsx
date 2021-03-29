@@ -1,11 +1,14 @@
 import React from 'react';
-import propTypes from 'prop-types';
 
-export const SpectacleLogo = (props) => (
+interface Props {
+  size?: number;
+}
+
+export const SpectacleLogo: React.FC<Props> = ({ size = 100 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={Math.floor(props.size * 1.012)}
-    height={props.size}
+    width={Math.floor(size * 1.012)}
+    height={size}
     fillRule="evenodd"
     clipRule="evenodd"
     viewBox="0 0 300 160"
@@ -83,11 +86,3 @@ export const SpectacleLogo = (props) => (
     </g>
   </svg>
 );
-
-SpectacleLogo.propTypes = {
-  size: propTypes.number
-};
-
-SpectacleLogo.defaultProps = {
-  size: 100
-};

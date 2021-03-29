@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import React from 'react';
 import { deckSlice } from '../../../slices/deck-slice';
 import { SlideViewerWrapper } from './slide-viewer-wrapper';
@@ -6,25 +6,35 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { SlideDragWrapper } from './slide-drag-wrapper';
 import { css } from 'styled-components';
-import { SlideViewerPropTypes } from './slide-viewer-prop-types';
+import { useRootSelector } from '../../../store';
+
+interface Props {
+  scale: number;
+  slideProps: Record<string, any>;
+}
 
 /**
  * Slide Viewer for timeline
- * @param children
- * @param scale
- * @param slideProps
- * @returns {JSX.Element}
  */
-export const TimelineSlideViewer = ({ children, scale, slideProps }) => {
-  const activeSlideId = useSelector(
+export const TimelineSlideViewer: React.FC<Props> = ({
+  children,
+  scale,
+  slideProps
+}) => {
+  const activeSlideId = useRootSelector(
     (state) => state.deck.activeSlide?.id || ''
   );
   const dispatch = useDispatch();
-  const [localSlides, setLocalSlides] = React.useState([]);
+  const [localSlides, setLocalSlides] = React.useState<React.ReactElement[]>(
+    []
+  );
 
   // Flatten out slides, tweak for active slide
   const slides = React.useMemo(() => {
-    const slideEls = (children instanceof Array ? children : [children]).flat();
+    const slideEls = (children instanceof Array
+      ? Array.from(children)
+      : [children]
+    ).flat() as React.ReactElement[];
 
     return slideEls.map((slide) => {
       return React.cloneElement(slide, {
@@ -93,8 +103,6 @@ export const TimelineSlideViewer = ({ children, scale, slideProps }) => {
     </SlideViewerWrapper>
   );
 };
-
-TimelineSlideViewer.propTypes = SlideViewerPropTypes;
 
 const activeSlideContainerStyle = css`
   outline: #ee5396 solid 2px;

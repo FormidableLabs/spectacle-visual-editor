@@ -3,15 +3,15 @@ import React, {
   useCallback,
   useEffect,
   useRef,
-  useState
+  useState,
+  MouseEvent
 } from 'react';
 import styled from 'styled-components';
-import Moveable from 'react-moveable';
-import PropTypes from 'prop-types';
+import Moveable, { OnResizeEnd } from 'react-moveable';
 import { useDispatch, useSelector } from 'react-redux';
 import { deckSlice, editableElementIdSelector } from '../../slices/deck-slice';
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ isSelected: boolean }>`
   display: contents;
 
   > div {
@@ -26,11 +26,15 @@ const Wrapper = styled.div`
   }
 `;
 
-export const SelectionFrame = ({ children }) => {
-  const ref = useRef();
+interface Props {
+  children: React.ReactElement;
+}
+
+export const SelectionFrame: React.FC<Props> = ({ children }) => {
+  const ref = useRef<HTMLElement>();
   const dispatch = useDispatch();
   const editableElementId = useSelector(editableElementIdSelector);
-  const [target, setTarget] = useState();
+  const [target, setTarget] = useState<HTMLElement | null>(null);
 
   const handleOnResize = useCallback((event) => {
     event.target.style.width = `${event.width}px`;
@@ -38,7 +42,7 @@ export const SelectionFrame = ({ children }) => {
   }, []);
 
   const handleOnResizeEnd = useCallback(
-    (event) => {
+    (event: OnResizeEnd) => {
       dispatch(
         deckSlice.actions.editableElementChanged({
           width: event.target.style.width,
@@ -51,7 +55,7 @@ export const SelectionFrame = ({ children }) => {
 
   useEffect(() => {
     if (editableElementId === children.props.id) {
-      setTarget(ref.current);
+      setTarget(ref.current || null);
     } else {
       setTarget(null);
     }
@@ -62,8 +66,10 @@ export const SelectionFrame = ({ children }) => {
   return (
     <>
       <Wrapper
-        onMouseDown={(e) => {
-          if (e.target.classList.contains('moveable-control')) {
+        onMouseDown={(e: MouseEvent<HTMLDivElement>) => {
+          if (
+            (e.target as HTMLElement).classList.contains('moveable-control')
+          ) {
             return;
           }
 
@@ -85,8 +91,4 @@ export const SelectionFrame = ({ children }) => {
       />
     </>
   );
-};
-
-SelectionFrame.propTypes = {
-  children: PropTypes.node.isRequired
 };

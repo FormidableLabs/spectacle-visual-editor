@@ -1,8 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { MdInput } from '../inputs/md';
+import { DeckElement } from '../../types/deck-elements';
 
-export const MdFormatControls = ({
+interface Props {
+  selectedElement: DeckElement | null;
+  editableElementChanged(element: Partial<DeckElement>): void;
+}
+
+export const MdFormatControls: React.FC<Props> = ({
   selectedElement,
   editableElementChanged
 }) => {
@@ -15,9 +20,4 @@ export const MdFormatControls = ({
       />
     </React.Fragment>
   );
-};
-
-MdFormatControls.propTypes = {
-  selectedElement: PropTypes.object,
-  editableElementChanged: PropTypes.func
 };

@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { ColorPickerInput } from '../inputs/color';
+import { DeckElement } from '../../types/deck-elements';
 
-export const BoxFormatControls = ({
+interface Props {
+  selectedElement: DeckElement | null;
+  editableElementChanged(element: Record<string, any>): void;
+}
+
+export const BoxFormatControls: React.FC<Props> = ({
   selectedElement,
   editableElementChanged
 }) => {
@@ -29,9 +34,4 @@ export const BoxFormatControls = ({
       />
     </>
   );
-};
-
-BoxFormatControls.propTypes = {
-  selectedElement: PropTypes.object,
-  editableElementChanged: PropTypes.func
 };

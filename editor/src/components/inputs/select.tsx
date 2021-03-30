@@ -20,9 +20,6 @@ export const SelectInput: React.FC<Props> = ({
       value={value}
       onChange={(e) => onValueChange(e.target.value)}
     >
-      <option disabled value="">
-        -- select an option --
-      </option>
       {options.map((op) => (
         <option value={op.value} key={op.value}>
           {op.title}

@@ -2,8 +2,9 @@ import React from 'react';
 import { DeckElement } from '../../types/deck-elements';
 import { FormField, Switch } from 'evergreen-ui';
 import { SelectInput } from '../inputs/select';
-import { set, cloneDeep } from 'lodash-es';
+import { cloneDeep, set } from 'lodash-es';
 import styled from 'styled-components';
+import { LIST_STYLE_TYPE_OPTIONS } from '../../constants/list-style-type-options';
 
 interface Props {
   selectedElement: DeckElement | null;
@@ -17,7 +18,7 @@ export const ListControls: React.FC<Props> = ({
   const shouldAnimateListItems =
     selectedElement?.props?.animateListItems || false;
   const listStyleType =
-    selectedElement?.props?.componentProps?.listStyleType || '';
+    selectedElement?.props?.componentProps?.listStyleType || 'disc';
 
   const onToggleAnimatedListItems = () => {
     editableElementChanged({
@@ -48,7 +49,7 @@ export const ListControls: React.FC<Props> = ({
         label="List Style Type"
         value={listStyleType}
         onValueChange={onListStyleTypeChanged}
-        options={ListStyleOptions.map((op) => ({
+        options={LIST_STYLE_TYPE_OPTIONS.map((op) => ({
           value: op,
           title: op
         }))}
@@ -61,16 +62,3 @@ const Container = styled.div`
   display: grid;
   grid-gap: 10px;
 `;
-
-const ListStyleOptions = [
-  'none',
-  'disc',
-  'circle',
-  'square',
-  'lower-latin',
-  'upper-latin',
-  'lower-roman',
-  'upper-roman',
-  'lower-greek',
-  'decimal'
-];

@@ -3,6 +3,7 @@ import { DeckElement } from '../../types/deck-elements';
 import { FormField, Switch } from 'evergreen-ui';
 import { SelectInput } from '../inputs/select';
 import { set, cloneDeep } from 'lodash-es';
+import styled from 'styled-components';
 
 interface Props {
   selectedElement: DeckElement | null;
@@ -36,25 +37,30 @@ export const ListControls: React.FC<Props> = ({
   };
 
   return (
-    <div>
+    <Container>
       <FormField label="Animate list items?">
         <Switch
           checked={shouldAnimateListItems}
           onChange={onToggleAnimatedListItems}
         />
-        <SelectInput
-          label="List Style Type"
-          value={listStyleType}
-          onValueChange={onListStyleTypeChanged}
-          options={ListStyleOptions.map((op) => ({
-            value: op,
-            title: op
-          }))}
-        />
       </FormField>
-    </div>
+      <SelectInput
+        label="List Style Type"
+        value={listStyleType}
+        onValueChange={onListStyleTypeChanged}
+        options={ListStyleOptions.map((op) => ({
+          value: op,
+          title: op
+        }))}
+      />
+    </Container>
   );
 };
+
+const Container = styled.div`
+  display: grid;
+  grid-gap: 10px;
+`;
 
 const ListStyleOptions = [
   'none',

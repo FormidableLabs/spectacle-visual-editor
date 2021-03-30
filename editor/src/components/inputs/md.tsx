@@ -1,5 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { TextareaField } from 'evergreen-ui';
+import styled from 'styled-components';
 
 interface Props {
   label: string;
@@ -9,7 +10,7 @@ interface Props {
 
 export const MdInput: React.FC<Props> = ({ label, value, onValueChange }) => {
   return (
-    <TextareaField
+    <VerticallyResizableTextareaField
       label={label}
       value={value}
       onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
@@ -19,3 +20,7 @@ export const MdInput: React.FC<Props> = ({ label, value, onValueChange }) => {
     />
   );
 };
+
+const VerticallyResizableTextareaField = styled(TextareaField)`
+  resize: vertical;
+`;

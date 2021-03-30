@@ -14,6 +14,10 @@ export const MdFormatControls: React.FC<Props> = ({
   selectedElement,
   editableElementChanged
 }) => {
+  /**
+   * Since doing RegExp checking isn't "free", and some users type fast,
+   * we'll throttle this check to once every 500ms.
+   */
   const doesContentContainList = useThrottleFn(
     (el) => doesMdContainList(String(el?.children)),
     500,

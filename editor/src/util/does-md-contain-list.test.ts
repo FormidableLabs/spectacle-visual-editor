@@ -1,5 +1,8 @@
 import { doesMdContainList } from './does-md-contain-list';
 
+/**
+ * [MD Content, Contains List?] pairs to run through our function
+ */
 const pairs = [
   [`- I'm a list?`, true],
   [`-I'm a list?`, false],

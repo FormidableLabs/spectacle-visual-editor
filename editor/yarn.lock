@@ -2453,6 +2453,18 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.7.tgz#98a993516c859eb0d5c4c8f098317a9ea68db9ad"
   integrity sha512-cxWFQVseBm6O9Gbw1IWb8r6OS4OhSt3hPZLkFApLjM8TEXROBuQGLAH2i2gZpcXdLBIrpXuTDhH7Vbm1iXmNGA==
 
+"@types/lodash-es@^4.17.4":
+  version "4.17.4"
+  resolved "https://registry.yarnpkg.com/@types/lodash-es/-/lodash-es-4.17.4.tgz#b2e440d2bf8a93584a9fd798452ec497986c9b97"
+  integrity sha512-BBz79DCJbD2CVYZH67MBeHZRX++HF+5p8Mo5MzjZi64Wac39S3diedJYHZtScbRVf4DjZyN6LzA0SB0zy+HSSQ==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*":
+  version "4.14.168"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"
+  integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
+
 "@types/markdown-to-jsx@^6.11.0":
   version "6.11.3"
   resolved "https://registry.yarnpkg.com/@types/markdown-to-jsx/-/markdown-to-jsx-6.11.3.tgz#cdd1619308fecbc8be7e6a26f3751260249b020e"
@@ -8799,7 +8811,7 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
-lodash-es@^4.17.15:
+lodash-es@^4.17.15, lodash-es@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
   integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
@@ -12005,10 +12017,10 @@ spdy@^4.0.2:
     select-hose "^2.0.0"
     spdy-transport "^3.0.0"
 
-spectacle@7.1.2:
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/spectacle/-/spectacle-7.1.2.tgz#85869e088edce9d4b428232c012677ea8781d65f"
-  integrity sha512-EXdRA6UdsMo1uqISAEKY6xSt/ZlyiRugBjxaT/P6fla86OpROvljXduRsPsHqWcN1QX9B/Dg61ZyoNUTFdvrpA==
+spectacle@7.1.3:
+  version "7.1.3"
+  resolved "https://registry.yarnpkg.com/spectacle/-/spectacle-7.1.3.tgz#099abba1eea17fa8a7d6769d2de75762df941ab0"
+  integrity sha512-iCWnR6aDLxnL/ImwHzCH+0wJPJSuF6yAozSUqu4yWlnbE6fwNE62/4QzB0zuzZFLmWl2XyBEmFg4eFrFtymCLg==
   dependencies:
     broadcast-channel "^3.2.0"
     broadcastchannel-polyfill "^1.0.0"

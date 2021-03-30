@@ -1,6 +1,8 @@
 import React from 'react';
 import { DeckElement } from '../../types/deck-elements';
-import { Switch } from 'evergreen-ui';
+import { FormField, Switch } from 'evergreen-ui';
+import { SelectInput } from '../inputs/select';
+import { set, cloneDeep } from 'lodash-es';
 
 interface Props {
   selectedElement: DeckElement | null;
@@ -11,18 +13,58 @@ export const ListControls: React.FC<Props> = ({
   selectedElement,
   editableElementChanged
 }) => {
-  const animateListItems = selectedElement?.props?.animateListItems || false;
+  const shouldAnimateListItems =
+    selectedElement?.props?.animateListItems || false;
+  const listStyleType =
+    selectedElement?.props?.componentProps?.listStyleType || '';
 
-  const onToggle = () => {
+  const onToggleAnimatedListItems = () => {
     editableElementChanged({
-      animateListItems: !animateListItems
+      animateListItems: !shouldAnimateListItems
     });
+  };
+
+  const onListStyleTypeChanged = (val: string) => {
+    if (selectedElement) {
+      const newEl = set(
+        cloneDeep(selectedElement),
+        'componentProps.listStyleType',
+        val
+      );
+      editableElementChanged(newEl);
+    }
   };
 
   return (
     <div>
-      <div>Animate list items?</div>
-      <Switch checked={animateListItems} onChange={onToggle} />
+      <FormField label="Animate list items?">
+        <Switch
+          checked={shouldAnimateListItems}
+          onChange={onToggleAnimatedListItems}
+        />
+        <SelectInput
+          label="List Style Type"
+          value={listStyleType}
+          onValueChange={onListStyleTypeChanged}
+          options={ListStyleOptions.map((op) => ({
+            value: op,
+            title: op
+          }))}
+        />
+      </FormField>
     </div>
   );
 };
+
+const ListStyleOptions = [
+  'none',
+  'disc',
+  'circle',
+  'square',
+  'lower-latin',
+  'upper-latin',
+  'lower-roman',
+  'upper-roman',
+  'lower-greek',
+  'decimal'
+];

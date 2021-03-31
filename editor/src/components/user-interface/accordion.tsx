@@ -12,18 +12,11 @@ const ContentPanel = styled.div<{ open: boolean }>`
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
-  height: 0;
-  opacity: 0;
   transition: all 500ms ease-in-out;
-  max-height: 0;
+  height: auto;
 
-  ${({ open }) =>
-    open &&
-    css`
-      height: auto;
-      max-height: 100vh;
-      opacity: 1;
-    `};
+  max-height: ${({ open }) => (open ? '100vh' : 0)};
+  opacity: ${({ open }) => (open ? 1 : 0)};
 `;
 
 const TitleBar = styled.div`

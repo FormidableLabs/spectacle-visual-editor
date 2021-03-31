@@ -30,12 +30,9 @@ export const ThemeValues = () => {
             Object.keys(themeValues.colors).map((colorKey) => (
               <ColorPickerInput
                 onChangeInput={(value) =>
-                  setInputState((prevState) => {
-                    return {
-                      ...prevState,
-                      colors: { ...prevState.colors, [colorKey]: value }
-                    };
-                  })
+                  setInputState((prevState) =>
+                    cloneAndSet(prevState, ['colors', colorKey], value)
+                  )
                 }
                 key={`${colorKey}-color-value`}
                 label={capitalize(colorKey)}

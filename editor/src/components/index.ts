@@ -1,6 +1,7 @@
 /**
  * User Interface Components
  */
+
 export { AppBodyStyle } from './user-interface/app-styles';
 export { MenuBar } from './user-interface/menu-bar';
 export {
@@ -29,6 +30,7 @@ export {
  * Inspector Components
  */
 export { Inspector } from './inspector';
+export { Accordion } from './user-interface/accordion';
 
 /**
  * Input Components

@@ -6,6 +6,7 @@ import { ColorPickerInput } from '../inputs/color';
 import { useRootSelector } from '../../store';
 import { Accordion } from '../user-interface/accordion';
 import { TextInputField } from 'evergreen-ui';
+import { isValidCSSSize } from '../../util/is-valid-css-size';
 
 const Container = styled.div`
   display: grid;
@@ -49,7 +50,7 @@ export const ThemeValues = () => {
             ))}
         </Container>
       </Accordion>
-      <Accordion label="Theme Fonts">
+      <Accordion label="Theme Font Sizes">
         <Container>
           {'fontSizes' in themeValues &&
             Object.keys(themeValues.fontSizes).map((fontSizeKey) => (
@@ -63,18 +64,21 @@ export const ThemeValues = () => {
                 value={inputState.fontSizes[fontSizeKey]}
                 disabled={false}
                 onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                  // const currentValue = e.target.value;
-                  // if (!isValidCSSColor(currentValue)) {
-                  //   onChangeInput(validValue);
-                  // }
+                  const currentValue = e.target.value;
+                  if (!isValidCSSSize(currentValue)) {
+                    setInputState((prevState) => {
+                      return {
+                        ...prevState,
+                        fontSizes: {
+                          ...prevState.fontSizes,
+                          [fontSizeKey]: themeValues?.fontSizes[fontSizeKey]
+                        }
+                      };
+                    });
+                  }
                 }}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   const value = e.target.value;
-                  dispatch(
-                    deckSlice.actions.updateThemeFontSizes({
-                      [fontSizeKey]: value
-                    })
-                  );
                   setInputState((prevState) => {
                     return {
                       ...prevState,
@@ -84,6 +88,14 @@ export const ThemeValues = () => {
                       }
                     };
                   });
+                  if (!isValidCSSSize(value)) {
+                    return;
+                  }
+                  dispatch(
+                    deckSlice.actions.updateThemeFontSizes({
+                      [fontSizeKey]: value
+                    })
+                  );
                 }}
               />
             ))}

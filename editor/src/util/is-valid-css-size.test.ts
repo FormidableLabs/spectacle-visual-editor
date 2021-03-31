@@ -24,4 +24,8 @@ describe('is-valid-css-size', () => {
   test('invalidates bad input', () => {
     expect(isValidCSSSize('10carlos')).toBeFalsy();
   });
+
+  test('invalidates the number 12', () => {
+    expect(isValidCSSSize(12)).toBeFalsy();
+  });
 });

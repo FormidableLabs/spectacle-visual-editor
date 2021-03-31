@@ -1,12 +1,14 @@
 import React, { ChangeEvent, FocusEvent, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
+import { capitalize } from 'lodash-es';
 import { deckSlice, themeSelector } from '../../slices/deck-slice';
 import { ColorPickerInput } from '../inputs/color';
 import { useRootSelector } from '../../store';
 import { Accordion } from '../user-interface/accordion';
 import { TextInputField } from 'evergreen-ui';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
+import { cloneAndSet } from '../../util/clone-and-set';
 
 const Container = styled.div`
   display: grid;
@@ -36,9 +38,7 @@ export const ThemeValues = () => {
                   })
                 }
                 key={`${colorKey}-color-value`}
-                label={
-                  colorKey[0].toUpperCase() + colorKey.slice(1, colorKey.length)
-                }
+                label={capitalize(colorKey)}
                 onUpdateValue={(value) =>
                   dispatch(
                     deckSlice.actions.updateThemeColors({ [colorKey]: value })
@@ -57,37 +57,22 @@ export const ThemeValues = () => {
               <TextInputField
                 key={`${fontSizeKey}-font-size-value`}
                 inputHeight={24}
-                label={
-                  fontSizeKey[0].toUpperCase() +
-                  fontSizeKey.slice(1, fontSizeKey.length)
-                }
+                label={capitalize(fontSizeKey)}
                 value={inputState.fontSizes[fontSizeKey]}
                 disabled={false}
                 onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                  const currentValue = e.target.value;
-                  if (!isValidCSSSize(currentValue)) {
-                    setInputState((prevState) => {
-                      return {
-                        ...prevState,
-                        fontSizes: {
-                          ...prevState.fontSizes,
-                          [fontSizeKey]: themeValues?.fontSizes[fontSizeKey]
-                        }
-                      };
-                    });
+                  const value = e.target.value;
+                  if (!isValidCSSSize(value)) {
+                    setInputState((prevState) =>
+                      cloneAndSet(prevState, ['fontSizes', fontSizeKey], value)
+                    );
                   }
                 }}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   const value = e.target.value;
-                  setInputState((prevState) => {
-                    return {
-                      ...prevState,
-                      fontSizes: {
-                        ...prevState.fontSizes,
-                        [fontSizeKey]: value
-                      }
-                    };
-                  });
+                  setInputState((prevState) =>
+                    cloneAndSet(prevState, ['fontSizes', fontSizeKey], value)
+                  );
                   if (!isValidCSSSize(value)) {
                     return;
                   }

@@ -14,7 +14,8 @@ export const EditorBody = styled.div`
 
 export const EditorContent = styled.div`
   display: flex;
-  flex: 1 0 auto;
+  flex: 1 1 0;
+  overflow: scroll;
   flex-direction: row;
 `;
 

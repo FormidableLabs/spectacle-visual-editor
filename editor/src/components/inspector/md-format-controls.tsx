@@ -1,16 +1,11 @@
 import React from 'react';
 import { MdInput } from '../inputs/md';
-import { DeckElement } from '../../types/deck-elements';
 import { useThrottleFn } from 'react-use';
 import { doesMdContainList } from '../../util/does-md-contain-list';
 import { ListControls } from './list-controls';
+import { ElementControlsProps } from './element-controls-props';
 
-interface Props {
-  selectedElement: DeckElement | null;
-  editableElementChanged(element: Partial<DeckElement>): void;
-}
-
-export const MdFormatControls: React.FC<Props> = ({
+export const MdFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
   editableElementChanged
 }) => {

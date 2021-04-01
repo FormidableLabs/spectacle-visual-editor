@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ColorPickerInput } from '../inputs/color';
-import { DeckElement } from '../../types/deck-elements';
+import { ElementControlsProps } from './element-controls-props';
 
-interface Props {
-  selectedElement: DeckElement | null;
-  editableElementChanged(element: Record<string, any>): void;
-}
-
-export const BoxFormatControls: React.FC<Props> = ({
+export const BoxFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
   editableElementChanged
 }) => {

@@ -20,7 +20,11 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
   },
   IMAGE: {
     component: 'Image',
-    props: { url: '' }
+    props: {
+      src: 'https://source.unsplash.com/WLUHO9A_xik/1600x900',
+      width: '500px',
+      height: `${(9 / 16) * 500}px`
+    }
   }
 };
 

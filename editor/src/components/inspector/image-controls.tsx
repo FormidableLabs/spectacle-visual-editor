@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent } from 'react';
+import React, { ChangeEvent } from 'react';
 import { ElementControlsProps } from './element-controls-props';
 import { TextInputField } from 'evergreen-ui';
 import { isValidUrl } from '../../util/is-valid-url';

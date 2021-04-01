@@ -17,6 +17,10 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
     component: 'Box',
     props: { backgroundColor: 'limegreen', height: 100, width: 200 },
     children: []
+  },
+  IMAGE: {
+    component: 'Image',
+    props: { url: '' }
   }
 };
 

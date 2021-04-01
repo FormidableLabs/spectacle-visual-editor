@@ -74,50 +74,19 @@ export const MenuBar = () => {
         content={({ close }) => (
           <Menu>
             <Menu.Group>
-              <Menu.Item
-                onSelect={() => {
-                  dispatch(
-                    deckSlice.actions.elementAddedToActiveSlide(
-                      ELEMENTS.HEADING
-                    )
-                  );
-                  close();
-                }}
-              >
-                Heading
-              </Menu.Item>
-              <Menu.Item
-                onSelect={() => {
-                  dispatch(
-                    deckSlice.actions.elementAddedToActiveSlide(ELEMENTS.TEXT)
-                  );
-                  close();
-                }}
-              >
-                Text Box
-              </Menu.Item>
-              <Menu.Item onSelect={() => {}}>Image</Menu.Item>
-              <Menu.Item
-                onSelect={() => {
-                  dispatch(
-                    deckSlice.actions.elementAddedToActiveSlide(ELEMENTS.LIST)
-                  );
-                  close();
-                }}
-              >
-                List
-              </Menu.Item>
-              <Menu.Item onSelect={() => {}}>Code Pane</Menu.Item>
-              <Menu.Item
-                onSelect={() => {
-                  dispatch(
-                    deckSlice.actions.elementAddedToActiveSlide(ELEMENTS.BOX)
-                  );
-                  close();
-                }}
-              >
-                Box
-              </Menu.Item>
+              {InsertItems.map((item) => (
+                <Menu.Item
+                  key={item.title}
+                  onSelect={() => {
+                    dispatch(
+                      deckSlice.actions.elementAddedToActiveSlide(item.element)
+                    );
+                    close();
+                  }}
+                >
+                  {item.title}
+                </Menu.Item>
+              ))}
             </Menu.Group>
           </Menu>
         )}
@@ -127,3 +96,11 @@ export const MenuBar = () => {
     </MenuBarContainer>
   );
 };
+
+const InsertItems: { title: string; element: typeof ELEMENTS[number] }[] = [
+  { title: 'Heading', element: ELEMENTS.HEADING },
+  { title: 'Text Box', element: ELEMENTS.TEXT },
+  { title: 'List', element: ELEMENTS.LIST },
+  { title: 'Box', element: ELEMENTS.BOX },
+  { title: 'Image', element: ELEMENTS.IMAGE }
+];

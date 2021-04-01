@@ -3,10 +3,10 @@
  * - Elements can be nested inside other elements (a la children)
  */
 export type DeckElement = {
-  component: 'Slide' | 'Markdown' | 'Box';
+  component: 'Slide' | 'Markdown' | 'Box' | 'Image';
   id: string;
   props?: { [key: string]: any };
-  children: string | DeckElement[];
+  children?: string | DeckElement[];
 };
 
 export type DeckSlide = DeckElement & {

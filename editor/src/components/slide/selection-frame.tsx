@@ -85,7 +85,7 @@ export const SelectionFrame: React.FC<Props> = ({ children }) => {
       <Moveable
         target={target}
         origin={false}
-        resizable={children.props.type === 'Box'}
+        resizable={['Box', 'Image'].includes(children.props.type)}
         onResize={handleOnResize}
         onResizeEnd={handleOnResizeEnd}
       />

@@ -3,8 +3,9 @@ import { Pane } from './inspector-styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { deckSlice, selectedElementSelector } from '../../slices/deck-slice';
 import { BoxFormatControls } from './box-format-controls';
-import { isBoxElement, isMdElement } from './validators';
+import { isBoxElement, isImageElement, isMdElement } from './validators';
 import { MdFormatControls } from './md-format-controls';
+import { ImageControls } from './image-controls';
 
 export const FormatInspector = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,8 @@ export const FormatInspector = () => {
           return <BoxFormatControls {...props} />;
         } else if (isMdElement(selectedElement)) {
           return <MdFormatControls {...props} />;
+        } else if (isImageElement(selectedElement)) {
+          return <ImageControls {...props} />;
         }
       })()}
     </Pane>

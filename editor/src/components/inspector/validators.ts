@@ -10,5 +10,8 @@ export const isBoxElement = (element: DeckElement | null) =>
 export const isMdElement = (element: DeckElement | null) =>
   Boolean(element?.component?.includes('Markdown'));
 
+export const isImageElement = (element: DeckElement | null) =>
+  Boolean(element?.component?.includes('Image'));
+
 export const isTextElement = (element: DeckElement | null) =>
   Boolean(element && ['Heading', 'Text'].includes(element?.component));

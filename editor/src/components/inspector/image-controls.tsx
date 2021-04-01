@@ -22,13 +22,16 @@ export const ImageControls: React.FC<ElementControlsProps> = ({
     <div>
       <TextInputField
         label="Image URL"
+        placeholder="https://..."
         value={desiredSrc}
         onChange={(e: ChangeEvent<HTMLInputElement>) =>
           setDesiredSrc(e.target.value)
         }
-        onBlur={(e: FocusEvent<HTMLInputElement>) =>
-          setDesiredSrc(e.target.value)
-        }
+        onBlur={() => {
+          if (!isValidUrl(desiredSrc)) {
+            setDesiredSrc(selectedElement?.props?.src || '');
+          }
+        }}
       />
     </div>
   );

@@ -35,6 +35,14 @@ export const SelectionFrame: React.FC<Props> = ({ children }) => {
   const dispatch = useDispatch();
   const editableElementId = useSelector(editableElementIdSelector);
   const [target, setTarget] = useState<HTMLElement | null>(null);
+  /**
+   * Moveable can't detect size of image until it is loaded,
+   *  so we'll keep track of the loaded state for images.
+   * Non-Image components are assumed to be loaded from the start.
+   */
+  const [elLoaded, setElLoaded] = React.useState(
+    children?.props?.type !== 'Image'
+  );
 
   const handleOnResize = useCallback((event) => {
     event.target.style.width = `${event.width}px`;
@@ -80,15 +88,22 @@ export const SelectionFrame: React.FC<Props> = ({ children }) => {
         }}
         isSelected={isSelected}
       >
-        {cloneElement(children, { ref })}
+        {cloneElement(children, {
+          ref,
+          // Image elements will need to alert the component once loaded
+          onLoad: elLoaded ? () => null : () => setElLoaded(true)
+        })}
       </Wrapper>
-      <Moveable
-        target={target}
-        origin={false}
-        resizable={['Box', 'Image'].includes(children.props.type)}
-        onResize={handleOnResize}
-        onResizeEnd={handleOnResizeEnd}
-      />
+      {elLoaded && (
+        <Moveable
+          target={target}
+          origin={false}
+          resizable={['Box', 'Image'].includes(children.props.type)}
+          onResize={handleOnResize}
+          onResizeEnd={handleOnResizeEnd}
+          keepRatio={children.props.type === 'Image'}
+        />
+      )}
     </>
   );
 };

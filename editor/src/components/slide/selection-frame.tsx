@@ -40,9 +40,9 @@ export const SelectionFrame: React.FC<Props> = ({ children }) => {
    *  so we'll keep track of the loaded state for images.
    * Non-Image components are assumed to be loaded from the start.
    */
-  const [elLoaded, setElLoaded] = React.useState(
-    children?.props?.type !== 'Image'
-  );
+  const isImgElement = children?.props?.type === 'Image';
+  const imgSrc = children?.props?.src;
+  const [elLoaded, setElLoaded] = React.useState(!isImgElement);
 
   const handleOnResize = useCallback((event) => {
     event.target.style.width = `${event.width}px`;
@@ -69,6 +69,15 @@ export const SelectionFrame: React.FC<Props> = ({ children }) => {
     }
   }, [children, editableElementId]);
 
+  /**
+   * If img src changes, we need to reset to unloaded state
+   */
+  useEffect(() => {
+    if (imgSrc) {
+      setElLoaded(false);
+    }
+  }, [imgSrc]);
+
   const isSelected = editableElementId === children.props.id;
 
   return (
@@ -90,8 +99,7 @@ export const SelectionFrame: React.FC<Props> = ({ children }) => {
       >
         {cloneElement(children, {
           ref,
-          // Image elements will need to alert the component once loaded
-          onLoad: elLoaded ? () => null : () => setElLoaded(true)
+          onLoad: () => setElLoaded(true)
         })}
       </Wrapper>
       {elLoaded && (

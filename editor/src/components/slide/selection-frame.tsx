@@ -35,6 +35,14 @@ export const SelectionFrame: React.FC<Props> = ({ children }) => {
   const dispatch = useDispatch();
   const editableElementId = useSelector(editableElementIdSelector);
   const [target, setTarget] = useState<HTMLElement | null>(null);
+  /**
+   * Moveable can't detect size of image until it is loaded,
+   *  so we'll keep track of the loaded state for images.
+   * Non-Image components are assumed to be loaded from the start.
+   */
+  const isImgElement = children?.props?.type === 'Image';
+  const imgSrc = children?.props?.src;
+  const [elLoaded, setElLoaded] = React.useState(!isImgElement);
 
   const handleOnResize = useCallback((event) => {
     event.target.style.width = `${event.width}px`;
@@ -61,6 +69,15 @@ export const SelectionFrame: React.FC<Props> = ({ children }) => {
     }
   }, [children, editableElementId]);
 
+  /**
+   * If img src changes, we need to reset to unloaded state
+   */
+  useEffect(() => {
+    if (imgSrc) {
+      setElLoaded(false);
+    }
+  }, [imgSrc]);
+
   const isSelected = editableElementId === children.props.id;
 
   return (
@@ -80,15 +97,21 @@ export const SelectionFrame: React.FC<Props> = ({ children }) => {
         }}
         isSelected={isSelected}
       >
-        {cloneElement(children, { ref })}
+        {cloneElement(children, {
+          ref,
+          onLoad: () => setElLoaded(true)
+        })}
       </Wrapper>
-      <Moveable
-        target={target}
-        origin={false}
-        resizable={['Box', 'Image'].includes(children.props.type)}
-        onResize={handleOnResize}
-        onResizeEnd={handleOnResizeEnd}
-      />
+      {elLoaded && (
+        <Moveable
+          target={target}
+          origin={false}
+          resizable={['Box', 'Image'].includes(children.props.type)}
+          onResize={handleOnResize}
+          onResizeEnd={handleOnResizeEnd}
+          keepRatio={children.props.type === 'Image'}
+        />
+      )}
     </>
   );
 };

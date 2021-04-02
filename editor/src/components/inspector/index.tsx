@@ -3,6 +3,7 @@ import { InspectorContainer } from './inspector-styles';
 import { Tab, Tablist } from 'evergreen-ui';
 import { FormatInspector } from './format-inspector';
 import { DocumentInspector } from './document-inspector';
+import { LayoutInspector } from './layout-inspector';
 import { InspectorTab, TabValuesList } from '../../types/inspector-tabs';
 import {
   useSwitchToFormatInspectorOnElementSelected,
@@ -11,7 +12,7 @@ import {
 import { LayerInspector } from './layer-inspector/layer-inspector';
 
 export const Inspector = () => {
-  const [activeTab, setActiveTab] = useState(InspectorTab.Document);
+  const [activeTab, setActiveTab] = useState(InspectorTab.Layout);
   useSwitchToFormatInspectorOnElementSelected({ setActiveTab });
   useSwitchToLayoutInspectorOnSlideAdded({ setActiveTab });
 
@@ -36,7 +37,7 @@ export const Inspector = () => {
         return {
           [InspectorTab.Document]: <DocumentInspector />,
           [InspectorTab.Format]: <FormatInspector />,
-          [InspectorTab.Layout]: <React.Fragment />,
+          [InspectorTab.Layout]: <LayoutInspector />,
           [InspectorTab.Layers]: <LayerInspector />
         }[activeTab];
       })()}

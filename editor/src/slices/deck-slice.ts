@@ -208,6 +208,19 @@ export const deckSlice = createSlice({
       });
 
       state.activeSlide.children = newElements;
+    },
+
+    applyLayoutToSlide: (state, action: PayloadAction<DeckElement[]>) => {
+      if (!state.activeSlide) {
+        return;
+      }
+
+      state.activeSlide.children = action.payload;
+
+      const index = state.slides.findIndex(
+        ({ id }) => id === state?.activeSlide?.id
+      );
+      state.slides[index] = state.activeSlide;
     }
   }
 });

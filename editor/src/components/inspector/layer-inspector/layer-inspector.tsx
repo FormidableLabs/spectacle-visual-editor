@@ -9,6 +9,7 @@ import { isDeckElement } from '../../../util/is-deck-element';
 import { SlideElementDragWrapper } from './slide-element-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import styled from 'styled-components';
+import { swapArrayItems } from '../../../util/swap-array-items';
 
 export const LayerInspector: React.FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
@@ -25,17 +26,8 @@ export const LayerInspector: React.FC = () => {
   }, [activeSlideChildren]);
 
   // Move a local item as its dragged.
-  // S TODO: Remove this duplicated logic
   const moveItem = React.useCallback((dragIndex, hoverIndex) => {
-    setLocalChildren((items) => {
-      const clonedItems = [...items];
-      const dragItem = items[dragIndex];
-
-      clonedItems.splice(dragIndex, 1);
-      clonedItems.splice(hoverIndex, 0, dragItem);
-
-      return clonedItems;
-    });
+    setLocalChildren((items) => swapArrayItems(items, dragIndex, hoverIndex));
   }, []);
 
   // Commit changes

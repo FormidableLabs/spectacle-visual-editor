@@ -8,7 +8,7 @@ import {
   useSwitchToFormatInspectorOnElementSelected,
   useSwitchToLayoutInspectorOnSlideAdded
 } from '../../hooks/inspector-hooks';
-import { LayerInspector } from './layer-inspector';
+import { LayerInspector } from './layer-inspector/layer-inspector';
 
 export const Inspector = () => {
   const [activeTab, setActiveTab] = useState(InspectorTab.Document);

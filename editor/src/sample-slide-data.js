@@ -44,6 +44,11 @@ export const sampleSlideData = [
         component: 'Markdown',
         id: v4(),
         children: '# Second Slide'
+      },
+      {
+        component: 'Markdown',
+        id: v4(),
+        children: '- one\n- two\n- three'
       }
     ]
   },

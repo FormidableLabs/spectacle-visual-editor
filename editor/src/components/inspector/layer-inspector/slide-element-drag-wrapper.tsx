@@ -29,10 +29,6 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
       };
     },
 
-    drop() {
-      onDrop();
-    },
-
     hover(item: { index: number }, monitor) {
       if (!ref.current) {
         return;
@@ -82,6 +78,11 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
     item: () => {
       return { id, index };
     },
+
+    end() {
+      onDrop();
+    },
+
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
     })

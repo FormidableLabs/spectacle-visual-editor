@@ -3,8 +3,6 @@ import { DeckElement } from '../../../types/deck-elements';
 import styled from 'styled-components';
 import { defaultTheme } from 'evergreen-ui';
 import { isImageElement, isMdElement } from '../validators';
-import { useDispatch } from 'react-redux';
-import { deckSlice } from '../../../slices/deck-slice';
 
 /**
  * Layers tab element card
@@ -13,10 +11,6 @@ import { deckSlice } from '../../../slices/deck-slice';
 export const ElementCard: React.FC<{ element: DeckElement }> = ({
   element
 }) => {
-  const dispatch = useDispatch();
-  const onCardClick = () =>
-    dispatch(deckSlice.actions.editableElementSelected(element.id));
-
   const elementPreview = React.useMemo(() => {
     if (isMdElement(element)) {
       return String(element.children);
@@ -28,7 +22,7 @@ export const ElementCard: React.FC<{ element: DeckElement }> = ({
   }, [element]);
 
   return (
-    <CardContainer onClick={onCardClick}>
+    <CardContainer>
       <TitleContainer>{element.component}</TitleContainer>
       <PreviewContainer>{elementPreview}</PreviewContainer>
     </CardContainer>

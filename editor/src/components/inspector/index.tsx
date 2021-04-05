@@ -37,7 +37,7 @@ export const Inspector = () => {
           [InspectorTab.Document]: <DocumentInspector />,
           [InspectorTab.Format]: <FormatInspector />,
           [InspectorTab.Layout]: <React.Fragment />,
-          [InspectorTab.Layers]: <LayerInspector />
+          [InspectorTab.Order]: <LayerInspector />
         }[activeTab];
       })()}
     </InspectorContainer>

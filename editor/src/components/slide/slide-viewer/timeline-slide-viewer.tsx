@@ -64,6 +64,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
   }, [slides]);
 
   // Move a local item as its dragged.
+  // S TODO: REMOVE DUPLICATED LOGIC
   const moveItem = React.useCallback((dragIndex, hoverIndex) => {
     setLocalSlides((items) => {
       const clonedItems = [...items];

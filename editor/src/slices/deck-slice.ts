@@ -185,6 +185,29 @@ export const deckSlice = createSlice({
       });
 
       state.slides = newSlides;
+    },
+
+    /**
+     * Reorder the elements of the active slide given an array of ID for new order
+     * @param state The draft state
+     * @param action Array of IDs
+     */
+    reorderActiveSlideElements: (state, action: PayloadAction<string[]>) => {
+      if (!Array.isArray(action.payload)) {
+        return;
+      }
+
+      const activeSlideChildren = state?.activeSlide?.children || [];
+
+      const newElements: DeckElement[] = [];
+      action.payload.forEach((id) => {
+        const el = activeSlideChildren.find((e) => e.id === id);
+        if (el) {
+          newElements.push(el);
+        }
+      });
+
+      state.activeSlide.children = newElements;
     }
   }
 });

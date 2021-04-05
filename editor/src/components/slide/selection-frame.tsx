@@ -28,13 +28,15 @@ const Wrapper = styled.div<{ isSelected: boolean }>`
 
 interface Props {
   children: React.ReactElement;
+  treeId: string;
 }
 
-export const SelectionFrame: React.FC<Props> = ({ children }) => {
+export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const ref = useRef<HTMLElement>();
   const dispatch = useDispatch();
   const editableElementId = useSelector(editableElementIdSelector);
   const [target, setTarget] = useState<HTMLElement | null>(null);
+
   /**
    * Moveable can't detect size of image until it is loaded,
    *  so we'll keep track of the loaded state for images.
@@ -110,6 +112,7 @@ export const SelectionFrame: React.FC<Props> = ({ children }) => {
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
           keepRatio={children.props.type === 'Image'}
+          key={treeId}
         />
       )}
     </>

@@ -12,7 +12,7 @@ import {
 import { LayerInspector } from './layer-inspector/layer-inspector';
 
 export const Inspector = () => {
-  const [activeTab, setActiveTab] = useState(InspectorTab.Layout);
+  const [activeTab, setActiveTab] = useState(InspectorTab.Document);
   useSwitchToFormatInspectorOnElementSelected({ setActiveTab });
   useSwitchToLayoutInspectorOnSlideAdded({ setActiveTab });
 

@@ -8,6 +8,7 @@ import {
   useSwitchToFormatInspectorOnElementSelected,
   useSwitchToLayoutInspectorOnSlideAdded
 } from '../../hooks/inspector-hooks';
+import { LayerInspector } from './layer-inspector/layer-inspector';
 
 export const Inspector = () => {
   const [activeTab, setActiveTab] = useState(InspectorTab.Document);
@@ -32,11 +33,12 @@ export const Inspector = () => {
         </Tablist>
       </div>
       {(() => {
-        if (activeTab === InspectorTab.Document) {
-          return <DocumentInspector />;
-        } else if (activeTab === InspectorTab.Format) {
-          return <FormatInspector />;
-        }
+        return {
+          [InspectorTab.Document]: <DocumentInspector />,
+          [InspectorTab.Format]: <FormatInspector />,
+          [InspectorTab.Layout]: <React.Fragment />,
+          [InspectorTab.Layers]: <LayerInspector />
+        }[activeTab];
       })()}
     </InspectorContainer>
   );

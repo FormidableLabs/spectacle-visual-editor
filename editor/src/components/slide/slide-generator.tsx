@@ -39,6 +39,7 @@ export interface GenerateOptions {
   props: Record<string, any>;
   id: string;
   children: React.ReactNode;
+  traversalState?: number[];
 }
 
 /**
@@ -60,7 +61,8 @@ export const generateSlideTreeFromMap = (
     component,
     props,
     id,
-    children
+    children,
+    traversalState = [0]
   }: GenerateOptions) {
     /* Ensure the id and any props are included in the React node */
     const newElementProps = {
@@ -78,7 +80,12 @@ export const generateSlideTreeFromMap = (
     /* If the child is an array recursively call this function to render all children */
     const newElementChildren =
       children instanceof Array
-        ? (children as GenerateOptions[]).map(generateSlideTree)
+        ? (children as GenerateOptions[]).map((c, idx) =>
+            generateSlideTree({
+              ...c,
+              traversalState: [...traversalState, idx]
+            })
+          )
         : children;
 
     const newElement = React.createElement(
@@ -91,7 +98,11 @@ export const generateSlideTreeFromMap = (
       return newElement;
     }
 
-    return <SelectionFrame key={`${id}-frame`}>{newElement}</SelectionFrame>;
+    return (
+      <SelectionFrame key={`${id}-frame`} treeId={traversalState.join('->')}>
+        {newElement}
+      </SelectionFrame>
+    );
   };
 };
 

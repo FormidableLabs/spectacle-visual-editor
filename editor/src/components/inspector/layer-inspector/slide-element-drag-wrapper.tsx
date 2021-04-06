@@ -1,29 +1,27 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
-/**
- * Slides in the Timeline can be dragged to reorder the slides in the deck.
- * This component contains the logic needed for DnD functionality.
- *
- * - This is based off of the example in: https://react-dnd.github.io/react-dnd/examples/sortable/simple
- */
-
 interface Props {
+  id: string;
   index: number;
-  moveItem(dragIndex: number, hoverIndex: number): void;
-  onDrop(): void;
+  moveItem: (dragIndex: number, hoverIndex: number) => void;
+  onDrop: () => void;
 }
 
-export const SlideDragWrapper: React.FC<Props> = ({
-  children,
+/**
+ * Element drag wrapper, used to wrap DnD functionality
+ */
+export const SlideElementDragWrapper: React.FC<Props> = ({
+  id,
   index,
   moveItem,
-  onDrop
+  onDrop,
+  children
 }) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
   const [{ handlerId }, drop] = useDrop({
-    accept: 'Slide',
+    accept: 'Element',
 
     collect(monitor) {
       return {
@@ -41,29 +39,33 @@ export const SlideDragWrapper: React.FC<Props> = ({
       if (dragIndex === hoverIndex) {
         return;
       }
+
       // Determine rectangle on screen
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
-      // Get horizontal middle
-      const hoverMiddleX =
-        (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+
+      // Get vertical middle
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+
       // Determine mouse position
       const clientOffset = monitor.getClientOffset();
-      // Get pixels to the left
-      const hoverClientX = (clientOffset?.x || 0) - hoverBoundingRect.left;
-      // Only perform the move when the mouse has crossed half of the items width
-      // When dragging right, only move when the cursor is past 50%
-      // When dragging left, only move when the cursor is before 50%
 
-      // Dragging right
-      if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
+      // Get pixels to the top
+      const hoverClientY = (clientOffset?.y || 0) - hoverBoundingRect.top;
+
+      // Only perform the move when the mouse has crossed half of the items height
+      // When dragging downwards, only move when the cursor is below 50%
+      // When dragging upwards, only move when the cursor is above 50%
+
+      // Dragging downwards
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
         return;
       }
 
-      // Dragging right
-      if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
+      // Dragging upwards
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
         return;
       }
-
       // Time to actually perform the action
       moveItem(dragIndex, hoverIndex);
 
@@ -72,9 +74,9 @@ export const SlideDragWrapper: React.FC<Props> = ({
   });
 
   const [{ isDragging }, drag] = useDrag({
-    type: 'Slide',
+    type: 'Element',
     item: () => {
-      return { id: (children as React.ReactElement).props.id, index };
+      return { id, index };
     },
 
     end() {
@@ -86,7 +88,7 @@ export const SlideDragWrapper: React.FC<Props> = ({
     })
   });
 
-  const opacity = isDragging ? 0 : 1;
+  const opacity = isDragging ? 0.9 : 1;
   drag(drop(ref));
 
   return (

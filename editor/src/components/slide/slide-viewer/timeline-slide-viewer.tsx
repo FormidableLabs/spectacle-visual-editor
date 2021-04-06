@@ -7,6 +7,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { SlideDragWrapper } from './slide-drag-wrapper';
 import { css } from 'styled-components';
 import { useRootSelector } from '../../../store';
+import { swapArrayItems } from '../../../util/swap-array-items';
 
 interface Props {
   scale: number;
@@ -65,15 +66,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
 
   // Move a local item as its dragged.
   const moveItem = React.useCallback((dragIndex, hoverIndex) => {
-    setLocalSlides((items) => {
-      const clonedItems = [...items];
-      const dragItem = items[dragIndex];
-
-      clonedItems.splice(dragIndex, 1);
-      clonedItems.splice(hoverIndex, 0, dragItem);
-
-      return clonedItems;
-    });
+    setLocalSlides((items) => swapArrayItems(items, dragIndex, hoverIndex));
   }, []);
 
   // Commit changes

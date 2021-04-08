@@ -5,7 +5,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
-import { CONTAINER_ELEMENTS } from '../components';
+import { CONTAINER_ELEMENTS } from '../components/slide/elements';
 import { defaultTheme } from 'spectacle';
 import { searchTreeForNode } from '../util/node-search';
 import { DeckElement, DeckSlide } from '../types/deck-elements';
@@ -20,7 +20,7 @@ type DeckState = {
   theme: SpectacleTheme;
 };
 
-const slidesAdapter = createEntityAdapter<DeckSlide>();
+export const slidesAdapter = createEntityAdapter<DeckSlide>();
 
 const initialState: DeckState = {
   slides: slidesAdapter.getInitialState(),

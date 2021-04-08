@@ -1,8 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createEntityAdapter,
+  createSlice,
+  EntityState,
+  PayloadAction
+} from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
-import { CONTAINER_ELEMENTS } from '../components';
-// @ts-ignore
-import defaultTheme from 'spectacle/es/theme/default-theme';
+import { CONTAINER_ELEMENTS } from '../components/slide/elements';
+import { defaultTheme } from 'spectacle';
 import { searchTreeForNode } from '../util/node-search';
 import { DeckElement, DeckSlide } from '../types/deck-elements';
 import { RootState } from '../store';
@@ -10,14 +14,16 @@ import { SpectacleTheme } from '../types/theme';
 import { isDeckElementChildren } from '../util/is-deck-element';
 
 type DeckState = {
-  slides: DeckSlide[];
+  slides: EntityState<DeckSlide>;
   activeSlide: DeckSlide;
   editableElementId: null | string;
   theme: SpectacleTheme;
 };
 
+export const slidesAdapter = createEntityAdapter<DeckSlide>();
+
 const initialState: DeckState = {
-  slides: [],
+  slides: slidesAdapter.getInitialState(),
   activeSlide: {
     component: 'Slide',
     id: '',
@@ -32,7 +38,7 @@ export const deckSlice = createSlice({
   initialState: initialState,
   reducers: {
     deckLoaded: (state, action) => {
-      state.slides = action.payload;
+      slidesAdapter.addMany(state.slides, action.payload);
       state.activeSlide = action.payload[0] || null;
     },
 
@@ -41,9 +47,10 @@ export const deckSlice = createSlice({
         return;
       }
 
-      const newActiveSlide = state.slides.find(
-        ({ id }) => id === action.payload
-      );
+      const newActiveSlide = slidesAdapter
+        .getSelectors()
+        .selectById(state.slides, action.payload);
+
       if (newActiveSlide) {
         state.activeSlide = newActiveSlide;
         state.editableElementId = null;
@@ -56,7 +63,8 @@ export const deckSlice = createSlice({
         component: 'Slide',
         children: []
       };
-      state.slides.push(newSlide);
+
+      slidesAdapter.addOne(state.slides, newSlide);
       state.activeSlide = newSlide;
     },
 
@@ -96,11 +104,10 @@ export const deckSlice = createSlice({
         node.children = [newElement];
       }
 
-      const index = state.slides.findIndex(
-        ({ id }) => id === state?.activeSlide?.id
-      );
-
-      state.slides[index] = state.activeSlide;
+      slidesAdapter.updateOne(state.slides, {
+        id: state.activeSlide.id,
+        changes: state.activeSlide
+      });
       state.editableElementId = newElementId;
     },
 
@@ -136,26 +143,21 @@ export const deckSlice = createSlice({
         node.children = incomingChildren;
       }
 
-      const index = state.slides.findIndex(
-        ({ id }) => id === state.activeSlide.id
-      );
-      state.slides[index] = state.activeSlide;
+      slidesAdapter.updateOne(state.slides, {
+        id: state.activeSlide.id,
+        changes: state.activeSlide
+      });
     },
 
-    deleteSlide: (state, action) => {
-      const index =
-        action.payload ||
-        state.slides.findIndex(({ id }) => id === state.activeSlide.id);
-      let updatedSlides = [...state.slides];
-
-      updatedSlides.splice(index, 1);
-
-      if (updatedSlides.length === 0) {
-        updatedSlides = [{ id: v4(), component: 'Slide', children: [] }];
+    deleteSlide: (state) => {
+      // Users cannot delete all slides otherwise it would break Spectacle
+      if (state.slides.ids.length === 1) {
+        return;
       }
-
-      state.slides = updatedSlides;
-      state.activeSlide = state.slides[0];
+      slidesAdapter.removeOne(state.slides, state.activeSlide.id);
+      state.activeSlide = slidesAdapter
+        .getSelectors()
+        .selectAll(state.slides)[0];
     },
 
     updateThemeColors: (state, action) => {
@@ -178,13 +180,13 @@ export const deckSlice = createSlice({
 
       const newSlides: DeckSlide[] = [];
       action.payload.forEach((id) => {
-        const slide = state.slides.find((s) => s.id === id);
+        const slide = slidesAdapter.getSelectors().selectById(state.slides, id);
         if (slide) {
           newSlides.push(slide);
         }
       });
 
-      state.slides = newSlides;
+      slidesAdapter.setAll(state.slides, newSlides);
     },
 
     /**
@@ -217,15 +219,16 @@ export const deckSlice = createSlice({
 
       state.activeSlide.children = action.payload;
 
-      const index = state.slides.findIndex(
-        ({ id }) => id === state?.activeSlide?.id
-      );
-      state.slides[index] = state.activeSlide;
+      slidesAdapter.updateOne(state.slides, {
+        id: state.activeSlide.id,
+        changes: state.activeSlide
+      });
     }
   }
 });
 
-export const slidesSelector = (state: RootState) => state.deck.slides;
+export const slidesSelector = (state: RootState) =>
+  slidesAdapter.getSelectors().selectAll(state.deck.slides);
 export const activeSlideSelector = (state: RootState) => state.deck.activeSlide;
 export const editableElementIdSelector = (state: RootState) =>
   state.deck.editableElementId;

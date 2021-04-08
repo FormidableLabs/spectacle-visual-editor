@@ -43,7 +43,7 @@ export const MenuBar = () => {
               </Menu.Item>
               <Menu.Item
                 onSelect={() => {
-                  dispatch(deckSlice.actions.deleteSlide(null));
+                  dispatch(deckSlice.actions.deleteSlide());
                   close();
                 }}
               >

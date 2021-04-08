@@ -11,5 +11,6 @@ export type DeckElement = {
 
 export type DeckSlide = DeckElement & {
   component: 'Slide';
+  id: string;
   children: DeckElement[];
 };

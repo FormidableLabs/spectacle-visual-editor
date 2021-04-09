@@ -6,6 +6,11 @@ export const sampleSlideData = [
     id: v4(),
     children: [
       {
+        component: 'Markdown',
+        id: v4(),
+        children: '# First slide'
+      },
+      {
         component: 'FlexBox',
         id: v4(),
         props: {

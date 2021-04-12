@@ -12,12 +12,12 @@ on:
     branches:
       - main
     paths:
-      - 'editor/**'
+      - '**'
   pull_request:
     branches:
       - main
     paths:
-      - 'editor/**'
+      - '**'
 
 jobs:
   build:

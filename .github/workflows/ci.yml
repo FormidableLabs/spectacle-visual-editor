@@ -1,9 +1,5 @@
 name: CI
 
-defaults:
-  run:
-    working-directory: ./editor
-
 # Runs build and test on:
 #   every push that has a change in a file in the editor folder
 #   every pull request with main branch as the base that has a change in a file in the editor folder
@@ -12,12 +8,12 @@ on:
     branches:
       - main
     paths:
-      - 'editor/**'
+      - '**'
   pull_request:
     branches:
       - main
     paths:
-      - 'editor/**'
+      - '**'
 
 jobs:
   build:
@@ -41,7 +37,7 @@ jobs:
         id: cache
         with:
           path: ${{ steps.cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ matrix.node-version }}-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-${{ matrix.node-version }}-${{ hashFiles('./yarn.lock') }}
 
       - name: Installation ${{ matrix.node-version }}
         run: yarn --prefer-offline --frozen-lockfile --non-interactive

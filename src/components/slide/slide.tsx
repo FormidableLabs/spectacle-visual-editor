@@ -27,12 +27,12 @@ const SlideWrapper = styled('div').attrs<SlideWrapperProps>(
   ({ scale, theme }) => ({
     style: {
       transform: `scale(${scale || 1})`,
-      marginBottom: `${parseInt(scale) >= 1 ? '' : '-'}${
-        Math.abs(theme.size.height - scale * theme.size.height)
-      }px`,
-      marginRight: `${parseInt(scale) >= 1 ? '' : '-'}${
-        Math.abs(theme.size.width - scale * theme.size.width)
-      }px`
+      marginBottom: `${scale >= 1 ? '' : '-'}${Math.abs(
+        theme.size.height - scale * theme.size.height
+      )}px`,
+      marginRight: `${scale >= 1 ? '' : '-'}${Math.abs(
+        theme.size.width - scale * theme.size.width
+      )}px`
     }
   })
 )<SlideWrapperProps>(color, space, background, ({ theme }) => ({

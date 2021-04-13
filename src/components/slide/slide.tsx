@@ -59,11 +59,11 @@ interface Props {
     onSlideClick?(id: string): void;
     handleKeyPress?(event: React.KeyboardEvent, id: string): void;
   };
-  backgroundColor: string;
-  backgroundPosition: string;
+  backgroundColor?: string;
+  backgroundPosition?: string;
   scale: number;
-  textColor: string;
-  padding: number | string;
+  textColor?: string;
+  padding?: number | string;
 }
 
 export const Slide: React.FC<Props> = ({

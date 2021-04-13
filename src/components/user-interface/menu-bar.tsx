@@ -2,8 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button, defaultTheme, Menu, Popover, Position } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { deckSlice } from '../../slices/deck-slice';
+import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow } from '../../hooks';
 import { ELEMENTS } from '../slide/elements';
 
@@ -20,6 +21,7 @@ const LogoContainer = styled.div`
 `;
 
 export const MenuBar = () => {
+  const { scale } = useSelector(settingsSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
 
@@ -92,6 +94,27 @@ export const MenuBar = () => {
         )}
       >
         <Button appearance="minimal">Insert</Button>
+      </Popover>
+      <Popover
+        position={Position.BOTTOM_LEFT}
+        content={({ close }) => (
+          <Menu>
+            <Menu.OptionsGroup
+              title="Zoom"
+              options={[
+                { label: 'To fit', value: 'fit' },
+                { label: 'Actual size', value: '1' }
+              ]}
+              selected={scale}
+              onChange={(selected) => {
+                dispatch(settingsSlice.actions.updateScale(selected));
+                close();
+              }}
+            />
+          </Menu>
+        )}
+      >
+        <Button appearance="minimal">View</Button>
       </Popover>
     </MenuBarContainer>
   );

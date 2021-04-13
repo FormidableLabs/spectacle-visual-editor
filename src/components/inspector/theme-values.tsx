@@ -8,6 +8,7 @@ import { useRootSelector } from '../../store';
 import { Accordion } from '../user-interface/accordion';
 import { TextInputField } from 'evergreen-ui';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
+import { isValidSlideSize } from '../../util/is-valid-slide-size';
 import { cloneAndSet } from '../../util/clone-and-set';
 
 const Container = styled.div`
@@ -24,6 +25,42 @@ export const ThemeValues = () => {
 
   return (
     <>
+      <Accordion label="Theme Slide Dimensions">
+        <Container>
+          {['width', 'height'].map((sizeKey) => (
+            <TextInputField
+              key={`${sizeKey}-font-size-value`}
+              type="number"
+              inputHeight={24}
+              label={capitalize(sizeKey)}
+              value={inputState.size[sizeKey]}
+              disabled={false}
+              onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                const value = e.target.value;
+                if (isValidSlideSize(value)) {
+                  setInputState((prevState) =>
+                    cloneAndSet(prevState, ['size', sizeKey], value)
+                  );
+                }
+              }}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                const value = e.target.value;
+                setInputState((prevState) =>
+                  cloneAndSet(prevState, ['size', sizeKey], value)
+                );
+                if (!isValidSlideSize(value)) {
+                  return;
+                }
+                dispatch(
+                  deckSlice.actions.updateThemeSize({
+                    [sizeKey]: value
+                  })
+                );
+              }}
+            />
+          ))}
+        </Container>
+      </Accordion>
       <Accordion label="Theme Colors">
         <Container>
           {'colors' in themeValues &&

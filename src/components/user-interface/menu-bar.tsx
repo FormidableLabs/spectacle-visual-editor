@@ -3,7 +3,12 @@ import styled from 'styled-components';
 import { Button, defaultTheme, Menu, Popover, Position } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
-import { deckSlice } from '../../slices/deck-slice';
+import { ActionCreators as UndoActionCreators } from 'redux-undo';
+import {
+  deckSlice,
+  hasPastSelector,
+  hasFutureSelector
+} from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow } from '../../hooks';
 import { ELEMENTS } from '../slide/elements';
@@ -22,6 +27,8 @@ const LogoContainer = styled.div`
 
 export const MenuBar = () => {
   const { scale } = useSelector(settingsSelector);
+  const hasPast = useSelector(hasPastSelector);
+  const hasFuture = useSelector(hasFutureSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
 
@@ -97,11 +104,27 @@ export const MenuBar = () => {
       </Popover>
       <Popover
         position={Position.BOTTOM_LEFT}
-        content={() => (
+        content={({ close }) => (
           <Menu>
             <Menu.Group>
-              <Menu.Item secondaryText={<span>⌘Z</span>}>Undo</Menu.Item>
-              <Menu.Item secondaryText={<span>⇧⌘Z</span>}>Redo</Menu.Item>
+              <Menu.Item
+                disabled={!hasPast}
+                onSelect={() => {
+                  dispatch(UndoActionCreators.undo());
+                  close();
+                }}
+              >
+                Undo
+              </Menu.Item>
+              <Menu.Item
+                disabled={!hasFuture}
+                onSelect={() => {
+                  dispatch(UndoActionCreators.redo());
+                  close();
+                }}
+              >
+                Redo
+              </Menu.Item>
             </Menu.Group>
             <Menu.Group>
               <Menu.Item secondaryText={<span>⌘X</span>}>Cut</Menu.Item>

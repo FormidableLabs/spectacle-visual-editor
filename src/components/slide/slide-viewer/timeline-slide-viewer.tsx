@@ -23,7 +23,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
   slideProps
 }) => {
   const activeSlideId = useRootSelector(
-    (state) => state.deck.activeSlide?.id || ''
+    (state) => state.deck.present.activeSlide?.id || ''
   );
   const dispatch = useDispatch();
   const [localSlides, setLocalSlides] = React.useState<React.ReactElement[]>(

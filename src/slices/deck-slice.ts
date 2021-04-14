@@ -5,6 +5,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
+
 import { CONTAINER_ELEMENTS } from '../components/slide/elements';
 import { defaultTheme } from 'spectacle';
 import { searchTreeForNode } from '../util/node-search';
@@ -12,6 +13,7 @@ import { DeckElement, DeckSlide } from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
 import { isDeckElementChildren } from '../util/is-deck-element';
+import undoable from 'redux-undo';
 
 type DeckState = {
   slides: EntityState<DeckSlide>;
@@ -35,7 +37,7 @@ const initialState: DeckState = {
 
 export const deckSlice = createSlice({
   name: 'deck',
-  initialState: initialState,
+  initialState,
   reducers: {
     deckLoaded: (state, action) => {
       slidesAdapter.addMany(state.slides, action.payload);
@@ -110,7 +112,6 @@ export const deckSlice = createSlice({
       });
       state.editableElementId = newElementId;
     },
-
     editableElementSelected: (state, action) => {
       state.editableElementId = action.payload;
     },
@@ -148,7 +149,6 @@ export const deckSlice = createSlice({
         changes: state.activeSlide
       });
     },
-
     deleteSlide: (state) => {
       // Users cannot delete all slides otherwise it would break Spectacle
       if (state.slides.ids.length === 1) {
@@ -231,18 +231,53 @@ export const deckSlice = createSlice({
   }
 });
 
+const UNDOABLE_ACTIONS = {
+  [deckSlice.actions.editableElementSelected.type]: true,
+  [deckSlice.actions.activeSlideWasChanged.type]: true
+};
+
+export const undoableDeckSliceReducer = undoable(deckSlice.reducer, {
+  /*
+   * Ignore selections
+   */
+  filter: function filterActions(action) {
+    return !UNDOABLE_ACTIONS[action.type];
+  },
+
+  /*
+   * Group edits made to the same entity
+   */
+  groupBy: function groupActions(action, currentState, previousHistory) {
+    const { past } = previousHistory;
+    const previous = past[past.length - 1];
+    if (
+      previous &&
+      previous.editableElementId === currentState.editableElementId
+    ) {
+      return true;
+    }
+  }
+});
+
 export const slidesSelector = (state: RootState) =>
-  slidesAdapter.getSelectors().selectAll(state.deck.slides);
-export const activeSlideSelector = (state: RootState) => state.deck.activeSlide;
+  slidesAdapter.getSelectors().selectAll(state.deck.present.slides);
+export const activeSlideSelector = (state: RootState) =>
+  state.deck.present.activeSlide;
 export const editableElementIdSelector = (state: RootState) =>
-  state.deck.editableElementId;
-export const themeSelector = (state: RootState) => state.deck.theme;
+  state.deck.present.editableElementId;
+export const themeSelector = (state: RootState) => state.deck.present.theme;
 export const selectedElementSelector = (state: RootState) => {
-  if (!state.deck.activeSlide?.children || !state.deck.editableElementId) {
+  if (
+    !state.deck.present.activeSlide?.children ||
+    !state.deck.present.editableElementId
+  ) {
     return null;
   }
   return searchTreeForNode(
-    state.deck.activeSlide.children,
-    state.deck.editableElementId
+    state.deck.present.activeSlide.children,
+    state.deck.present.editableElementId
   );
 };
+export const hasPastSelector = (state: RootState) => state.deck.past.length > 1;
+export const hasFutureSelector = (state: RootState) =>
+  state.deck.future.length > 0;

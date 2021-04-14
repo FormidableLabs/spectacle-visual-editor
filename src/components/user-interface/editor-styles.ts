@@ -15,7 +15,7 @@ export const EditorBody = styled.div`
 export const EditorContent = styled.div`
   display: flex;
   flex: 1 1 0;
-  overflow: scroll;
+  overflow: auto;
   flex-direction: row;
 `;
 
@@ -24,7 +24,7 @@ export const EditorCanvas = styled.div`
   flex: 1;
   align-items: center;
   justify-content: center;
-  overflow: scroll;
+  overflow: auto;
 
   ${SlideScaleWrapper} {
     box-shadow: 1px 2px 5px ${defaultTheme.scales.neutral.N8A};

@@ -53,7 +53,7 @@ export const ThemeValues = () => {
                 }
                 dispatch(
                   deckSlice.actions.updateThemeSize({
-                    [sizeKey]: value
+                    [sizeKey]: parseInt(value)
                   })
                 );
               }}

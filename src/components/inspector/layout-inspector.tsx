@@ -14,31 +14,39 @@ const layouts: { [key: string]: () => DeckElement[] } = {
   codePaneLayout
 };
 
+const SlideWrapper = styled.div`
+  overflow: hidden;
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+`;
+
 export const LayoutInspector = () => {
   const dispatch = useDispatch();
   return (
     <Pane>
       <SlideViewerWrapper>
         {Object.keys(layouts).map((layoutKey) => (
-          <Slide
-            key={`${layoutKey}-key`}
-            id={`${layoutKey}-template`}
-            scale={0.2}
-            slideProps={{
-              containerStyle: {},
-              onSlideClick() {
-                dispatch(
-                  deckSlice.actions.applyLayoutToSlide(layouts[layoutKey]())
-                );
-              }
-            }}
-          >
-            {(layouts[layoutKey]() as DeckSlide[]).map(
-              generateInternalSlideTree as (
-                opt: DeckSlide
-              ) => React.ReactElement
-            )}
-          </Slide>
+          <SlideWrapper key={`${layoutKey}-key`}>
+            <Slide
+              id={`${layoutKey}-template`}
+              scale={0.18}
+              slideProps={{
+                containerStyle: {},
+                onSlideClick() {
+                  dispatch(
+                    deckSlice.actions.applyLayoutToSlide(layouts[layoutKey]())
+                  );
+                }
+              }}
+            >
+              {(layouts[layoutKey]() as DeckSlide[]).map(
+                generateInternalSlideTree as (
+                  opt: DeckSlide
+                ) => React.ReactElement
+              )}
+            </Slide>
+          </SlideWrapper>
         ))}
       </SlideViewerWrapper>
     </Pane>

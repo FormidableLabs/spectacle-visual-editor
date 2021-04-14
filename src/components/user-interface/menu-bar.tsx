@@ -97,7 +97,7 @@ export const MenuBar = () => {
       </Popover>
       <Popover
         position={Position.BOTTOM_LEFT}
-        content={({ close }) => (
+        content={() => (
           <Menu>
             <Menu.Group>
               <Menu.Item secondaryText={<span>⌘Z</span>}>Undo</Menu.Item>

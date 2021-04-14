@@ -212,6 +212,11 @@ export const deckSlice = createSlice({
       state.activeSlide.children = newElements;
     },
 
+    setActiveSlideElements: (state, action: PayloadAction<DeckElement[]>) => {
+      state.activeSlide.children = action.payload;
+      // TODO: Do we have to resync?
+    },
+
     applyLayoutToSlide: (state, action: PayloadAction<DeckElement[]>) => {
       if (!state.activeSlide) {
         return;

@@ -2,16 +2,17 @@ import React from 'react';
 import { useRootSelector } from '../../../store';
 import { activeSlideSelector, deckSlice } from '../../../slices/deck-slice';
 import { Pane } from '../inspector-styles';
-import { DndProvider } from 'react-dnd';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch } from 'react-redux';
 import { isDeckElement } from '../../../util/is-deck-element';
-import { SlideElementDragWrapper } from './slide-element-drag-wrapper';
-import { ElementCard } from './layers-element-card';
 import styled from 'styled-components';
 import { swapArrayItems } from '../../../util/swap-array-items';
 import { DeckElement } from '../../../types/deck-elements';
 import { cloneDeep } from 'lodash-es';
+
+type FindItem = (id: string, nodes: DeckElement[]) => DeckElement | false;
+type MoveItem = (id: string, afterId: string, nodeId: string) => void;
 
 export const LayerInspector: React.FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
@@ -34,21 +35,13 @@ export const LayerInspector: React.FC = () => {
 
   // Commit changes
   const commitChangedOrder = React.useCallback(() => {
-    const currentIds = activeSlideChildren?.map((el) => el?.id) || [];
-    const newIds = localChildren?.map((el) => el?.id) || [];
-
-    // S TODO: This only handles first-level changes, needs to be recursive...
-    if (currentIds.join(',') !== newIds.join(',')) {
-      dispatch(deckSlice.actions.reorderActiveSlideElements(newIds));
-    }
-  }, [activeSlideChildren, dispatch, localChildren]);
+    dispatch(deckSlice.actions.setActiveSlideElements(localChildren));
+  }, [dispatch, localChildren]);
 
   /**
    * Search for an item by ID inside a list of nodes
    */
-  const __findItem = React.useCallback((id: string, nodes: DeckElement[]):
-    | DeckElement
-    | false => {
+  const __findItem: FindItem = React.useCallback<FindItem>((id, nodes) => {
     for (const node of nodes) {
       if (node.id === id) {
         return node;
@@ -69,8 +62,8 @@ export const LayerInspector: React.FC = () => {
    * Moving an item
    * SEE https://github.com/tamagokun/example-react-dnd-nested/blob/master/app/containers/Index.js
    */
-  const __moveItem = React.useCallback(
-    (id: string, afterId: string, nodeId: string) => {
+  const __moveItem = React.useCallback<MoveItem>(
+    (id, afterId, nodeId) => {
       if (id === afterId) return;
 
       setLocalChildren((els) => {
@@ -126,48 +119,115 @@ export const LayerInspector: React.FC = () => {
     <Pane>
       <GridContainer>
         <DndProvider backend={HTML5Backend}>
-          {localChildren.map((el, idx) => {
-            return (
-              <SlideElementDragWrapper
-                key={el.id}
-                id={el.id}
-                index={idx}
-                onDrop={commitChangedOrder}
-                moveItem={moveItem}
-              >
-                <ElItem key={el.id} el={el} />
-              </SlideElementDragWrapper>
-            );
-          })}
+          <Tree
+            nodes={localChildren}
+            move={__moveItem}
+            find={__findItem}
+            parentId={''}
+            commitChangeOrder={commitChangedOrder}
+          />
         </DndProvider>
       </GridContainer>
     </Pane>
   );
 };
 
-const ElItem: React.FC<{ el: DeckElement }> = ({ el }) => {
-  if (Array.isArray(el.children)) {
-    return (
-      <div>
-        <div>{el.component}</div>
-        <GridContainer padLeft>
-          {el.children.map((subEl, idx) => (
-            <SlideElementDragWrapper
-              key={subEl.id}
-              id={subEl.id}
-              index={idx}
-              onDrop={() => null}
-              moveItem={() => null}
-            >
-              <ElementCard element={subEl} key={el.id} />
-            </SlideElementDragWrapper>
-          ))}
-        </GridContainer>
-      </div>
-    );
-  }
+const Tree: React.FC<{
+  nodes: DeckElement[];
+  move: MoveItem;
+  find: FindItem;
+  parentId: string;
+  commitChangeOrder: () => void;
+}> = ({ nodes, move, find, parentId, commitChangeOrder }) => {
+  return (
+    <GridContainer>
+      {nodes.map((el, idx) => (
+        <Leaf
+          element={el}
+          find={find}
+          move={move}
+          key={el.id}
+          index={idx}
+          parentId={parentId}
+          commitChangeOrder={commitChangeOrder}
+        />
+      ))}
+    </GridContainer>
+  );
+};
 
-  return <ElementCard element={el} />;
+const Leaf: React.FC<{
+  element: DeckElement;
+  index: number;
+  move: MoveItem;
+  find: FindItem;
+  parentId: string;
+  commitChangeOrder: () => void;
+}> = ({ element, move, find, index, parentId, commitChangeOrder }) => {
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  const [{ handlerId }, drop] = useDrop({
+    accept: 'Element',
+
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId()
+      };
+    },
+    // canDrop: () => false,
+    hover(props, monitor) {
+      const { id: draggedId } = monitor.getItem();
+      const overId = element.id;
+
+      if (draggedId === overId || draggedId === parentId) return;
+      if (!monitor.isOver({ shallow: true })) return;
+
+      move(draggedId, overId, parentId);
+    }
+  });
+
+  const [_, drag] = useDrag({
+    type: 'Element',
+
+    item: () => {
+      return { id: element.id, index };
+    },
+
+    beginDrag() {
+      return {
+        id: element.id,
+        parentId,
+        items: element.children
+      };
+    },
+
+    end() {
+      commitChangeOrder();
+    },
+
+    isDragging: (monitor) => element.id === monitor.getItem().id
+  });
+
+  drag(drop(ref));
+
+  return (
+    <div>
+      <div ref={ref} data-handler-id={handlerId}>
+        {element.component}
+      </div>
+      {Array.isArray(element.children) && (
+        <div style={{ paddingLeft: 20 }}>
+          <Tree
+            find={find}
+            move={move}
+            nodes={element.children}
+            parentId={element.id}
+            commitChangeOrder={commitChangeOrder}
+          />
+        </div>
+      )}
+    </div>
+  );
 };
 
 const GridContainer = styled.div<{ padLeft?: boolean }>`

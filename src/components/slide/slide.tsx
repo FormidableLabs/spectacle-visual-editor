@@ -23,22 +23,26 @@ interface SlideWrapperProps
   scale: number;
 }
 
-const SlideWrapper = styled('div')<SlideWrapperProps>(
-  color,
-  space,
-  background,
+const SlideWrapper = styled('div').attrs<SlideWrapperProps>(
   ({ scale, theme }) => ({
-    width: `${theme.size.width}px`,
-    height: `${theme.size.height}px`,
-    transform: `scale(${scale || 1})`,
-    marginBottom: `-${theme.size.height - scale * theme.size.height}px`,
-    marginRight: `-${theme.size.width - scale * theme.size.width}px`,
-    transformOrigin: `left top`,
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column'
+    style: {
+      transform: `scale(${scale || 1})`,
+      marginBottom: `${scale >= 1 ? '' : '-'}${Math.abs(
+        theme.size.height - scale * theme.size.height
+      )}px`,
+      marginRight: `${scale >= 1 ? '' : '-'}${Math.abs(
+        theme.size.width - scale * theme.size.width
+      )}px`
+    }
   })
-);
+)<SlideWrapperProps>(color, space, background, ({ theme }) => ({
+  width: `${theme.size.width}px`,
+  height: `${theme.size.height}px`,
+  transformOrigin: `left top`,
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column'
+}));
 
 const ContentWrapper = styled('div')<SpaceProps>(
   space,

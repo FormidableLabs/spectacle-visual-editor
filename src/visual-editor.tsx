@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   SlideViewer,
@@ -12,7 +12,7 @@ import {
 } from './components';
 import { sampleSlideData } from './sample-slide-data';
 import { deckSlice } from './slices/deck-slice';
-import { useEditorActions, useSlideNodes } from './hooks';
+import { useEditorActions, useSlideNodes, useSlideScale } from './hooks';
 
 export const VisualEditor = () => {
   const dispatch = useDispatch();
@@ -26,13 +26,16 @@ export const VisualEditor = () => {
     dispatch(deckSlice.actions.deckLoaded(sampleSlideData));
   }, [dispatch, slideNodes]);
 
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const scale = useSlideScale(canvasRef);
+
   return (
     <EditorBody>
       <AppBodyStyle />
       <MenuBar />
       <EditorContent>
-        <EditorCanvas onMouseDown={handleCanvasMouseDown}>
-          <SlideViewer scale={0.45}>{activeSlideNode}</SlideViewer>
+        <EditorCanvas ref={canvasRef} onMouseDown={handleCanvasMouseDown}>
+          <SlideViewer scale={scale}>{activeSlideNode}</SlideViewer>
         </EditorCanvas>
         <Inspector />
       </EditorContent>

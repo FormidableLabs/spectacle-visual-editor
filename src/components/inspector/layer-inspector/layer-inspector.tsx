@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRootSelector } from '../../../store';
+import { DeckElement } from '../../../types/deck-elements';
 import { activeSlideSelector, deckSlice } from '../../../slices/deck-slice';
 import { Pane } from '../inspector-styles';
 import { DndProvider } from 'react-dnd';
@@ -10,6 +11,19 @@ import { SlideElementDragWrapper } from './slide-element-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import styled from 'styled-components';
 import { swapArrayItems } from '../../../util/swap-array-items';
+
+const reorderSlideElements = (
+  currentElements: DeckElement[],
+  nextElements: DeckElement[],
+  dispatch: React.Dispatch<{ payload: string[], type: string }>
+) => {
+  const currentIds = currentElements.map((el) => el?.id) || [];
+  const newIds = nextElements.map((el) => el?.id) || [];
+
+  if (currentIds.join(',') !== newIds.join(',')) {
+    dispatch(deckSlice.actions.reorderActiveSlideElements(newIds));
+  }
+};
 
 export const LayerInspector: React.FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
@@ -25,19 +39,20 @@ export const LayerInspector: React.FC = () => {
     setLocalChildren(activeSlideChildren);
   }, [activeSlideChildren]);
 
-  // Move a local item as its dragged.
-  const moveItem = React.useCallback((dragIndex, hoverIndex) => {
-    setLocalChildren((items) => swapArrayItems(items, dragIndex, hoverIndex));
+  // Move a local item as its dragged
+  const moveItem = React.useCallback((currentIndex: number, nextIndex: number) => {
+    setLocalChildren((items) => swapArrayItems(items, currentIndex, nextIndex));
   }, []);
 
-  // Commit changes
+  // Update the order with the local order
   const commitChangedOrder = React.useCallback(() => {
-    const currentIds = activeSlideChildren?.map((el) => el?.id) || [];
-    const newIds = localChildren?.map((el) => el?.id) || [];
+    reorderSlideElements(activeSlideChildren, localChildren, dispatch);
+  }, [activeSlideChildren, dispatch, localChildren]);
 
-    if (currentIds.join(',') !== newIds.join(',')) {
-      dispatch(deckSlice.actions.reorderActiveSlideElements(newIds));
-    }
+  // Commit the movement of an item immediately
+  const moveItemAndCommit = React.useCallback((currentIndex: number, nextIndex: number) => {
+    const swappedItems = swapArrayItems(localChildren, currentIndex, nextIndex);
+    reorderSlideElements(activeSlideChildren, swappedItems, dispatch);
   }, [activeSlideChildren, dispatch, localChildren]);
 
   return (
@@ -51,9 +66,21 @@ export const LayerInspector: React.FC = () => {
                 id={el.id}
                 index={idx}
                 onDrop={commitChangedOrder}
-                moveItem={moveItem}
+                onDrag={moveItem}
               >
-                <ElementCard element={el} />
+                <ElementCard
+                  element={el}
+                  onUpClick={
+                    idx - 1 < 0
+                      ? undefined
+                      : () => moveItemAndCommit(idx, idx - 1)
+                  }
+                  onDownClick={
+                    idx + 1 > localChildren.length - 1
+                      ? undefined
+                      : () => moveItemAndCommit(idx, idx + 1)
+                  }
+                />
               </SlideElementDragWrapper>
             );
           })}

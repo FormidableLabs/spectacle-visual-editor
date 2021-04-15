@@ -4,7 +4,7 @@ import { useDrag, useDrop } from 'react-dnd';
 interface Props {
   id: string;
   index: number;
-  moveItem: (dragIndex: number, hoverIndex: number) => void;
+  onDrag: (dragIndex: number, hoverIndex: number) => void;
   onDrop: () => void;
 }
 
@@ -14,7 +14,7 @@ interface Props {
 export const SlideElementDragWrapper: React.FC<Props> = ({
   id,
   index,
-  moveItem,
+  onDrag,
   onDrop,
   children
 }) => {
@@ -67,7 +67,7 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
         return;
       }
       // Time to actually perform the action
-      moveItem(dragIndex, hoverIndex);
+      onDrag(dragIndex, hoverIndex);
 
       item.index = hoverIndex;
     }

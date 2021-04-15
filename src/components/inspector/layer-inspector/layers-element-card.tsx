@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import { DeckElement } from '../../../types/deck-elements';
 import styled from 'styled-components';
 import { defaultTheme } from 'evergreen-ui';
 import { isImageElement, isMdElement } from '../validators';
 
+interface Props {
+  element: DeckElement;
+  onDownClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onUpClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+}
+
 /**
  * Layers tab element card
  * @param element DeckElement
  */
-export const ElementCard: React.FC<{ element: DeckElement }> = ({
-  element
+export const ElementCard: React.FC<Props> = ({
+  element,
+  onDownClick,
+  onUpClick
 }) => {
   const elementPreview = React.useMemo(() => {
     if (isMdElement(element)) {
@@ -23,8 +31,14 @@ export const ElementCard: React.FC<{ element: DeckElement }> = ({
 
   return (
     <CardContainer>
-      <TitleContainer>{element.component}</TitleContainer>
-      <PreviewContainer>{elementPreview}</PreviewContainer>
+      <CardContent>
+        <TitleContainer>{element.component}</TitleContainer>
+        <PreviewContainer>{elementPreview}</PreviewContainer>
+      </CardContent>
+      <ArrowsContainer>
+        {onUpClick && <button onClick={onUpClick}>up</button>}
+        {onDownClick && <button onClick={onDownClick}>down</button>}
+      </ArrowsContainer>
     </CardContainer>
   );
 };
@@ -35,6 +49,12 @@ const CardContainer = styled.div`
   border-radius: 5px;
   overflow: hidden;
   cursor: pointer;
+`;
+
+const CardContent = styled.div`
+`;
+
+const ArrowsContainer = styled.div`
 `;
 
 const TitleContainer = styled.div`

@@ -13,10 +13,10 @@ export const ImageControls: React.FC<ElementControlsProps> = ({
 
   // If desired src is valid, update the element in the store.
   React.useEffect(() => {
-    if (isValidUrl(desiredSrc)) {
+    if (isValidUrl(desiredSrc) && desiredSrc !== selectedElement?.props?.src) {
       editableElementChanged({ src: desiredSrc });
     }
-  }, [desiredSrc, editableElementChanged]);
+  }, [desiredSrc, editableElementChanged, selectedElement?.props?.src]);
 
   return (
     <div>

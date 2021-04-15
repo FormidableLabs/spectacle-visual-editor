@@ -97,6 +97,27 @@ export const MenuBar = () => {
       </Popover>
       <Popover
         position={Position.BOTTOM_LEFT}
+        content={() => (
+          <Menu>
+            <Menu.Group>
+              <Menu.Item secondaryText={<span>⌘Z</span>}>Undo</Menu.Item>
+              <Menu.Item secondaryText={<span>⇧⌘Z</span>}>Redo</Menu.Item>
+            </Menu.Group>
+            <Menu.Group>
+              <Menu.Item secondaryText={<span>⌘X</span>}>Cut</Menu.Item>
+              <Menu.Item secondaryText={<span>⌘C</span>}>Copy</Menu.Item>
+              <Menu.Item secondaryText={<span>⌘V</span>}>Paste</Menu.Item>
+            </Menu.Group>
+            <Menu.Group>
+              <Menu.Item secondaryText={<span>⌘D</span>}>Delete</Menu.Item>
+            </Menu.Group>
+          </Menu>
+        )}
+      >
+        <Button appearance="minimal">Edit</Button>
+      </Popover>
+      <Popover
+        position={Position.BOTTOM_LEFT}
         content={({ close }) => (
           <Menu>
             <Menu.OptionsGroup

@@ -1,7 +1,13 @@
 import React, { MouseEvent } from 'react';
 import { DeckElement } from '../../../types/deck-elements';
 import styled from 'styled-components';
-import { ArrowDownIcon, ArrowUpIcon, Button, ButtonProps, defaultTheme } from 'evergreen-ui';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  Button,
+  ButtonProps,
+  defaultTheme
+} from 'evergreen-ui';
 import { isImageElement, isMdElement } from '../validators';
 
 interface Props {
@@ -74,9 +80,10 @@ const CardContainer = styled.div<{ isActive?: boolean }>`
   background-color: ${(props) =>
     props.isActive ? defaultTheme.colors.background.blueTint : 'white'};
   border: 1px solid;
-  border-color: ${(props) => props.isActive
-    ? defaultTheme.palette.blue.base
-    : defaultTheme.colors.border.default};
+  border-color: ${(props) =>
+    props.isActive
+      ? defaultTheme.palette.blue.base
+      : defaultTheme.colors.border.default};
   border-radius: 5px;
   box-shadow: ${defaultTheme.elevations[1]};
   overflow: hidden;

@@ -16,7 +16,7 @@ import { swapArrayItems } from '../../../util/swap-array-items';
 const reorderSlideElements = (
   currentElements: DeckElement[],
   nextElements: DeckElement[],
-  dispatch: React.Dispatch<{ payload: string[], type: string }>
+  dispatch: React.Dispatch<{ payload: string[]; type: string }>
 ) => {
   const currentIds = currentElements.map((el) => el?.id) || [];
   const newIds = nextElements.map((el) => el?.id) || [];
@@ -33,7 +33,9 @@ export const LayerInspector: React.FC = () => {
     [activeSlide]
   );
   const [localChildren, setLocalChildren] = React.useState(activeSlideChildren);
-  const [activeElementId, setActiveElementId] = React.useState<null | string>(null);
+  const [activeElementId, setActiveElementId] = React.useState<null | string>(
+    null
+  );
   const containerRef = useOnClickOutside(() => {
     setActiveElementId(null);
   });
@@ -45,9 +47,14 @@ export const LayerInspector: React.FC = () => {
   }, [activeSlideChildren]);
 
   // Move a local item as its dragged
-  const moveItem = React.useCallback((currentIndex: number, nextIndex: number) => {
-    setLocalChildren((items) => swapArrayItems(items, currentIndex, nextIndex));
-  }, []);
+  const moveItem = React.useCallback(
+    (currentIndex: number, nextIndex: number) => {
+      setLocalChildren((items) =>
+        swapArrayItems(items, currentIndex, nextIndex)
+      );
+    },
+    []
+  );
 
   // Update the order with the local order
   const commitChangedOrder = React.useCallback(() => {
@@ -55,10 +62,17 @@ export const LayerInspector: React.FC = () => {
   }, [activeSlideChildren, dispatch, localChildren]);
 
   // Commit the movement of an item immediately
-  const moveItemAndCommit = React.useCallback((currentIndex: number, nextIndex: number) => {
-    const swappedItems = swapArrayItems(localChildren, currentIndex, nextIndex);
-    reorderSlideElements(activeSlideChildren, swappedItems, dispatch);
-  }, [activeSlideChildren, dispatch, localChildren]);
+  const moveItemAndCommit = React.useCallback(
+    (currentIndex: number, nextIndex: number) => {
+      const swappedItems = swapArrayItems(
+        localChildren,
+        currentIndex,
+        nextIndex
+      );
+      reorderSlideElements(activeSlideChildren, swappedItems, dispatch);
+    },
+    [activeSlideChildren, dispatch, localChildren]
+  );
 
   return (
     <Pane>

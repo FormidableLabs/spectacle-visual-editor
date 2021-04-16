@@ -43,7 +43,7 @@ export const ElementCard: React.FC<Props> = ({
     }
   }, [element]);
 
-  const arrowButtonProps: ButtonProps = {
+  const moveButtonProps: ButtonProps = {
     appearance: 'minimal',
     paddingX: 6,
     paddingY: 2
@@ -57,18 +57,18 @@ export const ElementCard: React.FC<Props> = ({
       </CardContent>
 
       {(showMoveDownIcon || showMoveUpIcon) && (
-        <ArrowsContainer>
+        <MoveButtonsContainer>
           {showMoveUpIcon && (
-            <Button {...arrowButtonProps} onClick={onMoveUpClick}>
+            <Button {...moveButtonProps} onClick={onMoveUpClick}>
               <ArrowUpIcon size={14} />
             </Button>
           )}
           {showMoveDownIcon && (
-            <Button {...arrowButtonProps} onClick={onMoveDownClick}>
+            <Button {...moveButtonProps} onClick={onMoveDownClick}>
               <ArrowDownIcon size={14} />
             </Button>
           )}
-        </ArrowsContainer>
+        </MoveButtonsContainer>
       )}
     </CardContainer>
   );
@@ -98,7 +98,7 @@ const CardContent = styled.div`
   flex: 1 0;
 `;
 
-const ArrowsContainer = styled.div`
+const MoveButtonsContainer = styled.div`
   align-self: center;
   display: flex;
   flex-direction: column;

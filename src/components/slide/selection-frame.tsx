@@ -33,6 +33,7 @@ interface Props {
 
 export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const ref = useRef<HTMLElement>();
+  const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch();
   const editableElementId = useSelector(editableElementIdSelector);
   const [target, setTarget] = useState<HTMLElement | null>(null);
@@ -59,6 +60,8 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           height: event.target.style.height
         })
       );
+      event.target.style.width = '';
+      event.target.style.height = '';
     },
     [dispatch]
   );
@@ -70,6 +73,15 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
       setTarget(null);
     }
   }, [children, editableElementId]);
+
+  /**
+   *  If the child's dimensions change, let the moveable instance know
+   */
+  useEffect(() => {
+    if (moveableRef?.current?.props?.target) {
+      moveableRef.current.updateRect();
+    }
+  }, [children?.props?.width, children?.props?.height]);
 
   /**
    * If img src changes, we need to reset to unloaded state
@@ -106,6 +118,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
       </Wrapper>
       {elLoaded && (
         <Moveable
+          ref={moveableRef}
           target={target}
           origin={false}
           resizable={['Box', 'Image'].includes(children.props.type)}

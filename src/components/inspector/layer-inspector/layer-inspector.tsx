@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRootSelector } from '../../../store';
+import useOnClickOutside from 'react-cool-onclickoutside';
 import { DeckElement } from '../../../types/deck-elements';
 import { activeSlideSelector, deckSlice } from '../../../slices/deck-slice';
 import { Pane } from '../inspector-styles';
@@ -32,6 +33,10 @@ export const LayerInspector: React.FC = () => {
     [activeSlide]
   );
   const [localChildren, setLocalChildren] = React.useState(activeSlideChildren);
+  const [activeElementId, setActiveElementId] = React.useState<null | string>(null);
+  const containerRef = useOnClickOutside(() => {
+    setActiveElementId(null);
+  });
   const dispatch = useDispatch();
 
   // Keep local children in sync with slide children
@@ -57,33 +62,27 @@ export const LayerInspector: React.FC = () => {
 
   return (
     <Pane>
-      <GridContainer>
+      <GridContainer ref={containerRef}>
         <DndProvider backend={HTML5Backend}>
-          {localChildren.map((el, idx) => {
-            return (
-              <SlideElementDragWrapper
-                key={el.id}
-                id={el.id}
-                index={idx}
-                onDrop={commitChangedOrder}
-                onDrag={moveItem}
-              >
-                <ElementCard
-                  element={el}
-                  onUpClick={
-                    idx - 1 < 0
-                      ? undefined
-                      : () => moveItemAndCommit(idx, idx - 1)
-                  }
-                  onDownClick={
-                    idx + 1 > localChildren.length - 1
-                      ? undefined
-                      : () => moveItemAndCommit(idx, idx + 1)
-                  }
-                />
-              </SlideElementDragWrapper>
-            );
-          })}
+          {localChildren.map((el, idx) => (
+            <SlideElementDragWrapper
+              key={el.id}
+              id={el.id}
+              index={idx}
+              onDrop={commitChangedOrder}
+              onDrag={moveItem}
+            >
+              <ElementCard
+                element={el}
+                isActive={el.id === activeElementId}
+                onMouseDown={() => setActiveElementId(el.id)}
+                onMoveUpClick={() => moveItemAndCommit(idx, idx - 1)}
+                onMoveDownClick={() => moveItemAndCommit(idx, idx + 1)}
+                showMoveUpIcon={idx - 1 > -1}
+                showMoveDownIcon={idx + 1 < localChildren.length}
+              />
+            </SlideElementDragWrapper>
+          ))}
         </DndProvider>
       </GridContainer>
     </Pane>

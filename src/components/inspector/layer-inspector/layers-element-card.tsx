@@ -1,13 +1,17 @@
 import React, { MouseEvent } from 'react';
 import { DeckElement } from '../../../types/deck-elements';
 import styled from 'styled-components';
-import { defaultTheme } from 'evergreen-ui';
+import { ArrowDownIcon, ArrowUpIcon, Button, ButtonProps, defaultTheme } from 'evergreen-ui';
 import { isImageElement, isMdElement } from '../validators';
 
 interface Props {
+  isActive?: boolean;
   element: DeckElement;
-  onDownClick?: (e: MouseEvent<HTMLButtonElement>) => void;
-  onUpClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onMoveDownClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
+  onMoveUpClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  showMoveDownIcon?: boolean;
+  showMoveUpIcon?: boolean;
 }
 
 /**
@@ -16,8 +20,12 @@ interface Props {
  */
 export const ElementCard: React.FC<Props> = ({
   element,
-  onDownClick,
-  onUpClick
+  isActive,
+  onMoveDownClick,
+  onMouseDown,
+  onMoveUpClick,
+  showMoveDownIcon,
+  showMoveUpIcon
 }) => {
   const elementPreview = React.useMemo(() => {
     if (isMdElement(element)) {
@@ -29,45 +37,76 @@ export const ElementCard: React.FC<Props> = ({
     }
   }, [element]);
 
+  const arrowButtonProps: ButtonProps = {
+    appearance: 'minimal',
+    paddingX: 6,
+    paddingY: 2
+  };
+
   return (
-    <CardContainer>
+    <CardContainer isActive={isActive} onMouseDown={onMouseDown}>
       <CardContent>
         <TitleContainer>{element.component}</TitleContainer>
         <PreviewContainer>{elementPreview}</PreviewContainer>
       </CardContent>
-      <ArrowsContainer>
-        {onUpClick && <button onClick={onUpClick}>up</button>}
-        {onDownClick && <button onClick={onDownClick}>down</button>}
-      </ArrowsContainer>
+
+      {(showMoveDownIcon || showMoveUpIcon) && (
+        <ArrowsContainer>
+          {showMoveUpIcon && (
+            <Button {...arrowButtonProps} onClick={onMoveUpClick}>
+              <ArrowUpIcon size={14} />
+            </Button>
+          )}
+          {showMoveDownIcon && (
+            <Button {...arrowButtonProps} onClick={onMoveDownClick}>
+              <ArrowDownIcon size={14} />
+            </Button>
+          )}
+        </ArrowsContainer>
+      )}
     </CardContainer>
   );
 };
 
-const CardContainer = styled.div`
-  border: 1px solid ${defaultTheme.colors.border.default};
-  box-shadow: ${defaultTheme.elevations[1]};
+const CardContainer = styled.div<{ isActive?: boolean }>`
+  cursor: move;
+  display: flex;
+  background-color: ${(props) =>
+    props.isActive ? defaultTheme.colors.background.blueTint : 'white'};
+  border: 1px solid;
+  border-color: ${(props) => props.isActive
+    ? defaultTheme.palette.blue.base
+    : defaultTheme.colors.border.default};
   border-radius: 5px;
+  box-shadow: ${defaultTheme.elevations[1]};
   overflow: hidden;
-  cursor: pointer;
+
+  &:hover {
+    background-color: ${defaultTheme.colors.background.blueTint};
+  }
 `;
 
 const CardContent = styled.div`
+  border-right: 1px solid ${defaultTheme.colors.border.default};
+  flex: 1 0;
 `;
 
 const ArrowsContainer = styled.div`
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const TitleContainer = styled.div`
-  padding: 8px;
-  background-color: white;
-  font-weight: bold;
-  color: ${defaultTheme.colors.text};
   border-bottom: 1px solid ${defaultTheme.colors.border.default};
+  color: ${defaultTheme.colors.text};
+  font-weight: bold;
+  padding: 8px;
 `;
 
 const PreviewContainer = styled.pre`
-  padding: 8px;
   margin: 0;
-  background-color: white;
   overflow-x: auto;
+  padding: 8px;
 `;

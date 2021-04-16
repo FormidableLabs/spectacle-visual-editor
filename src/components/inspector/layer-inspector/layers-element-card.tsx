@@ -16,8 +16,8 @@ interface Props {
   onMoveDownClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
   onMoveUpClick?: (e: MouseEvent<HTMLButtonElement>) => void;
-  showMoveDownIcon?: boolean;
-  showMoveUpIcon?: boolean;
+  showMoveDownButton?: boolean;
+  showMoveUpButton?: boolean;
 }
 
 /**
@@ -30,8 +30,8 @@ export const ElementCard: React.FC<Props> = ({
   onMoveDownClick,
   onMouseDown,
   onMoveUpClick,
-  showMoveDownIcon,
-  showMoveUpIcon
+  showMoveDownButton,
+  showMoveUpButton
 }) => {
   const elementPreview = React.useMemo(() => {
     if (isMdElement(element)) {
@@ -56,14 +56,14 @@ export const ElementCard: React.FC<Props> = ({
         <PreviewContainer>{elementPreview}</PreviewContainer>
       </CardContent>
 
-      {(showMoveDownIcon || showMoveUpIcon) && (
+      {(showMoveDownButton || showMoveUpButton) && (
         <MoveButtonsContainer>
-          {showMoveUpIcon && (
+          {showMoveUpButton && (
             <Button {...moveButtonProps} onClick={onMoveUpClick}>
               <ArrowUpIcon size={14} />
             </Button>
           )}
-          {showMoveDownIcon && (
+          {showMoveDownButton && (
             <Button {...moveButtonProps} onClick={onMoveDownClick}>
               <ArrowDownIcon size={14} />
             </Button>

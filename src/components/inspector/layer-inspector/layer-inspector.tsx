@@ -92,8 +92,8 @@ export const LayerInspector: React.FC = () => {
                 onMouseDown={() => setActiveElementId(el.id)}
                 onMoveUpClick={() => moveItemAndCommit(idx, idx - 1)}
                 onMoveDownClick={() => moveItemAndCommit(idx, idx + 1)}
-                showMoveUpIcon={idx - 1 > -1}
-                showMoveDownIcon={idx + 1 < localChildren.length}
+                showMoveUpButton={idx - 1 > -1}
+                showMoveDownButton={idx + 1 < localChildren.length}
               />
             </SlideElementDragWrapper>
           ))}

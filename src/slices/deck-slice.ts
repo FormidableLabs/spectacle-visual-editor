@@ -22,6 +22,10 @@ type DeckState = {
   theme: SpectacleTheme;
 };
 
+type DeckElementMap = {
+  [key: string]: DeckElement;
+};
+
 export const slidesAdapter = createEntityAdapter<DeckSlide>();
 
 const initialState: DeckState = {
@@ -204,14 +208,17 @@ export const deckSlice = createSlice({
       }
 
       const activeSlideChildren = state?.activeSlide?.children || [];
+      const activeSlideChildrenMap = activeSlideChildren.reduce<DeckElementMap>(
+        (accum, child) => {
+          accum[child.id] = child;
+          return accum;
+        },
+        {}
+      );
 
-      const newElements: DeckElement[] = [];
-      action.payload.forEach((id) => {
-        const el = activeSlideChildren.find((e) => e.id === id);
-        if (el) {
-          newElements.push(el);
-        }
-      });
+      const newElements: DeckElement[] = action.payload
+        .map((id) => activeSlideChildrenMap[id])
+        .filter(Boolean);
 
       state.activeSlide.children = newElements;
     },

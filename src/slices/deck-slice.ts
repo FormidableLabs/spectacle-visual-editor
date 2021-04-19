@@ -207,20 +207,20 @@ export const deckSlice = createSlice({
         return;
       }
 
-      const activeSlideChildren = state?.activeSlide?.children || [];
-      const activeSlideChildrenMap = activeSlideChildren.reduce<DeckElementMap>(
-        (accum, child) => {
-          accum[child.id] = child;
+      const elements = state?.activeSlide?.children || [];
+      const elementsMap = elements.reduce<DeckElementMap>(
+        (accum, element) => {
+          accum[element.id] = element;
           return accum;
         },
         {}
       );
 
-      const newElements: DeckElement[] = action.payload
-        .map((id) => activeSlideChildrenMap[id])
+      const reorderedElements: DeckElement[] = action.payload
+        .map((id) => elementsMap[id])
         .filter(Boolean);
 
-      state.activeSlide.children = newElements;
+      state.activeSlide.children = reorderedElements;
     },
 
     applyLayoutToSlide: (state, action: PayloadAction<DeckElement[]>) => {

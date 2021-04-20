@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
+import { DeckSlide } from './types/deck-elements';
 
-export const sampleSlideData = [
+export const sampleSlideData: DeckSlide[] = [
   {
     component: 'Slide',
     id: v4(),

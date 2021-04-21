@@ -1,5 +1,6 @@
 import {
   createEntityAdapter,
+  createSelector,
   createSlice,
   EntityState,
   PayloadAction
@@ -17,7 +18,7 @@ import undoable from 'redux-undo';
 
 type DeckState = {
   slides: EntityState<DeckSlide>;
-  activeSlide: DeckSlide;
+  activeSlideId: null | string;
   editableElementId: null | string;
   theme: SpectacleTheme;
 };
@@ -28,13 +29,18 @@ type DeckElementMap = {
 
 export const slidesAdapter = createEntityAdapter<DeckSlide>();
 
+// Returns the immer object (instead of the js object like createSelector, createDraftSafeSelector,
+// and slidesAdapter.getSelectors)
+const getActiveSlide = (state: DeckState) => {
+  if (!state.activeSlideId) {
+    return;
+  }
+  return state.slides.entities[state.activeSlideId];
+}
+
 const initialState: DeckState = {
   slides: slidesAdapter.getInitialState(),
-  activeSlide: {
-    component: 'Slide',
-    id: '',
-    children: []
-  },
+  activeSlideId: null,
   editableElementId: null,
   theme: defaultTheme
 };
@@ -45,7 +51,7 @@ export const deckSlice = createSlice({
   reducers: {
     deckLoaded: (state, action) => {
       slidesAdapter.addMany(state.slides, action.payload);
-      state.activeSlide = action.payload[0] || null;
+      state.activeSlideId = action.payload[0]?.id || null;
     },
 
     activeSlideWasChanged: (state, action: PayloadAction<string>) => {
@@ -58,7 +64,7 @@ export const deckSlice = createSlice({
         .selectById(state.slides, action.payload);
 
       if (newActiveSlide) {
-        state.activeSlide = newActiveSlide;
+        state.activeSlideId = newActiveSlide.id;
         state.editableElementId = null;
       }
     },
@@ -71,14 +77,15 @@ export const deckSlice = createSlice({
       };
 
       slidesAdapter.addOne(state.slides, newSlide);
-      state.activeSlide = newSlide;
+      state.activeSlideId = newSlide.id;
     },
 
     elementAddedToActiveSlide: (
       state,
       action: PayloadAction<Omit<DeckElement, 'id'>>
     ) => {
-      if (!state.activeSlide) {
+      const activeSlide = getActiveSlide(state);
+      if (!activeSlide) {
         return;
       }
 
@@ -88,16 +95,16 @@ export const deckSlice = createSlice({
 
       if (state.editableElementId) {
         const potentialNode = searchTreeForNode(
-          state.activeSlide.children,
+          activeSlide.children,
           state.editableElementId
         );
         if (CONTAINER_ELEMENTS.includes(potentialNode?.component || '')) {
           node = potentialNode;
         } else {
-          node = state.activeSlide;
+          node = activeSlide;
         }
       } else {
-        node = state.activeSlide;
+        node = activeSlide;
       }
 
       if (!node) {
@@ -111,11 +118,12 @@ export const deckSlice = createSlice({
       }
 
       slidesAdapter.updateOne(state.slides, {
-        id: state.activeSlide.id,
-        changes: state.activeSlide
+        id: activeSlide.id,
+        changes: activeSlide
       });
       state.editableElementId = newElementId;
     },
+
     editableElementSelected: (state, action) => {
       state.editableElementId = action.payload;
     },
@@ -129,14 +137,17 @@ export const deckSlice = createSlice({
         | { [key: string]: unknown }
       >
     ) => {
-      if (!state.editableElementId) {
+      const activeSlide = getActiveSlide(state);
+
+      if (!state.editableElementId || !activeSlide) {
         return;
       }
 
       const node = searchTreeForNode(
-        state.activeSlide.children,
+        activeSlide.children,
         state.editableElementId
       );
+
       if (!node) {
         return;
       }
@@ -149,19 +160,21 @@ export const deckSlice = createSlice({
       }
 
       slidesAdapter.updateOne(state.slides, {
-        id: state.activeSlide.id,
-        changes: state.activeSlide
+        id: activeSlide.id,
+        changes: activeSlide
       });
     },
+
     deleteSlide: (state) => {
       // Users cannot delete all slides otherwise it would break Spectacle
-      if (state.slides.ids.length === 1) {
+      if (state.slides.ids.length === 1 || !state.activeSlideId) {
         return;
       }
-      slidesAdapter.removeOne(state.slides, state.activeSlide.id);
-      state.activeSlide = slidesAdapter
+
+      slidesAdapter.removeOne(state.slides, state.activeSlideId);
+      state.activeSlideId = slidesAdapter
         .getSelectors()
-        .selectAll(state.slides)[0];
+        .selectAll(state.slides)[0].id;
     },
 
     updateThemeColors: (state, action) => {
@@ -203,11 +216,12 @@ export const deckSlice = createSlice({
      * @param action Array of IDs
      */
     reorderActiveSlideElements: (state, action: PayloadAction<string[]>) => {
-      if (!Array.isArray(action.payload)) {
+      const activeSlide = getActiveSlide(state);
+      if (!activeSlide || !Array.isArray(action.payload)) {
         return;
       }
 
-      const elements = state?.activeSlide?.children || [];
+      const elements = activeSlide.children || [];
       const elementsMap = elements.reduce<DeckElementMap>(
         (accum, element) => {
           accum[element.id] = element;
@@ -215,24 +229,27 @@ export const deckSlice = createSlice({
         },
         {}
       );
-
       const reorderedElements: DeckElement[] = action.payload
         .map((id) => elementsMap[id])
         .filter(Boolean);
 
-      state.activeSlide.children = reorderedElements;
+      activeSlide.children = reorderedElements;
+      slidesAdapter.updateOne(state.slides, {
+        id: activeSlide.id,
+        changes: activeSlide
+      });
     },
 
     applyLayoutToSlide: (state, action: PayloadAction<DeckElement[]>) => {
-      if (!state.activeSlide) {
+      const activeSlide = getActiveSlide(state);
+      if (!activeSlide) {
         return;
       }
 
-      state.activeSlide.children = action.payload;
-
+      activeSlide.children = action.payload;
       slidesAdapter.updateOne(state.slides, {
-        id: state.activeSlide.id,
-        changes: state.activeSlide
+        id: activeSlide.id,
+        changes: activeSlide
       });
     }
   }
@@ -266,25 +283,37 @@ export const undoableDeckSliceReducer = undoable(deckSlice.reducer, {
   }
 });
 
-export const slidesSelector = (state: RootState) =>
-  slidesAdapter.getSelectors().selectAll(state.deck.present.slides);
-export const activeSlideSelector = (state: RootState) =>
-  state.deck.present.activeSlide;
+const slidesEntitySelector = (state: RootState) => state.deck.present.slides;
+
+export const activeSlideIdSelector = (state: RootState) => state.deck.present.activeSlideId;
 export const editableElementIdSelector = (state: RootState) =>
   state.deck.present.editableElementId;
 export const themeSelector = (state: RootState) => state.deck.present.theme;
-export const selectedElementSelector = (state: RootState) => {
-  if (
-    !state.deck.present.activeSlide?.children ||
-    !state.deck.present.editableElementId
-  ) {
-    return null;
+
+export const slidesSelector = createSelector(
+  slidesEntitySelector,
+  (slidesEntity) => slidesAdapter.getSelectors().selectAll(slidesEntity)
+);
+export const activeSlideSelector = createSelector(
+  slidesEntitySelector,
+  activeSlideIdSelector,
+  (slidesEntity, activeSlideId) => {
+    if (!activeSlideId) {
+      return;
+    }
+    return slidesAdapter.getSelectors().selectById(slidesEntity, activeSlideId);
   }
-  return searchTreeForNode(
-    state.deck.present.activeSlide.children,
-    state.deck.present.editableElementId
-  );
-};
+);
+export const selectedElementSelector = createSelector(
+  activeSlideSelector,
+  editableElementIdSelector,
+  (activeSlide, editableElementId) => {
+    if (!activeSlide?.children || !editableElementId) {
+      return null;
+    }
+    return searchTreeForNode(activeSlide.children, editableElementId);
+  }
+);
 export const hasPastSelector = (state: RootState) => state.deck.past.length > 1;
 export const hasFutureSelector = (state: RootState) =>
   state.deck.future.length > 0;

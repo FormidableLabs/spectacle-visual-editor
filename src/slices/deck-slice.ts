@@ -2,7 +2,8 @@ import {
   createEntityAdapter,
   createSlice,
   EntityState,
-  PayloadAction
+  PayloadAction,
+  current
 } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
 
@@ -89,11 +90,14 @@ export const deckSlice = createSlice({
         );
         if (CONTAINER_ELEMENTS.includes(potentialNode?.component || '')) {
           node = potentialNode;
+          newElement.parentId = state.editableElementId;
         } else {
           node = state.activeSlide;
+          newElement.parentId = state.activeSlide.id;
         }
       } else {
         node = state.activeSlide;
+        newElement.parentId = state.activeSlide.id;
       }
 
       if (!node) {
@@ -133,9 +137,7 @@ export const deckSlice = createSlice({
         state.activeSlide.children,
         state.editableElementId
       );
-      if (!node) {
-        return;
-      }
+      if (!node) return;
 
       const { children: incomingChildren, ...incomingProps } = action.payload;
 
@@ -170,6 +172,31 @@ export const deckSlice = createSlice({
 
     updateThemeSize: (state, action) => {
       state.theme.size = { ...state.theme.size, ...action.payload };
+    },
+
+    deleteElement: (state) => {
+      if (state.activeSlide.children.length <= 0 || !state.editableElementId)
+        return;
+
+      let targetNode = searchTreeForNode(
+        state.activeSlide.children,
+        state.editableElementId
+      );
+      if (!targetNode || !targetNode.parentId) return;
+
+      let parentNode = searchTreeForNode(
+        state.activeSlide.children,
+        targetNode.parentId
+      );
+
+      if (!parentNode) return;
+
+      parentNode.children = [];
+
+      slidesAdapter.updateOne(state.slides, {
+        id: state.activeSlide.id,
+        changes: state.activeSlide
+      });
     },
 
     /**

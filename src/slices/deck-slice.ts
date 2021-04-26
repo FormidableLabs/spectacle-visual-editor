@@ -89,14 +89,11 @@ export const deckSlice = createSlice({
         );
         if (CONTAINER_ELEMENTS.includes(potentialNode?.component || '')) {
           node = potentialNode;
-          newElement.parentId = state.editableElementId;
         } else {
           node = state.activeSlide;
-          newElement.parentId = state.activeSlide.id;
         }
       } else {
         node = state.activeSlide;
-        newElement.parentId = state.activeSlide.id;
       }
 
       if (!node) {

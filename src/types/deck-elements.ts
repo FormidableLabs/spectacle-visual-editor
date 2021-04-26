@@ -7,7 +7,6 @@ export type DeckElement = {
   id: string;
   props?: { [key: string]: any };
   children?: string | DeckElement[];
-  parentId?: string;
 };
 
 export type DeckSlide = DeckElement & {

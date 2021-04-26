@@ -59,6 +59,13 @@ export const deckSlice = createSlice({
       }
     },
 
+    clearActiveSlideChildren: (state) => {
+      if (!state.activeSlide) {
+        return;
+      }
+      state.activeSlide.children = [];
+    },
+
     newSlideAdded: (state) => {
       const newSlide: DeckSlide = {
         id: v4(),

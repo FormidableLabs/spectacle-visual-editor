@@ -150,6 +150,7 @@ export const deckSlice = createSlice({
         changes: state.activeSlide
       });
     },
+
     deleteSlide: (state) => {
       // Users cannot delete all slides otherwise it would break Spectacle
       if (state.slides.ids.length === 1) {
@@ -188,9 +189,13 @@ export const deckSlice = createSlice({
         targetNode.parentId
       );
 
-      if (!parentNode) return;
-
-      parentNode.children = [];
+      if (!parentNode) {
+        state.activeSlide.children = state.activeSlide.children.filter(
+          (node) => node.id !== state.editableElementId
+        );
+      } else {
+        parentNode.children = [];
+      }
 
       slidesAdapter.updateOne(state.slides, {
         id: state.activeSlide.id,
@@ -291,6 +296,15 @@ export const activeSlideSelector = (state: RootState) =>
   state.deck.present.activeSlide;
 export const editableElementIdSelector = (state: RootState) =>
   state.deck.present.editableElementId;
+export const currentElementSelector = (
+  state: RootState
+): DeckElement | null => {
+  if (!state.deck.present.editableElementId) return null;
+  return searchTreeForNode(
+    state.deck.present.activeSlide.children,
+    state.deck.present.editableElementId
+  );
+};
 export const themeSelector = (state: RootState) => state.deck.present.theme;
 export const selectedElementSelector = (state: RootState) => {
   if (

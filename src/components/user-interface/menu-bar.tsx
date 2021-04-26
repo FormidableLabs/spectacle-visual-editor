@@ -15,11 +15,12 @@ import { ActionCreators as UndoActionCreators } from 'redux-undo';
 import {
   deckSlice,
   hasPastSelector,
-  hasFutureSelector
+  hasFutureSelector,
+  currentElementSelector
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
-import { ELEMENTS } from '../slide/elements';
+import { ELEMENTS, CONTAINER_ELEMENTS } from '../slide/elements';
 
 const MenuBarContainer = styled.div`
   width: 100%;
@@ -37,9 +38,20 @@ export const MenuBar = () => {
   const { scale } = useSelector(settingsSelector);
   const hasPast = useSelector(hasPastSelector);
   const hasFuture = useSelector(hasFutureSelector);
+  const currentlySelectedElement = useSelector(currentElementSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
+  const handleDeleteElement = () => {
+    if (
+      currentlySelectedElement &&
+      CONTAINER_ELEMENTS.includes(currentlySelectedElement.component)
+    ) {
+      toggleDialog();
+    } else {
+      dispatch(deckSlice.actions.deleteElement());
+    }
+  };
 
   return (
     <MenuBarContainer>
@@ -147,10 +159,11 @@ export const MenuBar = () => {
                 <Dialog
                   isShown={dialogOpen}
                   intent="danger"
-                  onCloseComplete={() => {
+                  onConfirm={(close) => {
                     dispatch(deckSlice.actions.deleteElement());
-                    toggleDialog();
+                    close();
                   }}
+                  onCloseComplete={toggleDialog}
                   hasHeader={false}
                   confirmLabel="Delete"
                 >
@@ -160,7 +173,7 @@ export const MenuBar = () => {
               </Pane>
               <Menu.Item
                 secondaryText={<span>⌘D</span>}
-                onSelect={toggleDialog}
+                onSelect={handleDeleteElement}
               >
                 Delete
               </Menu.Item>

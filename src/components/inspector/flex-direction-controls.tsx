@@ -20,7 +20,6 @@ export const FlexDirectionControls: React.FC<ElementControlsProps> = ({
 
   useEffect(() => {
     const selectedFlexDirection = selectedElement?.props?.flexDirection;
-    console.log(selectedElement);
     setFlexDirection(selectedFlexDirection);
   }, [flexDirection, selectedElement]);
 

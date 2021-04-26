@@ -42,16 +42,6 @@ export const MenuBar = () => {
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
-  const handleDeleteElement = () => {
-    if (
-      currentlySelectedElement &&
-      CONTAINER_ELEMENTS.includes(currentlySelectedElement.component)
-    ) {
-      toggleDialog();
-    } else {
-      dispatch(deckSlice.actions.deleteElement());
-    }
-  };
 
   return (
     <MenuBarContainer>
@@ -173,7 +163,19 @@ export const MenuBar = () => {
               </Pane>
               <Menu.Item
                 secondaryText={<span>⌘D</span>}
-                onSelect={handleDeleteElement}
+                onSelect={() => {
+                  if (
+                    currentlySelectedElement &&
+                    CONTAINER_ELEMENTS.includes(
+                      currentlySelectedElement.component
+                    )
+                  ) {
+                    toggleDialog();
+                  } else {
+                    dispatch(deckSlice.actions.deleteElement());
+                    close();
+                  }
+                }}
               >
                 Delete
               </Menu.Item>

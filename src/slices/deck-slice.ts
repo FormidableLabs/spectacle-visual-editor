@@ -8,7 +8,7 @@ import { v4, validate } from 'uuid';
 
 import { CONTAINER_ELEMENTS } from '../components/slide/elements';
 import { defaultTheme } from 'spectacle';
-import { searchTreeForNode } from '../util/node-search';
+import { searchTreeForNode, deleteInTreeForNode } from '../util/node-search';
 import { DeckElement, DeckSlide } from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
@@ -178,24 +178,7 @@ export const deckSlice = createSlice({
       if (state.activeSlide.children.length <= 0 || !state.editableElementId)
         return;
 
-      let targetNode = searchTreeForNode(
-        state.activeSlide.children,
-        state.editableElementId
-      );
-      if (!targetNode || !targetNode.parentId) return;
-
-      let parentNode = searchTreeForNode(
-        state.activeSlide.children,
-        targetNode.parentId
-      );
-
-      if (!parentNode) {
-        state.activeSlide.children = state.activeSlide.children.filter(
-          (node) => node.id !== state.editableElementId
-        );
-      } else {
-        parentNode.children = [];
-      }
+      deleteInTreeForNode(state.activeSlide.children, state.editableElementId);
 
       slidesAdapter.updateOne(state.slides, {
         id: state.activeSlide.id,

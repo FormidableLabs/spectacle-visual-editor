@@ -8,7 +8,7 @@ import { v4, validate } from 'uuid';
 
 import { CONTAINER_ELEMENTS } from '../components/slide/elements';
 import { defaultTheme } from 'spectacle';
-import { searchTreeForNode } from '../util/node-search';
+import { searchTreeForNode, deleteInTreeForNode } from '../util/node-search';
 import { DeckElement, DeckSlide } from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
@@ -133,9 +133,7 @@ export const deckSlice = createSlice({
         state.activeSlide.children,
         state.editableElementId
       );
-      if (!node) {
-        return;
-      }
+      if (!node) return;
 
       const { children: incomingChildren, ...incomingProps } = action.payload;
 
@@ -149,6 +147,7 @@ export const deckSlice = createSlice({
         changes: state.activeSlide
       });
     },
+
     deleteSlide: (state) => {
       // Users cannot delete all slides otherwise it would break Spectacle
       if (state.slides.ids.length === 1) {
@@ -170,6 +169,18 @@ export const deckSlice = createSlice({
 
     updateThemeSize: (state, action) => {
       state.theme.size = { ...state.theme.size, ...action.payload };
+    },
+
+    deleteElement: (state) => {
+      if (state.activeSlide.children.length <= 0 || !state.editableElementId)
+        return;
+
+      deleteInTreeForNode(state.activeSlide.children, state.editableElementId);
+
+      slidesAdapter.updateOne(state.slides, {
+        id: state.activeSlide.id,
+        changes: state.activeSlide
+      });
     },
 
     /**
@@ -265,6 +276,15 @@ export const activeSlideSelector = (state: RootState) =>
   state.deck.present.activeSlide;
 export const editableElementIdSelector = (state: RootState) =>
   state.deck.present.editableElementId;
+export const currentElementSelector = (
+  state: RootState
+): DeckElement | null => {
+  if (!state.deck.present.editableElementId) return null;
+  return searchTreeForNode(
+    state.deck.present.activeSlide.children,
+    state.deck.present.editableElementId
+  );
+};
 export const themeSelector = (state: RootState) => state.deck.present.theme;
 export const selectedElementSelector = (state: RootState) => {
   if (

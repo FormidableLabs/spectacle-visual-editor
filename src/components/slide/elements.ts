@@ -14,7 +14,7 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
     children: `- one\n- two\n- three`
   },
   BOX: {
-    component: 'Box',
+    component: 'FlexBox',
     props: { backgroundColor: 'limegreen', height: 100, width: 200 },
     children: []
   },

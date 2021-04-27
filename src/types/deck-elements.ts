@@ -2,8 +2,12 @@
  * Element in our deck component tree.
  * - Elements can be nested inside other elements (a la children)
  */
+
+export type SPECTACLE_ELEMENTS = 'Slide' | 'Markdown' | 'FlexBox' | 'Image';
+export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];
+
 export type DeckElement = {
-  component: 'Slide' | 'Markdown' | 'Box' | 'Image';
+  component: SPECTACLE_ELEMENTS;
   id: string;
   props?: { [key: string]: any };
   children?: string | DeckElement[];

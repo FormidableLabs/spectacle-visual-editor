@@ -5,7 +5,4 @@ export enum FLEX_DIRECTION {
 }
 
 // Options for mappings
-export const FLEX_DIRECTION_OPTIONS: string[] = [
-  FLEX_DIRECTION.column,
-  FLEX_DIRECTION.row
-];
+export const FLEX_DIRECTION_OPTIONS: string[] = Object.values(FLEX_DIRECTION);

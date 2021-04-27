@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { SelectInput } from '../inputs/select';
 import { ElementControlsProps } from './element-controls-props';
 import {
@@ -15,13 +15,7 @@ export const FlexDirectionControls: React.FC<ElementControlsProps> = ({
   selectedElement,
   editableElementChanged
 }) => {
-  // defaulting to column for now due to that being the current default behavior
-  const [flexDirection, setFlexDirection] = useState(FLEX_DIRECTION.column);
-
-  useEffect(() => {
-    const selectedFlexDirection = selectedElement?.props?.flexDirection;
-    setFlexDirection(selectedFlexDirection);
-  }, [flexDirection, selectedElement]);
+  const value = selectedElement?.props?.flexDirection || FLEX_DIRECTION.column;
 
   const handleValueChanged = useCallback(
     (value) => editableElementChanged({ flexDirection: value }),
@@ -32,7 +26,7 @@ export const FlexDirectionControls: React.FC<ElementControlsProps> = ({
     <SelectInput
       label="Layout Content"
       onValueChange={handleValueChanged}
-      value={flexDirection}
+      value={value}
       options={selectableFlexOptions}
     />
   );

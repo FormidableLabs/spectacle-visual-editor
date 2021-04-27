@@ -9,37 +9,43 @@ import { v4, validate } from 'uuid';
 
 import { CONTAINER_ELEMENTS } from '../components/slide/elements';
 import { defaultTheme } from 'spectacle';
-import { searchTreeForNode } from '../util/node-search';
-import { DeckElement, DeckSlide } from '../types/deck-elements';
+import { DeckElement2, DeckElementMap2, DeckSlide2 } from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
-import { isDeckElementChildren } from '../util/is-deck-element';
+import { constructElements } from '../util/construct-elements';
 import undoable from 'redux-undo';
 
 type DeckState = {
-  slides: EntityState<DeckSlide>;
+  slides: EntityState<DeckSlide2>;
+  elements: EntityState<DeckElement2>;
   activeSlideId: null | string;
+
+  // TODO: CHANGE TO selectedElementId
   editableElementId: null | string;
   theme: SpectacleTheme;
 };
 
-type DeckElementMap = {
-  [key: string]: DeckElement;
-};
-
-export const slidesAdapter = createEntityAdapter<DeckSlide>();
+export const slidesAdapter = createEntityAdapter<DeckSlide2>();
+export const elementsAdapter = createEntityAdapter<DeckElement2>();
 
 // Returns the immer object (instead of the js object like createSelector, createDraftSafeSelector,
 // and slidesAdapter.getSelectors)
-const getActiveSlide = (state: DeckState) => {
+const getActiveSlideImmer = (state: DeckState) => {
   if (!state.activeSlideId) {
     return;
   }
   return state.slides.entities[state.activeSlideId];
-}
+};
+const getSelectedElementImmer = (state: DeckState) => {
+  if (!state.editableElementId) {
+    return;
+  }
+  return state.elements.entities[state.editableElementId];
+};
 
 const initialState: DeckState = {
   slides: slidesAdapter.getInitialState(),
+  elements: elementsAdapter.getInitialState(),
   activeSlideId: null,
   editableElementId: null,
   theme: defaultTheme
@@ -49,9 +55,10 @@ export const deckSlice = createSlice({
   name: 'deck',
   initialState,
   reducers: {
-    deckLoaded: (state, action) => {
-      slidesAdapter.addMany(state.slides, action.payload);
-      state.activeSlideId = action.payload[0]?.id || null;
+    deckLoaded: (state, action: PayloadAction<{ slides: DeckSlide2[], elements: DeckElementMap2 }>) => {
+      slidesAdapter.addMany(state.slides, action.payload.slides);
+      elementsAdapter.addMany(state.elements, action.payload.elements);
+      state.activeSlideId = action.payload.slides[0]?.id || null;
     },
 
     activeSlideWasChanged: (state, action: PayloadAction<string>) => {
@@ -70,7 +77,7 @@ export const deckSlice = createSlice({
     },
 
     newSlideAdded: (state) => {
-      const newSlide: DeckSlide = {
+      const newSlide: DeckSlide2 = {
         id: v4(),
         component: 'Slide',
         children: []
@@ -78,26 +85,26 @@ export const deckSlice = createSlice({
 
       slidesAdapter.addOne(state.slides, newSlide);
       state.activeSlideId = newSlide.id;
+      state.editableElementId = null;
     },
 
     elementAddedToActiveSlide: (
       state,
-      action: PayloadAction<Omit<DeckElement, 'id'>>
+      action: PayloadAction<Omit<DeckElement2, 'id'>>
     ) => {
-      const activeSlide = getActiveSlide(state);
+      const activeSlide = getActiveSlideImmer(state);
+
       if (!activeSlide) {
         return;
       }
 
-      let node: DeckElement | null = null;
+      let node: DeckElement2 | undefined;
       const newElementId = v4();
-      const newElement: DeckElement = { id: newElementId, ...action.payload };
+      const newElement: DeckElement2 = { id: newElementId, ...action.payload };
 
       if (state.editableElementId) {
-        const potentialNode = searchTreeForNode(
-          activeSlide.children,
-          state.editableElementId
-        );
+        const potentialNode = getSelectedElementImmer(state);
+
         if (CONTAINER_ELEMENTS.includes(potentialNode?.component || '')) {
           node = potentialNode;
         } else {
@@ -112,15 +119,16 @@ export const deckSlice = createSlice({
       }
 
       if (Array.isArray(node?.children)) {
-        node.children.push(newElement);
+        node.children.push(newElementId);
       } else {
-        node.children = [newElement];
+        node.children = [newElementId];
       }
 
       slidesAdapter.updateOne(state.slides, {
         id: activeSlide.id,
         changes: activeSlide
       });
+      elementsAdapter.addOne(state.elements, newElement);
       state.editableElementId = newElementId;
     },
 
@@ -130,39 +138,22 @@ export const deckSlice = createSlice({
 
     editableElementChanged: (
       state,
-      action: PayloadAction<
-        | (Partial<DeckElement['props']> & {
-            children?: DeckElement['children'];
-          })
-        | { [key: string]: unknown }
-      >
+      // Does not allow nested children right now, only renderable string children
+      action: PayloadAction<DeckElement2['props'] & { children?: string; }>
     ) => {
-      const activeSlide = getActiveSlide(state);
+      const selectedElement = getSelectedElementImmer(state);
 
-      if (!state.editableElementId || !activeSlide) {
-        return;
-      }
-
-      const node = searchTreeForNode(
-        activeSlide.children,
-        state.editableElementId
-      );
-
-      if (!node) {
+      if (!selectedElement) {
         return;
       }
 
       const { children: incomingChildren, ...incomingProps } = action.payload;
 
-      node.props = { ...node.props, ...incomingProps };
-      if (isDeckElementChildren(incomingChildren)) {
-        node.children = incomingChildren;
-      }
+      selectedElement.props = { ...selectedElement.props, ...incomingProps };
 
-      slidesAdapter.updateOne(state.slides, {
-        id: activeSlide.id,
-        changes: activeSlide
-      });
+      if (incomingChildren) {
+        selectedElement.children = incomingChildren;
+      }
     },
 
     deleteSlide: (state) => {
@@ -199,9 +190,12 @@ export const deckSlice = createSlice({
         return;
       }
 
-      const newSlides: DeckSlide[] = [];
+      const newSlides: DeckSlide2[] = [];
+      const selectSlideById = slidesAdapter.getSelectors().selectById;
+
       action.payload.forEach((id) => {
-        const slide = slidesAdapter.getSelectors().selectById(state.slides, id);
+        const slide = selectSlideById(state.slides, id);
+
         if (slide) {
           newSlides.push(slide);
         }
@@ -216,41 +210,24 @@ export const deckSlice = createSlice({
      * @param action Array of IDs
      */
     reorderActiveSlideElements: (state, action: PayloadAction<string[]>) => {
-      const activeSlide = getActiveSlide(state);
+      const activeSlide = getActiveSlideImmer(state);
       if (!activeSlide || !Array.isArray(action.payload)) {
         return;
       }
 
-      const elements = activeSlide.children || [];
-      const elementsMap = elements.reduce<DeckElementMap>(
-        (accum, element) => {
-          accum[element.id] = element;
-          return accum;
-        },
-        {}
-      );
-      const reorderedElements: DeckElement[] = action.payload
-        .map((id) => elementsMap[id])
-        .filter(Boolean);
-
-      activeSlide.children = reorderedElements;
-      slidesAdapter.updateOne(state.slides, {
-        id: activeSlide.id,
-        changes: activeSlide
-      });
+      activeSlide.children = action.payload;
     },
 
-    applyLayoutToSlide: (state, action: PayloadAction<DeckElement[]>) => {
-      const activeSlide = getActiveSlide(state);
+    applyLayoutToSlide: (state, action: PayloadAction<{ elementIds: string[]; elementMap: DeckElementMap2; }>) => {
+      const activeSlide = getActiveSlideImmer(state);
+
       if (!activeSlide) {
         return;
       }
 
-      activeSlide.children = action.payload;
-      slidesAdapter.updateOne(state.slides, {
-        id: activeSlide.id,
-        changes: activeSlide
-      });
+      activeSlide.children = action.payload.elementIds;
+      elementsAdapter.addMany(state.elements, action.payload.elementMap);
+      state.editableElementId = null;
     }
   }
 });
@@ -284,6 +261,7 @@ export const undoableDeckSliceReducer = undoable(deckSlice.reducer, {
 });
 
 const slidesEntitySelector = (state: RootState) => state.deck.present.slides;
+const elementsEntitySelector = (state: RootState) => state.deck.present.elements;
 
 export const activeSlideIdSelector = (state: RootState) => state.deck.present.activeSlideId;
 export const editableElementIdSelector = (state: RootState) =>
@@ -292,26 +270,52 @@ export const themeSelector = (state: RootState) => state.deck.present.theme;
 
 export const slidesSelector = createSelector(
   slidesEntitySelector,
-  (slidesEntity) => slidesAdapter.getSelectors().selectAll(slidesEntity)
+  elementsEntitySelector,
+  (slidesEntity, elementsEntity) => {
+    const getElementById = (id: string) => elementsAdapter.getSelectors().selectById(elementsEntity, id);
+
+    return slidesAdapter.getSelectors().selectAll(slidesEntity).map((slide) => {
+      return { ...slide, children: constructElements(slide.children, getElementById) };
+    });
+  }
 );
 export const activeSlideSelector = createSelector(
   slidesEntitySelector,
+  elementsEntitySelector,
   activeSlideIdSelector,
-  (slidesEntity, activeSlideId) => {
+  (slidesEntity, elementsEntity, activeSlideId) => {
     if (!activeSlideId) {
-      return;
+      return null;
     }
-    return slidesAdapter.getSelectors().selectById(slidesEntity, activeSlideId);
+
+    const activeSlide = slidesAdapter.getSelectors().selectById(slidesEntity, activeSlideId);
+    if (!activeSlide) {
+      return null;
+    }
+
+    const getElementById = (id: string) => elementsAdapter.getSelectors().selectById(elementsEntity, id);
+    return { ...activeSlide, children: constructElements(activeSlide.children, getElementById) };
   }
 );
 export const selectedElementSelector = createSelector(
-  activeSlideSelector,
+  elementsEntitySelector,
   editableElementIdSelector,
-  (activeSlide, editableElementId) => {
-    if (!activeSlide?.children || !editableElementId) {
+  (elementsEntity, editableElementId) => {
+    if (!editableElementId) {
       return null;
     }
-    return searchTreeForNode(activeSlide.children, editableElementId);
+
+    const editableElement = elementsAdapter.getSelectors().selectById(elementsEntity, editableElementId);
+    if (!editableElement) {
+      return null;
+    }
+
+    if (Array.isArray(editableElement.children)) {
+      const getElementById = (id: string) => elementsAdapter.getSelectors().selectById(elementsEntity, id);
+      return { ...editableElement, children: constructElements(editableElement.children, getElementById) };
+    }
+
+    return editableElement;
   }
 );
 export const hasPastSelector = (state: RootState) => state.deck.past.length > 1;

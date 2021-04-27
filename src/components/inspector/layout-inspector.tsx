@@ -7,9 +7,14 @@ import { basicLayout, codePaneLayout } from '../../templates/basic-layouts';
 import { Slide } from '../slide/slide';
 import { SlideViewerWrapper } from '../slide/slide-viewer/slide-viewer-wrapper';
 import { generateInternalSlideTree } from '../slide/slide-generator';
-import { DeckElement, DeckSlide } from '../../types/deck-elements';
+import { DeckElement2, DeckElementMap2, DeckSlide2 } from '../../types/deck-elements';
+import { constructElements } from '../../util/construct-elements';
 
-const layouts: { [key: string]: () => DeckElement[] } = {
+type Layouts = {
+  [key: string]: () => { elementIds: string[]; elementMap: DeckElementMap2; }
+};
+
+const layouts: Layouts = {
   basicLayout,
   codePaneLayout
 };
@@ -23,6 +28,19 @@ const SlideWrapper = styled.div`
 
 export const LayoutInspector = () => {
   const dispatch = useDispatch();
+
+  const constructedLayouts: { [key: string]: DeckElement2[]; } = React.useMemo(() => {
+    return Object.keys(layouts).reduce((accum, layoutKey) => {
+      const { elementIds, elementMap } = layouts[layoutKey]();
+      const getElementById = (id: string) => elementMap[id];
+
+      return {
+        ...accum,
+        [layoutKey]: constructElements(elementIds, getElementById)
+      };
+    }, {});
+  }, []);
+
   return (
     <Pane>
       <SlideViewerWrapper>
@@ -40,9 +58,9 @@ export const LayoutInspector = () => {
                 }
               }}
             >
-              {(layouts[layoutKey]() as DeckSlide[]).map(
+              {(constructedLayouts[layoutKey] as DeckSlide2[]).map(
                 generateInternalSlideTree as (
-                  opt: DeckSlide
+                  opt: DeckSlide2
                 ) => React.ReactElement
               )}
             </Slide>

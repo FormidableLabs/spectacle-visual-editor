@@ -11,6 +11,28 @@ export type DeckElement = {
 
 export type DeckSlide = DeckElement & {
   component: 'Slide';
-  id: string;
   children: DeckElement[];
 };
+
+
+export type DeckElement2 = {
+  component: 'Slide' | 'Markdown' | 'Box' | 'Image' | 'FlexBox';
+  id: string;
+  props?: { [key: string]: any };
+  children?: string | string[];
+};
+
+export type ConstructedDeckElement2 = DeckElement2 & {
+  children?: string | ConstructedDeckElement2[];
+};
+
+export type DeckElementMap2 = Record<string, DeckElement2>;
+
+export type DeckSlide2 = DeckElement2 & {
+  component: 'Slide';
+  children: string[];
+};
+
+export type ConstructedDeckSlide2 = ConstructedDeckElement2 & DeckSlide2 & {
+  children: ConstructedDeckElement2[];
+}

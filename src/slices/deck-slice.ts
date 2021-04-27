@@ -59,13 +59,6 @@ export const deckSlice = createSlice({
       }
     },
 
-    clearActiveSlideChildren: (state) => {
-      if (!state.activeSlide) {
-        return;
-      }
-      state.activeSlide.children = [];
-    },
-
     newSlideAdded: (state) => {
       const newSlide: DeckSlide = {
         id: v4(),
@@ -176,6 +169,17 @@ export const deckSlice = createSlice({
 
     updateThemeSize: (state, action) => {
       state.theme.size = { ...state.theme.size, ...action.payload };
+    },
+
+    deleteActiveSlideElementById: (state, action) => {
+      if (state.activeSlide.children.length <= 0 || !action.payload) return;
+
+      deleteInTreeForNode(state.activeSlide.children, action.payload);
+
+      slidesAdapter.updateOne(state.slides, {
+        id: state.activeSlide.id,
+        changes: state.activeSlide
+      });
     },
 
     deleteElement: (state) => {

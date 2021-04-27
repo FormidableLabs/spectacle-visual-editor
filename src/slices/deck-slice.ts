@@ -171,17 +171,6 @@ export const deckSlice = createSlice({
       state.theme.size = { ...state.theme.size, ...action.payload };
     },
 
-    deleteActiveSlideElementById: (state, action) => {
-      if (state.activeSlide.children.length <= 0 || !action.payload) return;
-
-      deleteInTreeForNode(state.activeSlide.children, action.payload);
-
-      slidesAdapter.updateOne(state.slides, {
-        id: state.activeSlide.id,
-        changes: state.activeSlide
-      });
-    },
-
     deleteElement: (state) => {
       if (state.activeSlide.children.length <= 0 || !state.editableElementId)
         return;

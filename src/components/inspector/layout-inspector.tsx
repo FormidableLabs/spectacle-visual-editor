@@ -39,12 +39,6 @@ export const LayoutInspector = () => {
 
   const applySelectedLayout = useCallback(
     (closeDialog = null) => {
-      if (hasExisitingContent) {
-        activeSlide.children.forEach((element) =>
-          // Possibility of chaining these in a Promise.all later if it's necessary
-          dispatch(deckSlice.actions.deleteActiveSlideElementById(element.id))
-        );
-      }
       dispatch(
         deckSlice.actions.applyLayoutToSlide(layouts[selectedLayoutKey]())
       );
@@ -53,7 +47,7 @@ export const LayoutInspector = () => {
         closeDialog();
       }
     },
-    [activeSlide.children, dispatch, hasExisitingContent, selectedLayoutKey]
+    [dispatch, selectedLayoutKey]
   );
 
   useEffect(() => {

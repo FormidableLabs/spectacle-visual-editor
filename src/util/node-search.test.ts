@@ -77,4 +77,9 @@ describe('deleteInTreeForNode', () => {
       }
     ]);
   });
+
+  test('should delete object and nested children in tree', () => {
+    deleteInTreeForNode(tree, '456');
+    expect(tree[0].children).toEqual([]);
+  });
 });

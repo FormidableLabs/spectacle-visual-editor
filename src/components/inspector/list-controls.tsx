@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeckElement } from '../../types/deck-elements';
+import { ConstructedDeckElement } from '../../types/deck-elements';
 import { FormField, Switch } from 'evergreen-ui';
 import { SelectInput } from '../inputs/select';
 import { cloneDeep, set } from 'lodash-es';
@@ -7,8 +7,8 @@ import styled from 'styled-components';
 import { LIST_STYLE_TYPE_OPTIONS } from '../../constants/list-style-type-options';
 
 interface Props {
-  selectedElement: DeckElement | null;
-  editableElementChanged(element: Partial<DeckElement['props']>): void;
+  selectedElement: ConstructedDeckElement | null;
+  editableElementChanged(element: Partial<ConstructedDeckElement['props']>): void;
 }
 
 export const ListControls: React.FC<Props> = ({

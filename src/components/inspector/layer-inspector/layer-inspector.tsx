@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRootSelector } from '../../../store';
 import useOnClickOutside from 'react-cool-onclickoutside';
-import { DeckElement } from '../../../types/deck-elements';
+import { ConstructedDeckElement } from '../../../types/deck-elements';
 import { activeSlideSelector, deckSlice } from '../../../slices/deck-slice';
 import { Pane } from '../inspector-styles';
 import { DndProvider } from 'react-dnd';
@@ -29,7 +29,7 @@ export const LayerInspector: React.FC = () => {
   const dispatch = useDispatch();
 
   const reorderSlideElements = React.useCallback(
-    (nextElements: DeckElement[]) => {
+    (nextElements: ConstructedDeckElement[]) => {
       const nextIds = nextElements.map((el) => el?.id) || [];
       dispatch(deckSlice.actions.reorderActiveSlideElements(nextIds));
     },

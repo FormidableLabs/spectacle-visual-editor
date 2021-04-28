@@ -5,7 +5,7 @@ import {
 } from '../components';
 import { useSelector } from 'react-redux';
 import { activeSlideSelector, slidesSelector } from '../slices/deck-slice';
-import { DeckSlide } from '../types/deck-elements';
+import { ConstructedDeckSlide } from '../types/deck-elements';
 import { GenerateOptions } from '../components/slide/slide-generator';
 
 export const useSlideNodes = () => {
@@ -15,7 +15,7 @@ export const useSlideNodes = () => {
   const slideNodes = useMemo(
     () =>
       slideJson.map(
-        generateInternalSlideTree as (opt: DeckSlide) => React.ReactElement
+        generateInternalSlideTree as (opt: ConstructedDeckSlide) => React.ReactElement
       ),
     [slideJson]
   );

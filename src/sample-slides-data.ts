@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { DeckElementMap2, DeckSlide2 } from './types/deck-elements';
+import { DeckElementMap, DeckSlide } from './types/deck-elements';
 
 const childId1 = v4();
 const childId2 = v4();
@@ -9,7 +9,7 @@ const childId5 = v4();
 const childId6 = v4();
 const childId7 = v4();
 
-export const sampleSlidesData: DeckSlide2[] = [
+export const sampleSlidesData: DeckSlide[] = [
   {
     component: 'Slide',
     id: v4(),
@@ -32,7 +32,7 @@ export const sampleSlidesData: DeckSlide2[] = [
   }
 ];
 
-export const sampleElementsData: DeckElementMap2 = {
+export const sampleElementsData: DeckElementMap = {
   [childId1]: {
     component: 'FlexBox',
     id: childId1,

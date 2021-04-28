@@ -9,15 +9,15 @@ import { v4, validate } from 'uuid';
 
 import { CONTAINER_ELEMENTS } from '../components/slide/elements';
 import { defaultTheme } from 'spectacle';
-import { DeckElement2, DeckElementMap2, DeckSlide2 } from '../types/deck-elements';
+import { DeckElement, DeckElementMap, DeckSlide } from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
 import { constructElements } from '../util/construct-elements';
 import undoable from 'redux-undo';
 
 type DeckState = {
-  slides: EntityState<DeckSlide2>;
-  elements: EntityState<DeckElement2>;
+  slides: EntityState<DeckSlide>;
+  elements: EntityState<DeckElement>;
   activeSlideId: null | string;
 
   // TODO: CHANGE TO selectedElementId
@@ -25,8 +25,8 @@ type DeckState = {
   theme: SpectacleTheme;
 };
 
-export const slidesAdapter = createEntityAdapter<DeckSlide2>();
-export const elementsAdapter = createEntityAdapter<DeckElement2>();
+export const slidesAdapter = createEntityAdapter<DeckSlide>();
+export const elementsAdapter = createEntityAdapter<DeckElement>();
 
 // Returns the immer object (instead of the js object like createSelector, createDraftSafeSelector,
 // and slidesAdapter.getSelectors)
@@ -55,7 +55,7 @@ export const deckSlice = createSlice({
   name: 'deck',
   initialState,
   reducers: {
-    deckLoaded: (state, action: PayloadAction<{ slides: DeckSlide2[], elements: DeckElementMap2 }>) => {
+    deckLoaded: (state, action: PayloadAction<{ slides: DeckSlide[], elements: DeckElementMap }>) => {
       slidesAdapter.addMany(state.slides, action.payload.slides);
       elementsAdapter.addMany(state.elements, action.payload.elements);
       state.activeSlideId = action.payload.slides[0]?.id || null;
@@ -77,7 +77,7 @@ export const deckSlice = createSlice({
     },
 
     newSlideAdded: (state) => {
-      const newSlide: DeckSlide2 = {
+      const newSlide: DeckSlide = {
         id: v4(),
         component: 'Slide',
         children: []
@@ -90,7 +90,7 @@ export const deckSlice = createSlice({
 
     elementAddedToActiveSlide: (
       state,
-      action: PayloadAction<Omit<DeckElement2, 'id'>>
+      action: PayloadAction<Omit<DeckElement, 'id'>>
     ) => {
       const activeSlide = getActiveSlideImmer(state);
 
@@ -98,9 +98,9 @@ export const deckSlice = createSlice({
         return;
       }
 
-      let node: DeckElement2 | undefined;
+      let node: DeckElement | undefined;
       const newElementId = v4();
-      const newElement: DeckElement2 = { id: newElementId, ...action.payload };
+      const newElement: DeckElement = { id: newElementId, ...action.payload };
 
       if (state.editableElementId) {
         const potentialNode = getSelectedElementImmer(state);
@@ -139,7 +139,7 @@ export const deckSlice = createSlice({
     editableElementChanged: (
       state,
       // Does not allow nested children right now, only renderable string children
-      action: PayloadAction<DeckElement2['props'] & { children?: string; }>
+      action: PayloadAction<DeckElement['props'] & { children?: string; }>
     ) => {
       const selectedElement = getSelectedElementImmer(state);
 
@@ -190,7 +190,7 @@ export const deckSlice = createSlice({
         return;
       }
 
-      const newSlides: DeckSlide2[] = [];
+      const newSlides: DeckSlide[] = [];
       const selectSlideById = slidesAdapter.getSelectors().selectById;
 
       action.payload.forEach((id) => {
@@ -218,7 +218,7 @@ export const deckSlice = createSlice({
       activeSlide.children = action.payload;
     },
 
-    applyLayoutToSlide: (state, action: PayloadAction<{ elementIds: string[]; elementMap: DeckElementMap2; }>) => {
+    applyLayoutToSlide: (state, action: PayloadAction<{ elementIds: string[]; elementMap: DeckElementMap; }>) => {
       const activeSlide = getActiveSlideImmer(state);
 
       if (!activeSlide) {

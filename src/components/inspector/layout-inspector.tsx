@@ -7,11 +7,11 @@ import { basicLayout, codePaneLayout } from '../../templates/basic-layouts';
 import { Slide } from '../slide/slide';
 import { SlideViewerWrapper } from '../slide/slide-viewer/slide-viewer-wrapper';
 import { generateInternalSlideTree } from '../slide/slide-generator';
-import { DeckElement2, DeckElementMap2, DeckSlide2 } from '../../types/deck-elements';
+import { DeckElement, DeckElementMap, DeckSlide } from '../../types/deck-elements';
 import { constructElements } from '../../util/construct-elements';
 
 type Layouts = {
-  [key: string]: () => { elementIds: string[]; elementMap: DeckElementMap2; }
+  [key: string]: () => { elementIds: string[]; elementMap: DeckElementMap; }
 };
 
 const layouts: Layouts = {
@@ -29,7 +29,7 @@ const SlideWrapper = styled.div`
 export const LayoutInspector = () => {
   const dispatch = useDispatch();
 
-  const constructedLayouts: { [key: string]: DeckElement2[]; } = React.useMemo(() => {
+  const constructedLayouts: { [key: string]: DeckElement[]; } = React.useMemo(() => {
     return Object.keys(layouts).reduce((accum, layoutKey) => {
       const { elementIds, elementMap } = layouts[layoutKey]();
       const getElementById = (id: string) => elementMap[id];
@@ -58,9 +58,9 @@ export const LayoutInspector = () => {
                 }
               }}
             >
-              {(constructedLayouts[layoutKey] as DeckSlide2[]).map(
+              {(constructedLayouts[layoutKey] as DeckSlide[]).map(
                 generateInternalSlideTree as (
-                  opt: DeckSlide2
+                  opt: DeckSlide
                 ) => React.ReactElement
               )}
             </Slide>

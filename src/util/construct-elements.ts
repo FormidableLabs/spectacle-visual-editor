@@ -1,7 +1,7 @@
-import { ConstructedDeckElement2, DeckElement2 } from '../types/deck-elements';
+import { ConstructedDeckElement, DeckElement } from '../types/deck-elements';
 
 export const constructElements =
-  (elementIds: string[], getElementById: (id: string) => DeckElement2 | undefined): ConstructedDeckElement2[] => {
+  (elementIds: string[], getElementById: (id: string) => DeckElement | undefined): ConstructedDeckElement[] => {
     return elementIds.map((elementId) => {
       const element = getElementById(elementId);
 
@@ -13,6 +13,6 @@ export const constructElements =
         return { ...element, children: constructElements(element.children, getElementById) }
       }
 
-      return element as ConstructedDeckElement2;
-    }).filter((element): element is ConstructedDeckElement2 => !!element);
+      return element as ConstructedDeckElement;
+    }).filter((element): element is ConstructedDeckElement => !!element);
   };

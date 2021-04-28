@@ -25,8 +25,6 @@ type DeckState = {
   slides: EntityState<DeckSlide>;
   elements: EntityState<DeckElement>;
   activeSlideId: null | string;
-
-  // TODO: CHANGE TO selectedElementId
   selectedEditableElementId: null | string;
   theme: SpectacleTheme;
 };
@@ -194,7 +192,10 @@ export const deckSlice = createSlice({
       if (!state.selectedEditableElementId) {
         return;
       }
-      elementsAdapter.removeOne(state.elements, state.selectedEditableElementId);
+      elementsAdapter.removeOne(
+        state.elements,
+        state.selectedEditableElementId
+      );
     },
 
     /**

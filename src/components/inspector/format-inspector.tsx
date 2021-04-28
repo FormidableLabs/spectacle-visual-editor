@@ -6,6 +6,7 @@ import { BoxFormatControls } from './box-format-controls';
 import { isBoxElement, isImageElement, isMdElement } from './validators';
 import { MdFormatControls } from './md-format-controls';
 import { ImageControls } from './image-controls';
+import { FlexDirectionControls } from './flex-direction-controls';
 
 export const FormatInspector = () => {
   const dispatch = useDispatch();
@@ -24,7 +25,12 @@ export const FormatInspector = () => {
     <Pane>
       {(() => {
         if (isBoxElement(selectedElement)) {
-          return <BoxFormatControls {...props} />;
+          return (
+            <>
+              <BoxFormatControls {...props} />
+              <FlexDirectionControls {...props} />
+            </>
+          );
         } else if (isMdElement(selectedElement)) {
           return <MdFormatControls {...props} />;
         } else if (isImageElement(selectedElement)) {

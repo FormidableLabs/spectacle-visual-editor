@@ -1,4 +1,5 @@
 import { DeckElement } from '../../types/deck-elements';
+import { FLEX_DIRECTION } from '../../constants/flex-direction-options';
 
 export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
   HEADING: {
@@ -15,7 +16,12 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
   },
   BOX: {
     component: 'FlexBox',
-    props: { backgroundColor: 'limegreen', height: 100, width: 200 },
+    props: {
+      backgroundColor: 'limegreen',
+      height: 100,
+      width: 200,
+      flexDirection: FLEX_DIRECTION.column
+    },
     children: []
   },
   IMAGE: {

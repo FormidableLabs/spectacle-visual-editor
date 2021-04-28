@@ -2,7 +2,10 @@ import { v4 } from 'uuid';
 import { indentNormalizer } from 'spectacle';
 import { DeckElementMap } from '../types/deck-elements';
 
-export const basicLayout = (): { elementIds: string[]; elementMap: DeckElementMap; } => {
+export const basicLayout = (): {
+  elementIds: string[];
+  elementMap: DeckElementMap;
+} => {
   const elementId = v4();
 
   return {
@@ -21,7 +24,10 @@ export const basicLayout = (): { elementIds: string[]; elementMap: DeckElementMa
   };
 };
 
-export const codePaneLayout = (): { elementIds: string[]; elementMap: DeckElementMap; } => {
+export const codePaneLayout = (): {
+  elementIds: string[];
+  elementMap: DeckElementMap;
+} => {
   const elementId = v4();
 
   return {

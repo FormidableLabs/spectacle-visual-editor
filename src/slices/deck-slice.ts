@@ -9,7 +9,13 @@ import { v4, validate } from 'uuid';
 
 import { CONTAINER_ELEMENTS } from '../components/slide/elements';
 import { defaultTheme } from 'spectacle';
-import { ConstructedDeckElement, ConstructedDeckSlide, DeckElement, DeckElementMap, DeckSlide } from '../types/deck-elements';
+import {
+  ConstructedDeckElement,
+  ConstructedDeckSlide,
+  DeckElement,
+  DeckElementMap,
+  DeckSlide
+} from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
 import { constructDeckElements } from '../util/construct-deck-elements';
@@ -55,7 +61,10 @@ export const deckSlice = createSlice({
   name: 'deck',
   initialState,
   reducers: {
-    deckLoaded: (state, action: PayloadAction<{ slides: DeckSlide[], elements: DeckElementMap }>) => {
+    deckLoaded: (
+      state,
+      action: PayloadAction<{ slides: DeckSlide[]; elements: DeckElementMap }>
+    ) => {
       slidesAdapter.addMany(state.slides, action.payload.slides);
       elementsAdapter.addMany(state.elements, action.payload.elements);
       state.activeSlideId = action.payload.slides[0]?.id || null;
@@ -139,7 +148,7 @@ export const deckSlice = createSlice({
     editableElementChanged: (
       state,
       // Does not allow nested children right now, only renderable string children
-      action: PayloadAction<DeckElement['props'] & { children?: string; }>
+      action: PayloadAction<DeckElement['props'] & { children?: string }>
     ) => {
       const selectedElement = getSelectedElementImmer(state);
 
@@ -218,7 +227,13 @@ export const deckSlice = createSlice({
       activeSlide.children = action.payload;
     },
 
-    applyLayoutToSlide: (state, action: PayloadAction<{ elementIds: string[]; elementMap: DeckElementMap; }>) => {
+    applyLayoutToSlide: (
+      state,
+      action: PayloadAction<{
+        elementIds: string[];
+        elementMap: DeckElementMap;
+      }>
+    ) => {
       const activeSlide = getActiveSlideImmer(state);
 
       if (!activeSlide) {
@@ -261,9 +276,11 @@ export const undoableDeckSliceReducer = undoable(deckSlice.reducer, {
 });
 
 const slidesEntitySelector = (state: RootState) => state.deck.present.slides;
-const elementsEntitySelector = (state: RootState) => state.deck.present.elements;
+const elementsEntitySelector = (state: RootState) =>
+  state.deck.present.elements;
 
-export const activeSlideIdSelector = (state: RootState) => state.deck.present.activeSlideId;
+export const activeSlideIdSelector = (state: RootState) =>
+  state.deck.present.activeSlideId;
 export const editableElementIdSelector = (state: RootState) =>
   state.deck.present.editableElementId;
 export const themeSelector = (state: RootState) => state.deck.present.theme;
@@ -272,11 +289,18 @@ export const slidesSelector = createSelector(
   slidesEntitySelector,
   elementsEntitySelector,
   (slidesEntity, elementsEntity) => {
-    const getElementById = (id: string) => elementsAdapter.getSelectors().selectById(elementsEntity, id);
+    const getElementById = (id: string) =>
+      elementsAdapter.getSelectors().selectById(elementsEntity, id);
 
-    return slidesAdapter.getSelectors().selectAll(slidesEntity).map((slide) => {
-      return { ...slide, children: constructDeckElements(slide.children, getElementById) } as ConstructedDeckSlide;
-    });
+    return slidesAdapter
+      .getSelectors()
+      .selectAll(slidesEntity)
+      .map((slide) => {
+        return {
+          ...slide,
+          children: constructDeckElements(slide.children, getElementById)
+        } as ConstructedDeckSlide;
+      });
   }
 );
 export const activeSlideSelector = createSelector(
@@ -288,13 +312,19 @@ export const activeSlideSelector = createSelector(
       return null;
     }
 
-    const activeSlide = slidesAdapter.getSelectors().selectById(slidesEntity, activeSlideId);
+    const activeSlide = slidesAdapter
+      .getSelectors()
+      .selectById(slidesEntity, activeSlideId);
     if (!activeSlide) {
       return null;
     }
 
-    const getElementById = (id: string) => elementsAdapter.getSelectors().selectById(elementsEntity, id);
-    return { ...activeSlide, children: constructDeckElements(activeSlide.children, getElementById) } as ConstructedDeckSlide;
+    const getElementById = (id: string) =>
+      elementsAdapter.getSelectors().selectById(elementsEntity, id);
+    return {
+      ...activeSlide,
+      children: constructDeckElements(activeSlide.children, getElementById)
+    } as ConstructedDeckSlide;
   }
 );
 export const selectedElementSelector = createSelector(
@@ -305,14 +335,23 @@ export const selectedElementSelector = createSelector(
       return null;
     }
 
-    const editableElement = elementsAdapter.getSelectors().selectById(elementsEntity, editableElementId);
+    const editableElement = elementsAdapter
+      .getSelectors()
+      .selectById(elementsEntity, editableElementId);
     if (!editableElement) {
       return null;
     }
 
     if (Array.isArray(editableElement.children)) {
-      const getElementById = (id: string) => elementsAdapter.getSelectors().selectById(elementsEntity, id);
-      return { ...editableElement, children: constructDeckElements(editableElement.children, getElementById) } as ConstructedDeckElement;
+      const getElementById = (id: string) =>
+        elementsAdapter.getSelectors().selectById(elementsEntity, id);
+      return {
+        ...editableElement,
+        children: constructDeckElements(
+          editableElement.children,
+          getElementById
+        )
+      } as ConstructedDeckElement;
     }
 
     return editableElement as ConstructedDeckElement;

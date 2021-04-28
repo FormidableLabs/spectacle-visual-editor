@@ -22,7 +22,9 @@ export const PreviewDeck = () => {
   useEffect(() => {
     try {
       const slideTree = slideJson.map(
-        generatePreviewSlideTree as (opt: ConstructedDeckSlide) => React.ReactElement
+        generatePreviewSlideTree as (
+          opt: ConstructedDeckSlide
+        ) => React.ReactElement
       );
       setSlideNodes(slideTree);
     } catch (e) {}

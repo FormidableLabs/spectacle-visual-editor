@@ -25,4 +25,4 @@ export type ConstructedDeckElement = Omit<DeckElement, 'children'> & {
 
 export type ConstructedDeckSlide = Omit<DeckSlide, 'children'> & {
   children: ConstructedDeckElement[];
-}
+};

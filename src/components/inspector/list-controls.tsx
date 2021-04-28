@@ -8,7 +8,9 @@ import { LIST_STYLE_TYPE_OPTIONS } from '../../constants/list-style-type-options
 
 interface Props {
   selectedElement: ConstructedDeckElement | null;
-  editableElementChanged(element: Partial<ConstructedDeckElement['props']>): void;
+  editableElementChanged(
+    element: Partial<ConstructedDeckElement['props']>
+  ): void;
 }
 
 export const ListControls: React.FC<Props> = ({

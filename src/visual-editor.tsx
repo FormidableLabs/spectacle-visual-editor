@@ -23,10 +23,12 @@ export const VisualEditor = () => {
     if (Array.isArray(slideNodes) && slideNodes.length > 0) {
       return;
     }
-    dispatch(deckSlice.actions.deckLoaded({
-      slides: sampleSlidesData,
-      elements: sampleElementsData
-    }));
+    dispatch(
+      deckSlice.actions.deckLoaded({
+        slides: sampleSlidesData,
+        elements: sampleElementsData
+      })
+    );
   }, [dispatch, slideNodes]);
 
   const canvasRef = useRef<HTMLDivElement>(null);

@@ -15,7 +15,9 @@ export const useSlideNodes = () => {
   const slideNodes = useMemo(
     () =>
       slideJson.map(
-        generateInternalSlideTree as (opt: ConstructedDeckSlide) => React.ReactElement
+        generateInternalSlideTree as (
+          opt: ConstructedDeckSlide
+        ) => React.ReactElement
       ),
     [slideJson]
   );

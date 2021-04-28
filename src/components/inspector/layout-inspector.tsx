@@ -7,11 +7,15 @@ import { basicLayout, codePaneLayout } from '../../templates/basic-layouts';
 import { Slide } from '../slide/slide';
 import { SlideViewerWrapper } from '../slide/slide-viewer/slide-viewer-wrapper';
 import { generateInternalSlideTree } from '../slide/slide-generator';
-import { DeckElement, DeckElementMap, DeckSlide } from '../../types/deck-elements';
+import {
+  DeckElement,
+  DeckElementMap,
+  DeckSlide
+} from '../../types/deck-elements';
 import { constructDeckElements } from '../../util/construct-deck-elements';
 
 type Layouts = {
-  [key: string]: () => { elementIds: string[]; elementMap: DeckElementMap; }
+  [key: string]: () => { elementIds: string[]; elementMap: DeckElementMap };
 };
 
 const layouts: Layouts = {
@@ -29,7 +33,9 @@ const SlideWrapper = styled.div`
 export const LayoutInspector = () => {
   const dispatch = useDispatch();
 
-  const constructedLayouts: { [key: string]: DeckElement[]; } = React.useMemo(() => {
+  const constructedLayouts: {
+    [key: string]: DeckElement[];
+  } = React.useMemo(() => {
     return Object.keys(layouts).reduce((accum, layoutKey) => {
       const { elementIds, elementMap } = layouts[layoutKey]();
       const getElementById = (id: string) => elementMap[id];

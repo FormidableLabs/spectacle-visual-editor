@@ -1,6 +1,8 @@
 import { ConstructedDeckElement } from '../types/deck-elements';
 
-export const isDeckElement = (element: any): element is ConstructedDeckElement =>
+export const isDeckElement = (
+  element: any
+): element is ConstructedDeckElement =>
   typeof element?.component === 'string' && typeof element?.id === 'string';
 
 export const isDeckElementChildren = (

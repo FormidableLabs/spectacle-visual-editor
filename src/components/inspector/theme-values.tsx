@@ -6,10 +6,18 @@ import { deckSlice, themeSelector } from '../../slices/deck-slice';
 import { ColorPickerInput } from '../inputs/color';
 import { useRootSelector } from '../../store';
 import { Accordion } from '../user-interface/accordion';
-import { TextInputField } from 'evergreen-ui';
+import {
+  Pane,
+  Button,
+  LockIcon,
+  UnlockIcon,
+  TextInputField
+} from 'evergreen-ui';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
 import { isValidSlideSize } from '../../util/is-valid-slide-size';
 import { cloneAndSet } from '../../util/clone-and-set';
+import { calculateAspectRatio } from '../../util/aspect-ratio';
+import { useToggle } from '../../hooks/index';
 
 const Container = styled.div`
   display: grid;
@@ -22,6 +30,7 @@ export const ThemeValues = () => {
   const dispatch = useDispatch();
   const themeValues = useRootSelector(themeSelector);
   const [inputState, setInputState] = useState(themeValues);
+  const [aspectRatioLocked, toggleAspectRatioLocked] = useToggle();
 
   return (
     <>
@@ -51,15 +60,41 @@ export const ThemeValues = () => {
                 if (!isValidSlideSize(value)) {
                   return;
                 }
-                dispatch(
-                  deckSlice.actions.updateThemeSize({
-                    [sizeKey]: parseInt(value)
-                  })
-                );
+                if (aspectRatioLocked) {
+                  const width = themeValues.size.width;
+                  const height = themeValues.size.height;
+                  const newSize = calculateAspectRatio(
+                    { width, height },
+                    { [sizeKey]: parseInt(value) }
+                  );
+                  setInputState((prevState) =>
+                    cloneAndSet(prevState, ['size', 'height'], newSize.height)
+                  );
+                  setInputState((prevState) =>
+                    cloneAndSet(prevState, ['size', 'width'], newSize.width)
+                  );
+                  dispatch(deckSlice.actions.updateThemeSize(newSize));
+                } else {
+                  dispatch(
+                    deckSlice.actions.updateThemeSize({
+                      [sizeKey]: parseInt(value)
+                    })
+                  );
+                }
               }}
             />
           ))}
         </Container>
+        <Pane>
+          <Button
+            marginY={8}
+            marginRight={12}
+            iconBefore={aspectRatioLocked ? LockIcon : UnlockIcon}
+            onClick={toggleAspectRatioLocked}
+          >
+            Lock Aspect Ratio
+          </Button>
+        </Pane>
       </Accordion>
       <Accordion label="Theme Colors">
         <Container>

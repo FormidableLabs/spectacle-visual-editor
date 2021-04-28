@@ -1,17 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, defaultTheme, Menu, Popover, Position } from 'evergreen-ui';
+import {
+  Button,
+  defaultTheme,
+  Menu,
+  Popover,
+  Position,
+  Pane,
+  Dialog
+} from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActionCreators as UndoActionCreators } from 'redux-undo';
 import {
   deckSlice,
   hasPastSelector,
-  hasFutureSelector
+  hasFutureSelector,
+  selectedElementSelector
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
-import { usePreviewWindow } from '../../hooks';
+import { usePreviewWindow, useToggle } from '../../hooks';
 import { ELEMENTS } from '../slide/elements';
+import { CONTAINER_ELEMENTS } from '../../types/deck-elements';
 
 const MenuBarContainer = styled.div`
   width: 100%;
@@ -29,8 +39,10 @@ export const MenuBar = () => {
   const { scale } = useSelector(settingsSelector);
   const hasPast = useSelector(hasPastSelector);
   const hasFuture = useSelector(hasFutureSelector);
+  const selectedElement = useSelector(selectedElementSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
+  const [dialogOpen, toggleDialog] = useToggle();
 
   return (
     <MenuBarContainer>
@@ -134,7 +146,38 @@ export const MenuBar = () => {
               <Menu.Item secondaryText={<span>⌘V</span>}>Paste</Menu.Item>
             </Menu.Group>
             <Menu.Group>
-              <Menu.Item secondaryText={<span>⌘D</span>}>Delete</Menu.Item>
+              <Pane>
+                <Dialog
+                  isShown={dialogOpen}
+                  intent="danger"
+                  onConfirm={(close) => {
+                    dispatch(deckSlice.actions.deleteElement());
+                    close();
+                  }}
+                  onCloseComplete={toggleDialog}
+                  hasHeader={false}
+                  confirmLabel="Delete"
+                >
+                  Deleting this container from the slide will also delete the
+                  elements inside it. Do you wish to delete this container?
+                </Dialog>
+              </Pane>
+              <Menu.Item
+                secondaryText={<span>⌘D</span>}
+                onSelect={() => {
+                  if (
+                    selectedElement &&
+                    CONTAINER_ELEMENTS.includes(selectedElement.component)
+                  ) {
+                    toggleDialog();
+                  } else {
+                    dispatch(deckSlice.actions.deleteElement());
+                    close();
+                  }
+                }}
+              >
+                Delete
+              </Menu.Item>
             </Menu.Group>
           </Menu>
         )}

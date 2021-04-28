@@ -1,11 +1,14 @@
 import { isValidColorName, isValidHSL, isValidRGB } from 'is-valid-css-color';
-import { ConstructedDeckElement } from '../../types/deck-elements';
+import {
+  ConstructedDeckElement,
+  CONTAINER_ELEMENTS
+} from '../../types/deck-elements';
 
 export const isValidCSSColor = (color: string) =>
   isValidColorName(color) || isValidHSL(color) || isValidRGB(color);
 
 export const isBoxElement = (element: ConstructedDeckElement | null) =>
-  Boolean(element?.component?.includes('Box'));
+  Boolean(element && CONTAINER_ELEMENTS.includes(element?.component));
 
 export const isMdElement = (element: ConstructedDeckElement | null) =>
   Boolean(element?.component?.includes('Markdown'));

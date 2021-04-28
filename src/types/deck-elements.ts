@@ -5,10 +5,14 @@
  * - Constructed versions replace the child id references with the full children entities to form a
  *   complete tree
  */
+export type SPECTACLE_ELEMENTS = 'Slide' | 'Markdown' | 'FlexBox' | 'Image';
+export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];
+export const CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox'];
+
 export type DeckElementMap = { [id: string]: DeckElement };
 
 export type DeckElement = {
-  component: 'Slide' | 'Markdown' | 'Box' | 'Image' | 'FlexBox';
+  component: SPECTACLE_ELEMENTS;
   id: string;
   props?: { [key: string]: any };
   children?: string | string[];

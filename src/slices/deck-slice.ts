@@ -7,11 +7,11 @@ import {
 } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
 
-import { CONTAINER_ELEMENTS } from '../components/slide/elements';
 import { defaultTheme } from 'spectacle';
 import {
   ConstructedDeckElement,
   ConstructedDeckSlide,
+  CONTAINER_ELEMENTS,
   DeckElement,
   DeckElementMap,
   DeckSlide
@@ -114,7 +114,10 @@ export const deckSlice = createSlice({
       if (state.selectedEditableElementId) {
         const potentialNode = getSelectedElementImmer(state);
 
-        if (CONTAINER_ELEMENTS.includes(potentialNode?.component || '')) {
+        if (
+          potentialNode &&
+          CONTAINER_ELEMENTS.includes(potentialNode.component)
+        ) {
           node = potentialNode;
         } else {
           node = activeSlide;
@@ -151,13 +154,11 @@ export const deckSlice = createSlice({
       action: PayloadAction<DeckElement['props'] & { children?: string }>
     ) => {
       const selectedElement = getSelectedElementImmer(state);
-
       if (!selectedElement) {
         return;
       }
 
       const { children: incomingChildren, ...incomingProps } = action.payload;
-
       selectedElement.props = { ...selectedElement.props, ...incomingProps };
 
       if (incomingChildren) {
@@ -187,6 +188,13 @@ export const deckSlice = createSlice({
 
     updateThemeSize: (state, action) => {
       state.theme.size = { ...state.theme.size, ...action.payload };
+    },
+
+    deleteElement: (state) => {
+      if (!state.selectedEditableElementId) {
+        return;
+      }
+      elementsAdapter.removeOne(state.elements, state.selectedEditableElementId);
     },
 
     /**
@@ -268,7 +276,8 @@ export const undoableDeckSliceReducer = undoable(deckSlice.reducer, {
     const previous = past[past.length - 1];
     if (
       previous &&
-      previous.selectedEditableElementId === currentState.selectedEditableElementId
+      previous.selectedEditableElementId ===
+        currentState.selectedEditableElementId
     ) {
       return true;
     }
@@ -335,26 +344,26 @@ export const selectedElementSelector = createSelector(
       return null;
     }
 
-    const editableElement = elementsAdapter
+    const selectedElement = elementsAdapter
       .getSelectors()
       .selectById(elementsEntity, selectedEditableElementId);
-    if (!editableElement) {
+    if (!selectedElement) {
       return null;
     }
 
-    if (Array.isArray(editableElement.children)) {
+    if (Array.isArray(selectedElement.children)) {
       const getElementById = (id: string) =>
         elementsAdapter.getSelectors().selectById(elementsEntity, id);
       return {
-        ...editableElement,
+        ...selectedElement,
         children: constructDeckElements(
-          editableElement.children,
+          selectedElement.children,
           getElementById
         )
       } as ConstructedDeckElement;
     }
 
-    return editableElement as ConstructedDeckElement;
+    return selectedElement as ConstructedDeckElement;
   }
 );
 export const hasPastSelector = (state: RootState) => state.deck.past.length > 1;

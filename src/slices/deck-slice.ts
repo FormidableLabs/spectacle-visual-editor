@@ -7,10 +7,15 @@ import {
 import { v4, validate } from 'uuid';
 
 import { defaultTheme } from 'spectacle';
-import { searchTreeForNode, deleteInTreeForNode } from '../util/node-search';
+import {
+  searchTreeForNode,
+  deleteInTreeForNode,
+  copyNode
+} from '../util/node-search';
 import {
   CONTAINER_ELEMENTS,
   DeckElement,
+  CopiedDeckElement,
   DeckSlide
 } from '../types/deck-elements';
 import { RootState } from '../store';
@@ -22,6 +27,7 @@ type DeckState = {
   slides: EntityState<DeckSlide>;
   activeSlide: DeckSlide;
   editableElementId: null | string;
+  copiedElement: null | CopiedDeckElement;
   theme: SpectacleTheme;
 };
 
@@ -35,6 +41,7 @@ const initialState: DeckState = {
     children: []
   },
   editableElementId: null,
+  copiedElement: null,
   theme: defaultTheme
 };
 
@@ -153,7 +160,6 @@ export const deckSlice = createSlice({
         changes: state.activeSlide
       });
     },
-
     deleteSlide: (state) => {
       // Users cannot delete all slides otherwise it would break Spectacle
       if (state.slides.ids.length === 1) {
@@ -187,6 +193,21 @@ export const deckSlice = createSlice({
         id: state.activeSlide.id,
         changes: state.activeSlide
       });
+    },
+
+    copyElement: (state) => {
+      if (!state.editableElementId) return;
+
+      const targetNode = searchTreeForNode(
+        state.activeSlide.children,
+        state.editableElementId
+      );
+
+      if (!targetNode) return;
+
+      const copiedElement = copyNode(targetNode);
+
+      state.copiedElement = copiedElement;
     },
 
     /**

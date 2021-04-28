@@ -142,7 +142,16 @@ export const MenuBar = () => {
             </Menu.Group>
             <Menu.Group>
               <Menu.Item secondaryText={<span>⌘X</span>}>Cut</Menu.Item>
-              <Menu.Item secondaryText={<span>⌘C</span>}>Copy</Menu.Item>
+              <Menu.Item
+                secondaryText={<span>⌘C</span>}
+                disabled={!currentlySelectedElement}
+                onSelect={() => {
+                  dispatch(deckSlice.actions.copyElement());
+                  close();
+                }}
+              >
+                Copy
+              </Menu.Item>
               <Menu.Item secondaryText={<span>⌘V</span>}>Paste</Menu.Item>
             </Menu.Group>
             <Menu.Group>

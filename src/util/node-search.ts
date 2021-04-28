@@ -1,4 +1,4 @@
-import { DeckElement } from '../types/deck-elements';
+import { DeckElement, CopiedDeckElement } from '../types/deck-elements';
 
 export const searchTreeForNode = (
   tree: DeckElement[],
@@ -37,4 +37,31 @@ export const deleteInTreeForNode = (tree: DeckElement[], value: string) => {
       deleteInTreeForNode(leaf.children, value);
     }
   }
+};
+
+export const copyNode = (element: DeckElement): CopiedDeckElement => {
+  let copiedElement: CopiedDeckElement;
+  if (Array.isArray(element.children) && element.children.length > 0) {
+    copiedElement = { ...element, children: [] };
+  } else {
+    copiedElement = { ...element };
+  }
+  copiedElement.id = null;
+
+  if (Array.isArray(element.children) && element.children.length > 0) {
+    element.children.forEach((child) => {
+      const nodeWithoutIds = copyNode(child);
+      if (
+        Array.isArray(element.children) &&
+        element.children.length > 0 &&
+        copiedElement.children
+      ) {
+        (copiedElement.children as DeckElement[]).push(
+          nodeWithoutIds as DeckElement
+        );
+      }
+    });
+  }
+
+  return copiedElement;
 };

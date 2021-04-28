@@ -14,6 +14,8 @@ export type DeckElement = {
   children?: string | DeckElement[];
 };
 
+export type CopiedDeckElement = Omit<DeckElement, 'id'> & { id: string | null };
+
 export type DeckSlide = DeckElement & {
   component: 'Slide';
   id: string;

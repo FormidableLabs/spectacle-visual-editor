@@ -29,7 +29,8 @@ export const sampleSlideData = [
             props: {
               backgroundColor: 'yellowgreen',
               width: 200,
-              height: 100
+              height: 100,
+              flexDirection: 'column'
             }
           }
         ]

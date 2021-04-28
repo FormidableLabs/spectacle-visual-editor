@@ -20,7 +20,8 @@ import {
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
-import { ELEMENTS, CONTAINER_ELEMENTS } from '../slide/elements';
+import { ELEMENTS } from '../slide/elements';
+import { CONTAINER_ELEMENTS } from '../../types/deck-elements';
 
 const MenuBarContainer = styled.div`
   width: 100%;

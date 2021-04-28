@@ -27,5 +27,3 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
     }
   }
 };
-
-export const CONTAINER_ELEMENTS = ['Box', 'FlexBox'];

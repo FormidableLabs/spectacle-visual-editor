@@ -6,10 +6,13 @@ import {
 } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
 
-import { CONTAINER_ELEMENTS } from '../components/slide/elements';
 import { defaultTheme } from 'spectacle';
 import { searchTreeForNode, deleteInTreeForNode } from '../util/node-search';
-import { DeckElement, DeckSlide } from '../types/deck-elements';
+import {
+  CONTAINER_ELEMENTS,
+  DeckElement,
+  DeckSlide
+} from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
 import { isDeckElementChildren } from '../util/is-deck-element';
@@ -87,7 +90,10 @@ export const deckSlice = createSlice({
           state.activeSlide.children,
           state.editableElementId
         );
-        if (CONTAINER_ELEMENTS.includes(potentialNode?.component || '')) {
+        if (
+          potentialNode &&
+          CONTAINER_ELEMENTS.includes(potentialNode.component)
+        ) {
           node = potentialNode;
         } else {
           node = state.activeSlide;

@@ -5,6 +5,7 @@
 
 export type SPECTACLE_ELEMENTS = 'Slide' | 'Markdown' | 'FlexBox' | 'Image';
 export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];
+export const CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox'];
 
 export type DeckElement = {
   component: SPECTACLE_ELEMENTS;

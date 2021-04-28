@@ -9,7 +9,7 @@ import React, {
 import styled from 'styled-components';
 import Moveable, { OnResizeEnd } from 'react-moveable';
 import { useDispatch, useSelector } from 'react-redux';
-import { deckSlice, editableElementIdSelector } from '../../slices/deck-slice';
+import { deckSlice, selectedEditableElementIdSelector } from '../../slices/deck-slice';
 
 const Wrapper = styled.div<{ isSelected: boolean }>`
   display: contents;
@@ -35,7 +35,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const ref = useRef<HTMLElement>();
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch();
-  const editableElementId = useSelector(editableElementIdSelector);
+  const editableElementId = useSelector(selectedEditableElementIdSelector);
   const [target, setTarget] = useState<HTMLElement | null>(null);
 
   /**

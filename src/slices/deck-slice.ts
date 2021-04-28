@@ -27,7 +27,7 @@ type DeckState = {
   activeSlideId: null | string;
 
   // TODO: CHANGE TO selectedElementId
-  editableElementId: null | string;
+  selectedEditableElementId: null | string;
   theme: SpectacleTheme;
 };
 
@@ -43,17 +43,17 @@ const getActiveSlideImmer = (state: DeckState) => {
   return state.slides.entities[state.activeSlideId];
 };
 const getSelectedElementImmer = (state: DeckState) => {
-  if (!state.editableElementId) {
+  if (!state.selectedEditableElementId) {
     return;
   }
-  return state.elements.entities[state.editableElementId];
+  return state.elements.entities[state.selectedEditableElementId];
 };
 
 const initialState: DeckState = {
   slides: slidesAdapter.getInitialState(),
   elements: elementsAdapter.getInitialState(),
   activeSlideId: null,
-  editableElementId: null,
+  selectedEditableElementId: null,
   theme: defaultTheme
 };
 
@@ -81,7 +81,7 @@ export const deckSlice = createSlice({
 
       if (newActiveSlide) {
         state.activeSlideId = newActiveSlide.id;
-        state.editableElementId = null;
+        state.selectedEditableElementId = null;
       }
     },
 
@@ -94,7 +94,7 @@ export const deckSlice = createSlice({
 
       slidesAdapter.addOne(state.slides, newSlide);
       state.activeSlideId = newSlide.id;
-      state.editableElementId = null;
+      state.selectedEditableElementId = null;
     },
 
     elementAddedToActiveSlide: (
@@ -111,7 +111,7 @@ export const deckSlice = createSlice({
       const newElementId = v4();
       const newElement: DeckElement = { id: newElementId, ...action.payload };
 
-      if (state.editableElementId) {
+      if (state.selectedEditableElementId) {
         const potentialNode = getSelectedElementImmer(state);
 
         if (CONTAINER_ELEMENTS.includes(potentialNode?.component || '')) {
@@ -138,11 +138,11 @@ export const deckSlice = createSlice({
         changes: activeSlide
       });
       elementsAdapter.addOne(state.elements, newElement);
-      state.editableElementId = newElementId;
+      state.selectedEditableElementId = newElementId;
     },
 
     editableElementSelected: (state, action) => {
-      state.editableElementId = action.payload;
+      state.selectedEditableElementId = action.payload;
     },
 
     editableElementChanged: (
@@ -242,7 +242,7 @@ export const deckSlice = createSlice({
 
       activeSlide.children = action.payload.elementIds;
       elementsAdapter.addMany(state.elements, action.payload.elementMap);
-      state.editableElementId = null;
+      state.selectedEditableElementId = null;
     }
   }
 });
@@ -268,7 +268,7 @@ export const undoableDeckSliceReducer = undoable(deckSlice.reducer, {
     const previous = past[past.length - 1];
     if (
       previous &&
-      previous.editableElementId === currentState.editableElementId
+      previous.selectedEditableElementId === currentState.selectedEditableElementId
     ) {
       return true;
     }
@@ -281,8 +281,8 @@ const elementsEntitySelector = (state: RootState) =>
 
 export const activeSlideIdSelector = (state: RootState) =>
   state.deck.present.activeSlideId;
-export const editableElementIdSelector = (state: RootState) =>
-  state.deck.present.editableElementId;
+export const selectedEditableElementIdSelector = (state: RootState) =>
+  state.deck.present.selectedEditableElementId;
 export const themeSelector = (state: RootState) => state.deck.present.theme;
 
 export const slidesSelector = createSelector(
@@ -329,15 +329,15 @@ export const activeSlideSelector = createSelector(
 );
 export const selectedElementSelector = createSelector(
   elementsEntitySelector,
-  editableElementIdSelector,
-  (elementsEntity, editableElementId) => {
-    if (!editableElementId) {
+  selectedEditableElementIdSelector,
+  (elementsEntity, selectedEditableElementId) => {
+    if (!selectedEditableElementId) {
       return null;
     }
 
     const editableElement = elementsAdapter
       .getSelectors()
-      .selectById(elementsEntity, editableElementId);
+      .selectById(elementsEntity, selectedEditableElementId);
     if (!editableElement) {
       return null;
     }

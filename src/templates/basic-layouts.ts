@@ -1,8 +1,8 @@
 import { v4 } from 'uuid';
 import { indentNormalizer } from 'spectacle';
-import { DeckElementMap2 } from '../types/deck-elements';
+import { DeckElementMap } from '../types/deck-elements';
 
-export const basicLayout = (): { elementIds: string[]; elementMap: DeckElementMap2; } => {
+export const basicLayout = (): { elementIds: string[]; elementMap: DeckElementMap; } => {
   const elementId = v4();
 
   return {
@@ -21,7 +21,7 @@ export const basicLayout = (): { elementIds: string[]; elementMap: DeckElementMa
   };
 };
 
-export const codePaneLayout = (): { elementIds: string[]; elementMap: DeckElementMap2; } => {
+export const codePaneLayout = (): { elementIds: string[]; elementMap: DeckElementMap; } => {
   const elementId = v4();
 
   return {

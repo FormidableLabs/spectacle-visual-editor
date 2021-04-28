@@ -9,10 +9,10 @@ import { v4, validate } from 'uuid';
 
 import { CONTAINER_ELEMENTS } from '../components/slide/elements';
 import { defaultTheme } from 'spectacle';
-import { DeckElement, DeckElementMap, DeckSlide } from '../types/deck-elements';
+import { ConstructedDeckElement, ConstructedDeckSlide, DeckElement, DeckElementMap, DeckSlide } from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
-import { constructElements } from '../util/construct-elements';
+import { constructDeckElements } from '../util/construct-deck-elements';
 import undoable from 'redux-undo';
 
 type DeckState = {
@@ -275,7 +275,7 @@ export const slidesSelector = createSelector(
     const getElementById = (id: string) => elementsAdapter.getSelectors().selectById(elementsEntity, id);
 
     return slidesAdapter.getSelectors().selectAll(slidesEntity).map((slide) => {
-      return { ...slide, children: constructElements(slide.children, getElementById) };
+      return { ...slide, children: constructDeckElements(slide.children, getElementById) } as ConstructedDeckSlide;
     });
   }
 );
@@ -294,7 +294,7 @@ export const activeSlideSelector = createSelector(
     }
 
     const getElementById = (id: string) => elementsAdapter.getSelectors().selectById(elementsEntity, id);
-    return { ...activeSlide, children: constructElements(activeSlide.children, getElementById) };
+    return { ...activeSlide, children: constructDeckElements(activeSlide.children, getElementById) } as ConstructedDeckSlide;
   }
 );
 export const selectedElementSelector = createSelector(
@@ -312,10 +312,10 @@ export const selectedElementSelector = createSelector(
 
     if (Array.isArray(editableElement.children)) {
       const getElementById = (id: string) => elementsAdapter.getSelectors().selectById(elementsEntity, id);
-      return { ...editableElement, children: constructElements(editableElement.children, getElementById) };
+      return { ...editableElement, children: constructDeckElements(editableElement.children, getElementById) } as ConstructedDeckElement;
     }
 
-    return editableElement;
+    return editableElement as ConstructedDeckElement;
   }
 );
 export const hasPastSelector = (state: RootState) => state.deck.past.length > 1;

@@ -1,6 +1,6 @@
 import { ConstructedDeckElement, DeckElement } from '../types/deck-elements';
 
-export const constructElements =
+export const constructDeckElements =
   (elementIds: string[], getElementById: (id: string) => DeckElement | undefined): ConstructedDeckElement[] => {
     return elementIds.map((elementId) => {
       const element = getElementById(elementId);
@@ -10,7 +10,7 @@ export const constructElements =
       }
 
       if (element.children && Array.isArray(element.children)) {
-        return { ...element, children: constructElements(element.children, getElementById) }
+        return { ...element, children: constructDeckElements(element.children, getElementById) }
       }
 
       return element as ConstructedDeckElement;

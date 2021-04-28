@@ -8,7 +8,7 @@ import { Slide } from '../slide/slide';
 import { SlideViewerWrapper } from '../slide/slide-viewer/slide-viewer-wrapper';
 import { generateInternalSlideTree } from '../slide/slide-generator';
 import { DeckElement, DeckElementMap, DeckSlide } from '../../types/deck-elements';
-import { constructElements } from '../../util/construct-elements';
+import { constructDeckElements } from '../../util/construct-deck-elements';
 
 type Layouts = {
   [key: string]: () => { elementIds: string[]; elementMap: DeckElementMap; }
@@ -36,7 +36,7 @@ export const LayoutInspector = () => {
 
       return {
         ...accum,
-        [layoutKey]: constructElements(elementIds, getElementById)
+        [layoutKey]: constructDeckElements(elementIds, getElementById)
       };
     }, {});
   }, []);

@@ -17,7 +17,7 @@ export { SpectacleLogo } from './user-interface/logo';
 export { Slide } from './slide/slide';
 export { SlideTimeline } from './slide/slide-timeline';
 export { SlideViewer } from './slide/slide-viewer/slide-viewer';
-export { ELEMENTS, CONTAINER_ELEMENTS } from './slide/elements';
+export { ELEMENTS } from './slide/elements';
 export { PreviewDeck } from './slide/preview-deck';
 export {
   generateInternalEditableSlideTree,

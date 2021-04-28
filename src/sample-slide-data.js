@@ -24,11 +24,11 @@ export const sampleSlideData = [
             children: '## Spectacle'
           },
           {
-            component: 'Box',
+            component: 'FlexBox',
             id: v4(),
             props: {
               backgroundColor: 'yellowgreen',
-              width: 100,
+              width: 200,
               height: 100
             }
           }

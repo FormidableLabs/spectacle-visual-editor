@@ -41,7 +41,7 @@ describe('deleteInTreeForNode', () => {
       },
       children: [
         {
-          component: 'Box',
+          component: 'FlexBox',
           id: '456',
           props: {
             color: 'yellow'
@@ -70,7 +70,7 @@ describe('deleteInTreeForNode', () => {
     deleteInTreeForNode(tree, '555');
     expect(tree[0].children).toEqual([
       {
-        component: 'Box',
+        component: 'FlexBox',
         id: '456',
         props: { color: 'yellow' },
         children: []

@@ -134,10 +134,6 @@ export const deckSlice = createSlice({
         node.children = [newElementId];
       }
 
-      slidesAdapter.updateOne(state.slides, {
-        id: activeSlide.id,
-        changes: activeSlide
-      });
       elementsAdapter.addOne(state.elements, newElement);
       state.selectedEditableElementId = newElementId;
     },

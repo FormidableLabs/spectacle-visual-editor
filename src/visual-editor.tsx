@@ -10,7 +10,7 @@ import {
   EditorCanvas,
   Inspector
 } from './components';
-import { sampleSlideData } from './sample-slide-data';
+import { sampleElementsData, sampleSlidesData } from './sample-slides-data';
 import { deckSlice } from './slices/deck-slice';
 import { useEditorActions, useSlideNodes, useSlideScale } from './hooks';
 
@@ -23,7 +23,12 @@ export const VisualEditor = () => {
     if (Array.isArray(slideNodes) && slideNodes.length > 0) {
       return;
     }
-    dispatch(deckSlice.actions.deckLoaded(sampleSlideData));
+    dispatch(
+      deckSlice.actions.deckLoaded({
+        slides: sampleSlidesData,
+        elements: sampleElementsData
+      })
+    );
   }, [dispatch, slideNodes]);
 
   const canvasRef = useRef<HTMLDivElement>(null);

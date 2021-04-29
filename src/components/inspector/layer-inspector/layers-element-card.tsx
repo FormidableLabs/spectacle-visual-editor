@@ -1,5 +1,5 @@
 import React, { MouseEvent } from 'react';
-import { DeckElement } from '../../../types/deck-elements';
+import { ConstructedDeckElement } from '../../../types/deck-elements';
 import styled from 'styled-components';
 import {
   ArrowDownIcon,
@@ -12,7 +12,7 @@ import { isImageElement, isMdElement } from '../validators';
 
 interface Props {
   isActive?: boolean;
-  element: DeckElement;
+  element: ConstructedDeckElement;
   onMoveDownClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
   onMoveUpClick?: (e: MouseEvent<HTMLButtonElement>) => void;

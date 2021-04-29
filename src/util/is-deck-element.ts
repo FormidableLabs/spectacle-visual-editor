@@ -1,12 +1,13 @@
 import { ConstructedDeckElement } from '../types/deck-elements';
 
 export const isDeckElement = (
-  element: any
+  element: unknown
 ): element is ConstructedDeckElement =>
-  typeof element?.component === 'string' && typeof element?.id === 'string';
+  typeof (<ConstructedDeckElement>element)?.component === 'string' &&
+  typeof (<ConstructedDeckElement>element)?.id === 'string';
 
 export const isDeckElementChildren = (
-  element: any
+  element: unknown
 ): element is ConstructedDeckElement['children'] =>
   typeof element === 'string' ||
   (Array.isArray(element) && element.every((c) => isDeckElement(c)));

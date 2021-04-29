@@ -19,6 +19,7 @@ import {
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
 import { constructDeckElements } from '../util/construct-deck-elements';
+import { copyDeckElement } from '../util/copy-deck-element';
 import undoable from 'redux-undo';
 
 type DeckState = {
@@ -161,6 +162,7 @@ export const deckSlice = createSlice({
         selectedElement.children = incomingChildren;
       }
     },
+
     deleteSlide: (state) => {
       // Users cannot delete all slides otherwise it would break Spectacle
       if (state.slides.ids.length === 1 || !state.activeSlideId) {
@@ -200,6 +202,14 @@ export const deckSlice = createSlice({
         return;
       }
       state.copiedElementId = state.selectedEditableElementId;
+    },
+
+    pasteElement: (state) => {
+      if (!state.copiedElementId) {
+        return;
+      }
+      const getElementById = elementsAdapter.getSelectors().selectById;
+      const copiedElement = copyDeckElement(state.copiedElementId, getElementById);
     },
 
     /**

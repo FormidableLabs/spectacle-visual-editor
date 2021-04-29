@@ -51,15 +51,9 @@ export const copyNode = (element: DeckElement): CopiedDeckElement => {
   if (Array.isArray(element.children) && element.children.length > 0) {
     element.children.forEach((child) => {
       const nodeWithoutIds = copyNode(child);
-      if (
-        Array.isArray(element.children) &&
-        element.children.length > 0 &&
-        copiedElement.children
-      ) {
-        (copiedElement.children as DeckElement[]).push(
-          nodeWithoutIds as DeckElement
-        );
-      }
+      (copiedElement.children as DeckElement[]).push(
+        nodeWithoutIds as DeckElement
+      );
     });
   }
 

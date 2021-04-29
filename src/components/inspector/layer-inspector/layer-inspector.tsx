@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRootSelector } from '../../../store';
 import useOnClickOutside from 'react-cool-onclickoutside';
-import { DeckElement } from '../../../types/deck-elements';
+import { ConstructedDeckElement } from '../../../types/deck-elements';
 import { activeSlideSelector, deckSlice } from '../../../slices/deck-slice';
 import { Pane } from '../inspector-styles';
 import { DndProvider } from 'react-dnd';
@@ -12,19 +12,6 @@ import { SlideElementDragWrapper } from './slide-element-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import styled from 'styled-components';
 import { swapArrayItems } from '../../../util/swap-array-items';
-
-const reorderSlideElements = (
-  currentElements: DeckElement[],
-  nextElements: DeckElement[],
-  dispatch: React.Dispatch<{ payload: string[]; type: string }>
-) => {
-  const currentIds = currentElements.map((el) => el?.id) || [];
-  const newIds = nextElements.map((el) => el?.id) || [];
-
-  if (currentIds.join(',') !== newIds.join(',')) {
-    dispatch(deckSlice.actions.reorderActiveSlideElements(newIds));
-  }
-};
 
 export const LayerInspector: React.FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
@@ -40,6 +27,14 @@ export const LayerInspector: React.FC = () => {
     setActiveElementId(null);
   });
   const dispatch = useDispatch();
+
+  const reorderSlideElements = React.useCallback(
+    (nextElements: ConstructedDeckElement[]) => {
+      const nextIds = nextElements.map((el) => el?.id) || [];
+      dispatch(deckSlice.actions.reorderActiveSlideElements(nextIds));
+    },
+    [dispatch]
+  );
 
   // Keep local children in sync with slide children
   React.useEffect(() => {
@@ -58,8 +53,8 @@ export const LayerInspector: React.FC = () => {
 
   // Update the order with the local order
   const commitChangedOrder = React.useCallback(() => {
-    reorderSlideElements(activeSlideChildren, localChildren, dispatch);
-  }, [activeSlideChildren, dispatch, localChildren]);
+    reorderSlideElements(localChildren);
+  }, [localChildren, reorderSlideElements]);
 
   // Commit the movement of an item immediately
   const moveItemAndCommit = React.useCallback(
@@ -69,9 +64,9 @@ export const LayerInspector: React.FC = () => {
         currentIndex,
         nextIndex
       );
-      reorderSlideElements(activeSlideChildren, swappedItems, dispatch);
+      reorderSlideElements(swappedItems);
     },
-    [activeSlideChildren, dispatch, localChildren]
+    [localChildren, reorderSlideElements]
   );
 
   return (

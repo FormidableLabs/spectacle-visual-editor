@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import React from 'react';
-import { deckSlice } from '../../../slices/deck-slice';
+import { activeSlideIdSelector, deckSlice } from '../../../slices/deck-slice';
 import { SlideViewerWrapper } from './slide-viewer-wrapper';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -22,9 +22,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
   scale,
   slideProps
 }) => {
-  const activeSlideId = useRootSelector(
-    (state) => state.deck.present.activeSlide?.id || ''
-  );
+  const activeSlideId = useRootSelector(activeSlideIdSelector);
   const dispatch = useDispatch();
   const [localSlides, setLocalSlides] = React.useState<React.ReactElement[]>(
     []

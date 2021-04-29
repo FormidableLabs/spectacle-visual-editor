@@ -16,7 +16,7 @@ import {
   deckSlice,
   hasPastSelector,
   hasFutureSelector,
-  currentElementSelector
+  selectedElementSelector
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
@@ -39,7 +39,7 @@ export const MenuBar = () => {
   const { scale } = useSelector(settingsSelector);
   const hasPast = useSelector(hasPastSelector);
   const hasFuture = useSelector(hasFutureSelector);
-  const currentlySelectedElement = useSelector(currentElementSelector);
+  const selectedElement = useSelector(selectedElementSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
@@ -166,10 +166,8 @@ export const MenuBar = () => {
                 secondaryText={<span>⌘D</span>}
                 onSelect={() => {
                   if (
-                    currentlySelectedElement &&
-                    CONTAINER_ELEMENTS.includes(
-                      currentlySelectedElement.component
-                    )
+                    selectedElement &&
+                    CONTAINER_ELEMENTS.includes(selectedElement.component)
                   ) {
                     toggleDialog();
                   } else {

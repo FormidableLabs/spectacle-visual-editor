@@ -6,7 +6,7 @@ import { generatePreviewSlideTree } from './slide-generator';
 import { useSelector } from 'react-redux';
 import { slidesSelector, themeSelector } from '../../slices/deck-slice';
 import { useRootSelector } from '../../store';
-import { DeckSlide } from '../../types/deck-elements';
+import { ConstructedDeckSlide } from '../../types/deck-elements';
 
 const Message = styled.div`
   position: sticky;
@@ -22,7 +22,9 @@ export const PreviewDeck = () => {
   useEffect(() => {
     try {
       const slideTree = slideJson.map(
-        generatePreviewSlideTree as (opt: DeckSlide) => React.ReactElement
+        generatePreviewSlideTree as (
+          opt: ConstructedDeckSlide
+        ) => React.ReactElement
       );
       setSlideNodes(slideTree);
     } catch (e) {}

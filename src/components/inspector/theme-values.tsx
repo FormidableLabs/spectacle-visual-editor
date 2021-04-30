@@ -69,6 +69,7 @@ export const ThemeValues = () => {
         <Container>
           {['width', 'height'].map((sizeKey) => (
             <TextInputField
+              marginBottom={0}
               key={`${sizeKey}-font-size-value`}
               type="number"
               inputHeight={24}
@@ -86,8 +87,8 @@ export const ThemeValues = () => {
         </Container>
         <Pane>
           <Button
-            marginY={8}
-            marginRight={12}
+            marginBottom={24}
+            marginTop={8}
             iconBefore={aspectRatioLocked ? LockIcon : UnlockIcon}
             onClick={() => {
               toggleAspectRatioLocked();

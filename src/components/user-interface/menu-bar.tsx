@@ -22,6 +22,8 @@ import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
 import { ELEMENTS } from '../slide/elements';
 import { CONTAINER_ELEMENTS } from '../../types/deck-elements';
+import { useMousetrap } from 'spectacle';
+import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 
 const MenuBarContainer = styled.div`
   width: 100%;
@@ -43,6 +45,12 @@ export const MenuBar = () => {
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
+  useMousetrap(
+    {
+      [KEYBOARD_SHORTCUTS.COPY]: () => dispatch(deckSlice.actions.copyElement())
+    },
+    []
+  );
 
   return (
     <MenuBarContainer>

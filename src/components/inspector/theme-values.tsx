@@ -31,6 +31,37 @@ export const ThemeValues = () => {
   const themeValues = useRootSelector(themeSelector);
   const [inputState, setInputState] = useState(themeValues);
   const [aspectRatioLocked, toggleAspectRatioLocked] = useToggle();
+  const [ratio, setRatio] = useState(0);
+  const updateThemeSize = (
+    sizeKey: string,
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    setInputState((prevState) =>
+      cloneAndSet(prevState, ['size', sizeKey], value)
+    );
+    if (!isValidSlideSize(value)) {
+      return;
+    }
+    if (aspectRatioLocked) {
+      const newSize = calculateAspectRatio(ratio, {
+        [sizeKey]: parseInt(value)
+      });
+      setInputState((prevState) =>
+        cloneAndSet(prevState, ['size', 'height'], newSize.height)
+      );
+      setInputState((prevState) =>
+        cloneAndSet(prevState, ['size', 'width'], newSize.width)
+      );
+      dispatch(deckSlice.actions.updateThemeSize(newSize));
+    } else {
+      dispatch(
+        deckSlice.actions.updateThemeSize({
+          [sizeKey]: parseInt(value)
+        })
+      );
+    }
+  };
 
   return (
     <>
@@ -45,42 +76,10 @@ export const ThemeValues = () => {
               value={inputState.size[sizeKey]}
               disabled={false}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                const value = e.target.value;
-                if (isValidSlideSize(value)) {
-                  setInputState((prevState) =>
-                    cloneAndSet(prevState, ['size', sizeKey], value)
-                  );
-                }
+                updateThemeSize(sizeKey, e);
               }}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const value = e.target.value;
-                setInputState((prevState) =>
-                  cloneAndSet(prevState, ['size', sizeKey], value)
-                );
-                if (!isValidSlideSize(value)) {
-                  return;
-                }
-                if (aspectRatioLocked) {
-                  const width = themeValues.size.width;
-                  const height = themeValues.size.height;
-                  const newSize = calculateAspectRatio(
-                    { width, height },
-                    { [sizeKey]: parseInt(value) }
-                  );
-                  setInputState((prevState) =>
-                    cloneAndSet(prevState, ['size', 'height'], newSize.height)
-                  );
-                  setInputState((prevState) =>
-                    cloneAndSet(prevState, ['size', 'width'], newSize.width)
-                  );
-                  dispatch(deckSlice.actions.updateThemeSize(newSize));
-                } else {
-                  dispatch(
-                    deckSlice.actions.updateThemeSize({
-                      [sizeKey]: parseInt(value)
-                    })
-                  );
-                }
+                updateThemeSize(sizeKey, e);
               }}
             />
           ))}
@@ -90,7 +89,10 @@ export const ThemeValues = () => {
             marginY={8}
             marginRight={12}
             iconBefore={aspectRatioLocked ? LockIcon : UnlockIcon}
-            onClick={toggleAspectRatioLocked}
+            onClick={() => {
+              toggleAspectRatioLocked();
+              setRatio(themeValues.size.width / themeValues.size.height);
+            }}
           >
             Lock Aspect Ratio
           </Button>

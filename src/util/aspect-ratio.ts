@@ -4,19 +4,19 @@ interface AspectRatio {
 }
 
 export const calculateAspectRatio = (
-  originalAspectRatio: AspectRatio,
+  ratio: number,
   userAdjustedValue: Partial<AspectRatio>
-) => {
-  const ratio = originalAspectRatio.width / originalAspectRatio.height;
-  if (userAdjustedValue.width)
+): AspectRatio => {
+  if (userAdjustedValue.width) {
     return {
       width: userAdjustedValue.width,
-      height: parseFloat((userAdjustedValue.width / ratio).toFixed(2))
+      height: Math.ceil(userAdjustedValue.width / ratio)
     };
+  }
   if (userAdjustedValue.height)
     return {
-      width: parseFloat((userAdjustedValue.height * ratio).toFixed(2)),
+      width: Math.ceil(userAdjustedValue.height * ratio),
       height: userAdjustedValue.height
     };
-  return originalAspectRatio;
+  return { width: 1920, height: 1080 };
 };

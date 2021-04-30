@@ -26,6 +26,7 @@ type DeckState = {
   elements: EntityState<DeckElement>;
   activeSlideId: null | string;
   selectedEditableElementId: null | string;
+  copiedElementId: null | string;
   theme: SpectacleTheme;
 };
 
@@ -52,6 +53,7 @@ const initialState: DeckState = {
   elements: elementsAdapter.getInitialState(),
   activeSlideId: null,
   selectedEditableElementId: null,
+  copiedElementId: null,
   theme: defaultTheme
 };
 
@@ -159,7 +161,6 @@ export const deckSlice = createSlice({
         selectedElement.children = incomingChildren;
       }
     },
-
     deleteSlide: (state) => {
       // Users cannot delete all slides otherwise it would break Spectacle
       if (state.slides.ids.length === 1 || !state.activeSlideId) {
@@ -192,6 +193,13 @@ export const deckSlice = createSlice({
         state.elements,
         state.selectedEditableElementId
       );
+    },
+
+    copyElement: (state) => {
+      if (!state.selectedEditableElementId) {
+        return;
+      }
+      state.copiedElementId = state.selectedEditableElementId;
     },
 
     /**

@@ -12,7 +12,7 @@ export const CodePaneFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
   editableElementChanged
 }) => {
-  const language = selectedElement?.props?.language || 'jsx';
+  const language = selectedElement?.props?.language || 'javascript';
   const content = String(selectedElement?.children) || '';
 
   const handleValueChanged = useCallback(

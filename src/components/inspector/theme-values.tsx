@@ -16,7 +16,7 @@ import {
 import { isValidCSSSize } from '../../util/is-valid-css-size';
 import { isValidSlideSize } from '../../util/is-valid-slide-size';
 import { cloneAndSet } from '../../util/clone-and-set';
-import { calculateAspectRatio } from '../../util/aspect-ratio';
+import { calculateAspectRatio, dimension } from '../../util/aspect-ratio';
 import { useToggle } from '../../hooks/index';
 
 const Container = styled.div`
@@ -44,9 +44,11 @@ export const ThemeValues = () => {
       return;
     }
     if (aspectRatioLocked) {
-      const newSize = calculateAspectRatio(ratio, {
-        [sizeKey]: parseInt(value)
-      });
+      const newSize = calculateAspectRatio(
+        ratio,
+        sizeKey as dimension,
+        parseInt(value)
+      );
       setInputState((prevState) =>
         cloneAndSet(prevState, ['size', 'height'], newSize.height)
       );

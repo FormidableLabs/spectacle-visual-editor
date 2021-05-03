@@ -1,22 +1,18 @@
-interface AspectRatio {
-  width: number;
-  height: number;
-}
-
+export type dimension = 'width' | 'height';
 export const calculateAspectRatio = (
   ratio: number,
-  userAdjustedValue: Partial<AspectRatio>
-): AspectRatio => {
-  if (userAdjustedValue.width) {
+  dimension: dimension,
+  userAdjustedValue: number
+): { width: number; height: number } => {
+  if (dimension === 'width') {
     return {
-      width: userAdjustedValue.width,
-      height: Math.ceil(userAdjustedValue.width / ratio)
+      width: userAdjustedValue,
+      height: Math.ceil(userAdjustedValue / ratio)
+    };
+  } else {
+    return {
+      width: Math.ceil(userAdjustedValue * ratio),
+      height: userAdjustedValue
     };
   }
-  if (userAdjustedValue.height)
-    return {
-      width: Math.ceil(userAdjustedValue.height * ratio),
-      height: userAdjustedValue.height
-    };
-  return { width: 1920, height: 1080 };
 };

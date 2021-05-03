@@ -5,7 +5,12 @@
  * - Constructed versions replace the child id references with the full children entities to form a
  *   complete tree
  */
-export type SPECTACLE_ELEMENTS = 'Slide' | 'Markdown' | 'FlexBox' | 'Image';
+export type SPECTACLE_ELEMENTS =
+  | 'Slide'
+  | 'Markdown'
+  | 'FlexBox'
+  | 'Image'
+  | 'CodePane';
 export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];
 export const CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox'];
 

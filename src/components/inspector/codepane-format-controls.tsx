@@ -7,14 +7,23 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 const availableLanguages = SyntaxHighlighter.supportedLanguages.map(
   (language: string) => ({ title: language, value: language })
 );
+
 export const CodePaneFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
   editableElementChanged
 }) => {
-  const language = selectedElement?.props?.language || 'typescript';
+  const language = selectedElement?.props?.language || 'jsx';
+  const content = String(selectedElement?.children) || '';
 
   const handleValueChanged = useCallback(
     (value) => editableElementChanged({ language: value }),
+    [editableElementChanged]
+  );
+
+  const handleInputChanged = useCallback(
+    (value) => {
+      editableElementChanged({ children: value });
+    },
     [editableElementChanged]
   );
 
@@ -22,8 +31,8 @@ export const CodePaneFormatControls: React.FC<ElementControlsProps> = ({
     <React.Fragment>
       <MdInput
         label="Content"
-        value={String(selectedElement?.children)}
-        onValueChange={(val) => editableElementChanged({ children: val })}
+        value={content}
+        onValueChange={handleInputChanged}
       />
       <SelectInput
         label="Language"

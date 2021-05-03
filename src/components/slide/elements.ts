@@ -1,6 +1,6 @@
 import { DeckElement } from '../../types/deck-elements';
 import { FLEX_DIRECTION } from '../../constants/flex-direction-options';
-import dark from 'react-syntax-highlighter/dist/esm/styles/prism/vs-dark';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
   HEADING: {
@@ -35,7 +35,7 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
   },
   CODEPANE: {
     component: 'CodePane',
-    props: { theme: dark },
+    props: { theme: vscDarkPlus, language: 'jsx' },
     children: 'let name = "Carlos";'
   }
 };

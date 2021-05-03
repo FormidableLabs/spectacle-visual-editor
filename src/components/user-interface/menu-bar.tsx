@@ -16,11 +16,14 @@ import {
   deckSlice,
   hasPastSelector,
   hasFutureSelector,
-  currentElementSelector
+  selectedElementSelector
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
-import { ELEMENTS, CONTAINER_ELEMENTS } from '../slide/elements';
+import { ELEMENTS } from '../slide/elements';
+import { CONTAINER_ELEMENTS } from '../../types/deck-elements';
+import { useMousetrap } from 'spectacle';
+import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 
 const MenuBarContainer = styled.div`
   width: 100%;
@@ -38,10 +41,16 @@ export const MenuBar = () => {
   const { scale } = useSelector(settingsSelector);
   const hasPast = useSelector(hasPastSelector);
   const hasFuture = useSelector(hasFutureSelector);
-  const currentlySelectedElement = useSelector(currentElementSelector);
+  const selectedElement = useSelector(selectedElementSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
+  useMousetrap(
+    {
+      [KEYBOARD_SHORTCUTS.COPY]: () => dispatch(deckSlice.actions.copyElement())
+    },
+    []
+  );
 
   return (
     <MenuBarContainer>
@@ -141,7 +150,16 @@ export const MenuBar = () => {
             </Menu.Group>
             <Menu.Group>
               <Menu.Item secondaryText={<span>⌘X</span>}>Cut</Menu.Item>
-              <Menu.Item secondaryText={<span>⌘C</span>}>Copy</Menu.Item>
+              <Menu.Item
+                secondaryText={<span>⌘C</span>}
+                disabled={!selectedElement}
+                onSelect={() => {
+                  dispatch(deckSlice.actions.copyElement());
+                  close();
+                }}
+              >
+                Copy
+              </Menu.Item>
               <Menu.Item secondaryText={<span>⌘V</span>}>Paste</Menu.Item>
             </Menu.Group>
             <Menu.Group>
@@ -165,10 +183,8 @@ export const MenuBar = () => {
                 secondaryText={<span>⌘D</span>}
                 onSelect={() => {
                   if (
-                    currentlySelectedElement &&
-                    CONTAINER_ELEMENTS.includes(
-                      currentlySelectedElement.component
-                    )
+                    selectedElement &&
+                    CONTAINER_ELEMENTS.includes(selectedElement.component)
                   ) {
                     toggleDialog();
                   } else {

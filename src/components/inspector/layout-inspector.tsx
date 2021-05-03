@@ -7,12 +7,21 @@ import { basicLayout, codePaneLayout } from '../../templates/basic-layouts';
 import { Slide } from '../slide/slide';
 import { SlideViewerWrapper } from '../slide/slide-viewer/slide-viewer-wrapper';
 import { generateInternalSlideTree } from '../slide/slide-generator';
-import { DeckElement, DeckSlide } from '../../types/deck-elements';
+import {
+  DeckElement,
+  DeckElementMap,
+  DeckSlide
+} from '../../types/deck-elements';
+import { constructDeckElements } from '../../util/construct-deck-elements';
 import { useSelector } from 'react-redux';
 import { Dialog } from 'evergreen-ui';
 import { useToggle } from '../../hooks/use-toggle';
 
-const layouts: { [key: string]: () => DeckElement[] } = {
+type Layouts = {
+  [key: string]: () => { elementIds: string[]; elementMap: DeckElementMap };
+};
+
+const layouts: Layouts = {
   basicLayout,
   codePaneLayout
 };
@@ -31,21 +40,19 @@ export const LayoutInspector = () => {
   const [dialogOpen, toggleDialog] = useToggle();
 
   const hasExisitingContent = useMemo(() => {
-    if (activeSlide?.children.length > 0) {
+    if (activeSlide?.children && activeSlide.children.length > 0) {
       return true;
     }
     return false;
-  }, [activeSlide?.children]);
+  }, [activeSlide]);
 
   const applySelectedLayout = useCallback(
-    (closeDialog = null) => {
+    (closeDialog?: () => void) => {
       dispatch(
         deckSlice.actions.applyLayoutToSlide(layouts[selectedLayoutKey]())
       );
-      if (closeDialog) {
-        // closeDialog is an argument from Dialog's onConfirm
-        closeDialog();
-      }
+      // closeDialog is an argument from Dialog's onConfirm
+      closeDialog?.();
     },
     [dispatch, selectedLayoutKey]
   );
@@ -59,7 +66,7 @@ export const LayoutInspector = () => {
   }, [applySelectedLayout, hasExisitingContent, selectedLayoutKey]);
 
   const handleSlideClick = useCallback(
-    (layoutKey) => {
+    (layoutKey: string) => {
       // Removes template portion of id
       const newLayoutKey = layoutKey.split('-template')[0];
       setSelectedLayoutKey(newLayoutKey);
@@ -74,6 +81,20 @@ export const LayoutInspector = () => {
     () => ({ containerStyle: {}, onSlideClick: handleSlideClick }),
     [handleSlideClick]
   );
+
+  const constructedLayouts: {
+    [key: string]: DeckElement[];
+  } = React.useMemo(() => {
+    return Object.keys(layouts).reduce((accum, layoutKey) => {
+      const { elementIds, elementMap } = layouts[layoutKey]();
+      const getElementById = (id: string) => elementMap[id];
+
+      return {
+        ...accum,
+        [layoutKey]: constructDeckElements(elementIds, getElementById)
+      };
+    }, {});
+  }, []);
 
   return (
     <Pane>
@@ -96,7 +117,7 @@ export const LayoutInspector = () => {
               scale={0.18}
               slideProps={slideProps}
             >
-              {(layouts[layoutKey]() as DeckSlide[]).map(
+              {(constructedLayouts[layoutKey] as DeckSlide[]).map(
                 generateInternalSlideTree as (
                   opt: DeckSlide
                 ) => React.ReactElement

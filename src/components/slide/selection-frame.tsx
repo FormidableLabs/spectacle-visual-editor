@@ -9,7 +9,11 @@ import React, {
 import styled from 'styled-components';
 import Moveable, { OnResizeEnd } from 'react-moveable';
 import { useDispatch, useSelector } from 'react-redux';
-import { deckSlice, editableElementIdSelector } from '../../slices/deck-slice';
+import {
+  deckSlice,
+  selectedEditableElementIdSelector
+} from '../../slices/deck-slice';
+import { RESIZABLE_ELEMENTS } from '../../types/deck-elements';
 
 const Wrapper = styled.div<{ isSelected: boolean }>`
   display: contents;
@@ -35,7 +39,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const ref = useRef<HTMLElement>();
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch();
-  const editableElementId = useSelector(editableElementIdSelector);
+  const editableElementId = useSelector(selectedEditableElementIdSelector);
   const [target, setTarget] = useState<HTMLElement | null>(null);
 
   /**
@@ -121,7 +125,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           ref={moveableRef}
           target={target}
           origin={false}
-          resizable={['Box', 'Image'].includes(children.props.type)}
+          resizable={RESIZABLE_ELEMENTS.includes(children.props.type)}
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
           keepRatio={children.props.type === 'Image'}

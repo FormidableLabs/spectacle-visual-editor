@@ -6,10 +6,18 @@ import { deckSlice, themeSelector } from '../../slices/deck-slice';
 import { ColorPickerInput } from '../inputs/color';
 import { useRootSelector } from '../../store';
 import { Accordion } from '../user-interface/accordion';
-import { TextInputField } from 'evergreen-ui';
+import {
+  Pane,
+  Button,
+  LockIcon,
+  UnlockIcon,
+  TextInputField
+} from 'evergreen-ui';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
 import { isValidSlideSize } from '../../util/is-valid-slide-size';
 import { cloneAndSet } from '../../util/clone-and-set';
+import { calculateAspectRatio, dimension } from '../../util/aspect-ratio';
+import { useToggle } from '../../hooks/index';
 
 const Container = styled.div`
   display: grid;
@@ -22,6 +30,40 @@ export const ThemeValues = () => {
   const dispatch = useDispatch();
   const themeValues = useRootSelector(themeSelector);
   const [inputState, setInputState] = useState(themeValues);
+  const [aspectRatioLocked, toggleAspectRatioLocked] = useToggle();
+  const [ratio, setRatio] = useState(0);
+  const updateThemeSize = (
+    sizeKey: string,
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    setInputState((prevState) =>
+      cloneAndSet(prevState, ['size', sizeKey], value)
+    );
+    if (!isValidSlideSize(value)) {
+      return;
+    }
+    if (aspectRatioLocked) {
+      const newSize = calculateAspectRatio(
+        ratio,
+        sizeKey as dimension,
+        parseInt(value)
+      );
+      setInputState((prevState) =>
+        cloneAndSet(prevState, ['size', 'height'], newSize.height)
+      );
+      setInputState((prevState) =>
+        cloneAndSet(prevState, ['size', 'width'], newSize.width)
+      );
+      dispatch(deckSlice.actions.updateThemeSize(newSize));
+    } else {
+      dispatch(
+        deckSlice.actions.updateThemeSize({
+          [sizeKey]: parseInt(value)
+        })
+      );
+    }
+  };
 
   return (
     <>
@@ -29,6 +71,7 @@ export const ThemeValues = () => {
         <Container>
           {['width', 'height'].map((sizeKey) => (
             <TextInputField
+              marginBottom={0}
               key={`${sizeKey}-font-size-value`}
               type="number"
               inputHeight={24}
@@ -36,30 +79,27 @@ export const ThemeValues = () => {
               value={inputState.size[sizeKey]}
               disabled={false}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                const value = e.target.value;
-                if (isValidSlideSize(value)) {
-                  setInputState((prevState) =>
-                    cloneAndSet(prevState, ['size', sizeKey], value)
-                  );
-                }
+                updateThemeSize(sizeKey, e);
               }}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const value = e.target.value;
-                setInputState((prevState) =>
-                  cloneAndSet(prevState, ['size', sizeKey], value)
-                );
-                if (!isValidSlideSize(value)) {
-                  return;
-                }
-                dispatch(
-                  deckSlice.actions.updateThemeSize({
-                    [sizeKey]: parseInt(value)
-                  })
-                );
+                updateThemeSize(sizeKey, e);
               }}
             />
           ))}
         </Container>
+        <Pane>
+          <Button
+            marginBottom={24}
+            marginTop={8}
+            iconBefore={aspectRatioLocked ? LockIcon : UnlockIcon}
+            onClick={() => {
+              toggleAspectRatioLocked();
+              setRatio(themeValues.size.width / themeValues.size.height);
+            }}
+          >
+            Lock Aspect Ratio
+          </Button>
+        </Pane>
       </Accordion>
       <Accordion label="Theme Colors">
         <Container>

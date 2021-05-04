@@ -171,6 +171,7 @@ export const MenuBar = () => {
                 secondaryText={<span>⌘V</span>}
                 onSelect={() => {
                   dispatch(deckSlice.actions.pasteElement());
+                  close();
                 }}
               >
                 Paste

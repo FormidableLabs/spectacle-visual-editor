@@ -37,5 +37,8 @@ describe('copyDeckElement', () => {
     expect(Object.entries(copiedElement!.elements)[0][1].props).toEqual(
       deckElement1.props
     );
+    expect(Object.entries(copiedElement!.elements)[1][1].children).toEqual(
+      deckElement2.children
+    );
   });
 });

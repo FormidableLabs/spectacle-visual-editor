@@ -213,12 +213,10 @@ export const deckSlice = createSlice({
         getElementById
       );
       if (state.selectedEditableElementId) {
-        selectedElement = getElementById(state.selectedEditableElementId);
+        selectedElement = getSelectedElementImmer(state);
       }
       if (copiedElement) {
-        Object.entries(copiedElement.elements).forEach((entry) =>
-          elementsAdapter.addOne(state.elements, entry[1] as DeckElement)
-        );
+        elementsAdapter.addMany(state.elements, copiedElement.elements);
         if (
           selectedElement &&
           CONTAINER_ELEMENTS.includes(selectedElement.component) &&
@@ -231,7 +229,9 @@ export const deckSlice = createSlice({
             }
           });
         } else {
-          getActiveSlideImmer(state)?.children.push(copiedElement.id);
+          const activeSlide = getActiveSlideImmer(state);
+          if (!activeSlide) return;
+          activeSlide.children.push(copiedElement.id);
         }
       }
     },

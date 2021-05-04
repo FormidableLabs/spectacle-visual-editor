@@ -19,6 +19,7 @@ import {
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
 import { constructDeckElements } from '../util/construct-deck-elements';
+import { copyDeckElement } from '../util/copy-deck-element';
 import undoable from 'redux-undo';
 
 type DeckState = {
@@ -200,6 +201,39 @@ export const deckSlice = createSlice({
         return;
       }
       state.copiedElementId = state.selectedEditableElementId;
+    },
+
+    pasteElement: (state) => {
+      if (!state.copiedElementId) return;
+      let selectedElement: DeckElement | undefined = undefined;
+      const getElementById = (id: string) =>
+        elementsAdapter.getSelectors().selectById(state.elements, id);
+      const copiedElement = copyDeckElement(
+        state.copiedElementId,
+        getElementById
+      );
+      if (state.selectedEditableElementId) {
+        selectedElement = getSelectedElementImmer(state);
+      }
+      if (copiedElement) {
+        elementsAdapter.addMany(state.elements, copiedElement.elements);
+        if (
+          selectedElement &&
+          CONTAINER_ELEMENTS.includes(selectedElement.component) &&
+          Array.isArray(selectedElement.children)
+        ) {
+          elementsAdapter.updateOne(state.elements, {
+            id: selectedElement.id,
+            changes: {
+              children: [...selectedElement.children, copiedElement.id]
+            }
+          });
+        } else {
+          const activeSlide = getActiveSlideImmer(state);
+          if (!activeSlide) return;
+          activeSlide.children.push(copiedElement.id);
+        }
+      }
     },
 
     /**

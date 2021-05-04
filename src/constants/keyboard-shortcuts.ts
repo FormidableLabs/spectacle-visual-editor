@@ -1,3 +1,4 @@
 export const KEYBOARD_SHORTCUTS = {
-  COPY: 'command+c'
+  COPY: 'command+c',
+  PASTE: 'command+v'
 };

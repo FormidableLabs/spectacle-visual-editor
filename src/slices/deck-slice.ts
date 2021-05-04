@@ -19,6 +19,7 @@ import {
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
 import { constructDeckElements } from '../util/construct-deck-elements';
+import { copyDeckElement } from '../util/copy-deck-element';
 import undoable from 'redux-undo';
 
 type DeckState = {
@@ -200,6 +201,39 @@ export const deckSlice = createSlice({
         return;
       }
       state.copiedElementId = state.selectedEditableElementId;
+    },
+
+    pasteElement: (state) => {
+      if (!state.copiedElementId) return;
+      let selectedElement: DeckElement | undefined = undefined;
+      const getElementById = (id: string) =>
+        elementsAdapter.getSelectors().selectById(state.elements, id);
+      const copiedElement = copyDeckElement(
+        state.copiedElementId,
+        getElementById
+      );
+      if (state.selectedEditableElementId) {
+        selectedElement = getElementById(state.selectedEditableElementId);
+      }
+      if (copiedElement) {
+        Object.entries(copiedElement.elements).forEach((entry) =>
+          elementsAdapter.addOne(state.elements, entry[1] as DeckElement)
+        );
+        if (
+          selectedElement &&
+          CONTAINER_ELEMENTS.includes(selectedElement.component) &&
+          Array.isArray(selectedElement.children)
+        ) {
+          elementsAdapter.updateOne(state.elements, {
+            id: selectedElement.id,
+            changes: {
+              children: [...selectedElement.children, copiedElement.id]
+            }
+          });
+        } else {
+          getActiveSlideImmer(state)?.children.push(copiedElement.id);
+        }
+      }
     },
 
     /**

@@ -7,7 +7,8 @@ import {
   Popover,
   Position,
   Pane,
-  Dialog
+  Dialog,
+  toaster
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
@@ -45,9 +46,15 @@ export const MenuBar = () => {
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
+  const copyElement = () => {
+    dispatch(deckSlice.actions.copyElement());
+    toaster.success('Element copied!');
+  };
   useMousetrap(
     {
-      [KEYBOARD_SHORTCUTS.COPY]: () => dispatch(deckSlice.actions.copyElement())
+      [KEYBOARD_SHORTCUTS.COPY]: () => copyElement(),
+      [KEYBOARD_SHORTCUTS.PASTE]: () =>
+        dispatch(deckSlice.actions.pasteElement())
     },
     []
   );
@@ -154,13 +161,20 @@ export const MenuBar = () => {
                 secondaryText={<span>⌘C</span>}
                 disabled={!selectedElement}
                 onSelect={() => {
-                  dispatch(deckSlice.actions.copyElement());
+                  copyElement();
                   close();
                 }}
               >
                 Copy
               </Menu.Item>
-              <Menu.Item secondaryText={<span>⌘V</span>}>Paste</Menu.Item>
+              <Menu.Item
+                secondaryText={<span>⌘V</span>}
+                onSelect={() => {
+                  dispatch(deckSlice.actions.pasteElement());
+                }}
+              >
+                Paste
+              </Menu.Item>
             </Menu.Group>
             <Menu.Group>
               <Pane>

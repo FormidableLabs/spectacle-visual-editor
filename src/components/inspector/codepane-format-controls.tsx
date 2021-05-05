@@ -4,8 +4,11 @@ import { ElementControlsProps } from './element-controls-props';
 import { SelectInput } from '../inputs/select';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
-const availableLanguages = SyntaxHighlighter.supportedLanguages.map(
-  (language: string) => ({ title: language, value: language })
+const availableLanguages = (SyntaxHighlighter as any).supportedLanguages.supportedLanguages.map(
+  (language: string) => ({
+    title: language,
+    value: language
+  })
 );
 
 export const CodePaneFormatControls: React.FC<ElementControlsProps> = ({

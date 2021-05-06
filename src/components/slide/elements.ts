@@ -1,7 +1,7 @@
 import { DeckElement } from '../../types/deck-elements';
 import { FLEX_DIRECTION } from '../../constants/flex-direction-options';
 
-export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
+export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
   HEADING: {
     component: 'Markdown',
     children: '# Oh Hello There'

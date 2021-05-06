@@ -1,11 +1,14 @@
 import { DeckElement } from '../types/deck-elements';
 import { copyDeckElement } from './copy-deck-element';
+
 describe('copyDeckElement', () => {
   const getElementById = jest.fn();
+  const id = '123456';
   const deckElement2: DeckElement = {
     component: 'Markdown',
     id: '456',
-    children: 'abc'
+    children: 'abc',
+    parent: id
   };
   const deckElement3: DeckElement = {
     component: 'Image',
@@ -14,15 +17,17 @@ describe('copyDeckElement', () => {
       src: 'www.images.com',
       width: '500px',
       height: 'auto'
-    }
+    },
+    parent: id
   };
   const deckElement1: DeckElement = {
     component: 'FlexBox',
-    id: '123',
+    id,
     children: [deckElement2.id, deckElement3.id],
     props: {
       backgroundColor: 'yellowgreen'
-    }
+    },
+    parent: '999'
   };
 
   getElementById

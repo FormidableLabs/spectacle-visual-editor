@@ -16,17 +16,24 @@ export type DeckElement = {
   id: string;
   props?: { [key: string]: any };
   children?: string | string[];
+  parent: string;
 };
 
-export type DeckSlide = Omit<DeckElement, 'component' | 'children'> & {
+export type DeckSlide = Omit<
+  DeckElement,
+  'component' | 'children' | 'parent'
+> & {
   component: 'Slide';
   children: string[];
 };
 
-export type ConstructedDeckElement = Omit<DeckElement, 'children'> & {
+export type ConstructedDeckElement = Omit<
+  DeckElement,
+  'children' | 'parent'
+> & {
   children?: string | ConstructedDeckElement[];
 };
 
-export type ConstructedDeckSlide = Omit<DeckSlide, 'children'> & {
+export type ConstructedDeckSlide = Omit<DeckSlide, 'children' | 'parent'> & {
   children: ConstructedDeckElement[];
 };

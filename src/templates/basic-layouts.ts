@@ -2,6 +2,7 @@ import { v4 } from 'uuid';
 import { indentNormalizer } from 'spectacle';
 import { DeckElementMap } from '../types/deck-elements';
 
+export const ROOT_ELEMENT = '<ROOT>';
 export const basicLayout = (): {
   elementIds: string[];
   elementMap: DeckElementMap;
@@ -14,6 +15,7 @@ export const basicLayout = (): {
       [elementId]: {
         component: 'Markdown',
         id: elementId,
+        parent: ROOT_ELEMENT,
         children: indentNormalizer(`
           # Header
 
@@ -36,6 +38,7 @@ export const codePaneLayout = (): {
       [elementId]: {
         component: 'Markdown',
         id: elementId,
+        parent: ROOT_ELEMENT,
         children: indentNormalizer(`
           # Header
 

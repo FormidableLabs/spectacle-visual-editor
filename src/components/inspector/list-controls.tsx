@@ -12,6 +12,7 @@ import {
 import { ColorPickerInput } from '../inputs/color';
 import { useRootSelector } from '../../store';
 import { themeSelector } from '../../slices/deck-slice';
+import { isValidCSSSize } from '../../util/is-valid-css-size';
 
 interface Props {
   selectedElement: ConstructedDeckElement | null;
@@ -81,16 +82,22 @@ export const ListControls: React.FC<Props> = ({
         value={inputState.fontSize}
         onBlur={(e: FocusEvent<HTMLInputElement>) => {
           const { value } = e.target;
-          if (!/^\d+px$/g.test(value)) {
-            onChangeComponentProps(LIST_COMPONENT_PROPS.FONT_SIZE, fontSize);
-            setInputState({ ...inputState, fontSize });
-          } else {
+          if (isValidCSSSize(value)) {
+            setInputState({ ...inputState, fontSize: value });
             onChangeComponentProps(LIST_COMPONENT_PROPS.FONT_SIZE, value);
+          } else {
+            setInputState({ ...inputState, fontSize });
           }
         }}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setInputState({ ...inputState, fontSize: e.target.value })
-        }
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          const { value } = e.target;
+          if (isValidCSSSize(value)) {
+            setInputState({ ...inputState, fontSize: value });
+            onChangeComponentProps(LIST_COMPONENT_PROPS.FONT_SIZE, value);
+          } else {
+            setInputState({ ...inputState, fontSize: value });
+          }
+        }}
       />
       <SelectInput
         label="Font Weight"

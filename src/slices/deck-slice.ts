@@ -20,8 +20,9 @@ import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
 import { constructDeckElements } from '../util/construct-deck-elements';
 import { copyDeckElement } from '../util/copy-deck-element';
+import { ROOT_ELEMENT } from '../templates/basic-layouts';
 import undoable from 'redux-undo';
-
+import { getChildren } from '../util/get-children';
 type DeckState = {
   slides: EntityState<DeckSlide>;
   elements: EntityState<DeckElement>;
@@ -100,7 +101,7 @@ export const deckSlice = createSlice({
 
     elementAddedToActiveSlide: (
       state,
-      action: PayloadAction<Omit<DeckElement, 'id'>>
+      action: PayloadAction<Omit<DeckElement, 'id' | 'parent'>>
     ) => {
       const activeSlide = getActiveSlideImmer(state);
 
@@ -108,9 +109,13 @@ export const deckSlice = createSlice({
         return;
       }
 
-      let node: DeckElement | undefined;
+      let node: DeckElement | DeckSlide | undefined;
       const newElementId = v4();
-      const newElement: DeckElement = { id: newElementId, ...action.payload };
+      const newElement: DeckElement = {
+        id: newElementId,
+        parent: '',
+        ...action.payload
+      };
 
       if (state.selectedEditableElementId) {
         const potentialNode = getSelectedElementImmer(state);
@@ -120,11 +125,14 @@ export const deckSlice = createSlice({
           CONTAINER_ELEMENTS.includes(potentialNode.component)
         ) {
           node = potentialNode;
+          newElement.parent = state.selectedEditableElementId;
         } else {
           node = activeSlide;
+          newElement.parent = activeSlide.id;
         }
       } else {
         node = activeSlide;
+        newElement.parent = activeSlide.id;
       }
 
       if (!node) {
@@ -164,11 +172,19 @@ export const deckSlice = createSlice({
     },
     deleteSlide: (state) => {
       // Users cannot delete all slides otherwise it would break Spectacle
-      if (state.slides.ids.length === 1 || !state.activeSlideId) {
-        return;
-      }
+      const activeSlide = getActiveSlideImmer(state);
+      if (state.slides.ids.length === 1 || !activeSlide) return;
 
-      slidesAdapter.removeOne(state.slides, state.activeSlideId);
+      const getElementById = (id: string) =>
+        elementsAdapter.getSelectors().selectById(state.elements, id);
+
+      let elementsToDelete: string[] = [];
+
+      elementsToDelete = getChildren(activeSlide.children, getElementById);
+
+      elementsAdapter.removeMany(state.elements, elementsToDelete);
+
+      slidesAdapter.removeOne(state.slides, activeSlide.id);
       state.activeSlideId = slidesAdapter
         .getSelectors()
         .selectAll(state.slides)[0].id;
@@ -187,13 +203,37 @@ export const deckSlice = createSlice({
     },
 
     deleteElement: (state) => {
-      if (!state.selectedEditableElementId) {
-        return;
+      const selectedElement = getSelectedElementImmer(state);
+      if (!selectedElement) return;
+
+      const getElementById = (id: string) =>
+        elementsAdapter.getSelectors().selectById(state.elements, id);
+
+      if (
+        selectedElement?.children &&
+        Array.isArray(selectedElement.children)
+      ) {
+        const childElements = getChildren(
+          selectedElement.children,
+          getElementById
+        );
+        const parent = getElementById(selectedElement.parent);
+        if (!parent) return;
+
+        // remove child entities of selected node
+        elementsAdapter.removeMany(state.elements, childElements);
+
+        // remove reference from parent
+        elementsAdapter.updateOne(state.elements, {
+          id: parent.id,
+          changes: {
+            children: (parent.children as string[]).filter(
+              (id) => id !== selectedElement.id
+            )
+          }
+        });
       }
-      elementsAdapter.removeOne(
-        state.elements,
-        state.selectedEditableElementId
-      );
+      elementsAdapter.removeOne(state.elements, selectedElement.id);
     },
 
     copyElement: (state) => {
@@ -286,6 +326,12 @@ export const deckSlice = createSlice({
       if (!activeSlide) {
         return;
       }
+
+      action.payload.elementIds.forEach((id) => {
+        if (action.payload.elementMap[id].parent === ROOT_ELEMENT) {
+          action.payload.elementMap[id].parent = activeSlide.id;
+        }
+      });
 
       activeSlide.children = action.payload.elementIds;
       elementsAdapter.addMany(state.elements, action.payload.elementMap);

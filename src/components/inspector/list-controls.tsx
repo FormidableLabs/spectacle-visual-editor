@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, FocusEvent } from 'react';
 import { ConstructedDeckElement } from '../../types/deck-elements';
 import { FormField, Switch, TextInputField } from 'evergreen-ui';
 import { SelectInput } from '../inputs/select';
@@ -66,7 +66,7 @@ export const ListControls: React.FC<Props> = ({
         onUpdateValue={(value) =>
           onChangeComponentProps(LIST_COMPONENT_PROPS.COLOR, value)
         }
-        validValue={color}
+        validValue={themeValues.colors.primary}
         onChangeInput={(value) =>
           onChangeComponentProps(LIST_COMPONENT_PROPS.COLOR, value)
         }
@@ -75,11 +75,18 @@ export const ListControls: React.FC<Props> = ({
       <TextInputField
         label="Font Size"
         value={fontSize}
+        onBlur={(e: FocusEvent<HTMLInputElement>) => {
+          const { value } = e.target;
+          if (!/^\d+px$/g.test(value)) {
+            onChangeComponentProps(
+              LIST_COMPONENT_PROPS.FONT_SIZE,
+              themeValues.fontSizes.text
+            );
+          }
+        }}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           const { value } = e.target;
-          if (/^\d+px$/g.test(value)) {
-            onChangeComponentProps(LIST_COMPONENT_PROPS.FONT_SIZE, value);
-          }
+          onChangeComponentProps(LIST_COMPONENT_PROPS.FONT_SIZE, value);
         }}
       />
       <SelectInput

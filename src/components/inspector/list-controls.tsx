@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent } from 'react';
+import React, { ChangeEvent, FocusEvent, useState } from 'react';
 import { ConstructedDeckElement } from '../../types/deck-elements';
 import { FormField, Switch, TextInputField } from 'evergreen-ui';
 import { SelectInput } from '../inputs/select';
@@ -14,7 +14,7 @@ import { useRootSelector } from '../../store';
 import { themeSelector } from '../../slices/deck-slice';
 
 interface Props {
-  selectedElement: ConstructedDeckElement | null;
+  selectedElement: ConstructedDeckElement;
   editableElementChanged(
     element: Partial<ConstructedDeckElement['props']>
   ): void;
@@ -26,21 +26,25 @@ export const ListControls: React.FC<Props> = ({
 }) => {
   const themeValues = useRootSelector(themeSelector);
   const shouldAnimateListItems =
-    selectedElement?.props?.animateListItems || false;
+    selectedElement.props?.animateListItems || false;
   const listStyleType =
-    selectedElement?.props?.componentProps?.listStyleType ||
+    selectedElement.props?.componentProps?.listStyleType ||
     LIST_STYLE_TYPE_OPTIONS.DISC;
-  const color =
-    selectedElement?.props?.componentProps?.color || themeValues.colors.primary;
+  const color: string =
+    selectedElement.props?.componentProps?.color || themeValues.colors.primary;
   const fontSize =
-    selectedElement?.props?.componentProps?.fontSize ||
+    selectedElement.props?.componentProps?.fontSize ||
     themeValues.fontSizes.text;
   const fontWeight =
-    selectedElement?.props?.componentProps?.fontWeight ||
+    selectedElement.props?.componentProps?.fontWeight ||
     LIST_FONT_WEIGHT_OPTIONS.FOUR_HUNDRED;
   const textAlign =
-    selectedElement?.props?.componentProps?.textAlign ||
+    selectedElement.props?.componentProps?.textAlign ||
     LIST_TEXT_ALIGN_OPTIONS.LEFT;
+  const [inputState, setInputState] = useState({
+    color,
+    fontSize
+  });
 
   const onToggleAnimatedListItems = () => {
     editableElementChanged({
@@ -66,28 +70,27 @@ export const ListControls: React.FC<Props> = ({
         onUpdateValue={(value) =>
           onChangeComponentProps(LIST_COMPONENT_PROPS.COLOR, value)
         }
-        validValue={themeValues.colors.primary}
+        validValue={color}
         onChangeInput={(value) =>
-          onChangeComponentProps(LIST_COMPONENT_PROPS.COLOR, value)
+          setInputState({ ...inputState, color: value })
         }
-        value={color}
+        value={inputState.color}
       />
       <TextInputField
         label="Font Size"
-        value={fontSize}
+        value={inputState.fontSize}
         onBlur={(e: FocusEvent<HTMLInputElement>) => {
           const { value } = e.target;
           if (!/^\d+px$/g.test(value)) {
-            onChangeComponentProps(
-              LIST_COMPONENT_PROPS.FONT_SIZE,
-              themeValues.fontSizes.text
-            );
+            onChangeComponentProps(LIST_COMPONENT_PROPS.FONT_SIZE, fontSize);
+            setInputState({ ...inputState, fontSize });
+          } else {
+            onChangeComponentProps(LIST_COMPONENT_PROPS.FONT_SIZE, value);
           }
         }}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          const { value } = e.target;
-          onChangeComponentProps(LIST_COMPONENT_PROPS.FONT_SIZE, value);
-        }}
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          setInputState({ ...inputState, fontSize: e.target.value })
+        }
       />
       <SelectInput
         label="Font Weight"

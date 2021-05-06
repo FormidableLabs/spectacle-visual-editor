@@ -14,7 +14,7 @@ import { useRootSelector } from '../../store';
 import { themeSelector } from '../../slices/deck-slice';
 
 interface Props {
-  selectedElement: ConstructedDeckElement;
+  selectedElement: ConstructedDeckElement | null;
   editableElementChanged(
     element: Partial<ConstructedDeckElement['props']>
   ): void;
@@ -26,20 +26,20 @@ export const ListControls: React.FC<Props> = ({
 }) => {
   const themeValues = useRootSelector(themeSelector);
   const shouldAnimateListItems =
-    selectedElement.props?.animateListItems || false;
+    selectedElement?.props?.animateListItems || false;
   const listStyleType =
-    selectedElement.props?.componentProps?.listStyleType ||
+    selectedElement?.props?.componentProps?.listStyleType ||
     LIST_STYLE_TYPE_OPTIONS.DISC;
   const color: string =
-    selectedElement.props?.componentProps?.color || themeValues.colors.primary;
+    selectedElement?.props?.componentProps?.color || themeValues.colors.primary;
   const fontSize =
-    selectedElement.props?.componentProps?.fontSize ||
+    selectedElement?.props?.componentProps?.fontSize ||
     themeValues.fontSizes.text;
   const fontWeight =
-    selectedElement.props?.componentProps?.fontWeight ||
+    selectedElement?.props?.componentProps?.fontWeight ||
     LIST_FONT_WEIGHT_OPTIONS.FOUR_HUNDRED;
   const textAlign =
-    selectedElement.props?.componentProps?.textAlign ||
+    selectedElement?.props?.componentProps?.textAlign ||
     LIST_TEXT_ALIGN_OPTIONS.LEFT;
   const [inputState, setInputState] = useState({
     color,

@@ -1,10 +1,13 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
-interface Props {
-  id: string;
+export interface ElementLocation {
   index: number;
-  onDrag: (dragIndex: number, hoverIndex: number) => void;
+  parentIndex?: number;
+}
+
+interface Props extends ElementLocation {
+  onDrag: (dragLocation: ElementLocation, hoverLocation: ElementLocation) => void;
   onDrop: () => void;
 }
 
@@ -12,11 +15,11 @@ interface Props {
  * Element drag wrapper, used to wrap DnD functionality
  */
 export const SlideElementDragWrapper: React.FC<Props> = ({
-  id,
+  children,
   index,
   onDrag,
   onDrop,
-  children
+  parentIndex
 }) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -29,16 +32,18 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
       };
     },
 
-    hover(item: { index: number }, monitor) {
+    hover(item: ElementLocation, monitor) {
       if (!ref.current) {
         return;
       }
-      const dragIndex = item.index;
-      const hoverIndex = index;
+
       // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
+      if (item.parentIndex === parentIndex && item.index === index) {
         return;
       }
+
+      const dragIndex = item.index;
+      const hoverIndex = index;
 
       // Determine rectangle on screen
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
@@ -66,8 +71,9 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
         return;
       }
+
       // Time to actually perform the action
-      onDrag(dragIndex, hoverIndex);
+      onDrag(item, { parentIndex, index });
 
       item.index = hoverIndex;
     }
@@ -75,8 +81,9 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
 
   const [{ isDragging }, drag] = useDrag({
     type: 'Element',
-    item: () => {
-      return { id, index };
+
+    item: (): ElementLocation => {
+      return { parentIndex, index };
     },
 
     end() {
@@ -88,7 +95,7 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
     })
   });
 
-  const opacity = isDragging ? 0.9 : 1;
+  const opacity = isDragging ? 0.2 : 1;
   drag(drop(ref));
 
   return (

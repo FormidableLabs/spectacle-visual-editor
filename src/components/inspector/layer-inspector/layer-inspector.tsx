@@ -8,7 +8,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch } from 'react-redux';
 import { isDeckElement } from '../../../util/is-deck-element';
-import { SlideElementDragWrapper } from './slide-element-drag-wrapper';
+import { ElementLocation, SlideElementDragWrapper } from './slide-element-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import styled from 'styled-components';
 import { moveArrayItem } from '../../../util/move-array-item';
@@ -30,7 +30,7 @@ export const LayerInspector: React.FC = () => {
 
   const reorderSlideElements = React.useCallback(
     (nextElements: ConstructedDeckElement[]) => {
-      const nextIds = nextElements.map((el) => el?.id) || [];
+      const nextIds = nextElements.map((element) => element?.id) || [];
       dispatch(deckSlice.actions.reorderActiveSlideElements(nextIds));
     },
     [dispatch]
@@ -43,10 +43,14 @@ export const LayerInspector: React.FC = () => {
 
   // Move a local item as its dragged
   const moveItem = React.useCallback(
-    (currentIndex: number, nextIndex: number) => {
-      setLocalChildren((items) =>
-        moveArrayItem(items, currentIndex, nextIndex)
-      );
+    (currentLocation: ElementLocation, nextLocation: ElementLocation) => {
+      setLocalChildren((localChildren) => {
+        if (typeof currentLocation.parentIndex === 'number') {
+          return localChildren;
+        }
+
+        return moveArrayItem(localChildren, currentLocation.index, nextLocation.index)
+      });
     },
     []
   );
@@ -73,22 +77,21 @@ export const LayerInspector: React.FC = () => {
     <Pane>
       <GridContainer ref={containerRef}>
         <DndProvider backend={HTML5Backend}>
-          {localChildren.map((el, idx) => (
+          {localChildren.map((element, index) => (
             <SlideElementDragWrapper
-              key={el.id}
-              id={el.id}
-              index={idx}
+              key={element.id}
+              index={index}
               onDrop={commitChangedOrder}
               onDrag={moveItem}
             >
               <ElementCard
-                element={el}
-                isActive={el.id === activeElementId}
-                onMouseDown={() => setActiveElementId(el.id)}
-                onMoveUpClick={() => moveItemAndCommit(idx, idx - 1)}
-                onMoveDownClick={() => moveItemAndCommit(idx, idx + 1)}
-                showMoveUpButton={idx - 1 > -1}
-                showMoveDownButton={idx + 1 < localChildren.length}
+                element={element}
+                isActive={element.id === activeElementId}
+                onMouseDown={() => setActiveElementId(element.id)}
+                onMoveUpClick={() => moveItemAndCommit(index, index - 1)}
+                onMoveDownClick={() => moveItemAndCommit(index, index + 1)}
+                showMoveUpButton={index - 1 > -1}
+                showMoveDownButton={index + 1 < localChildren.length}
               />
             </SlideElementDragWrapper>
           ))}

@@ -3,8 +3,7 @@ import {
   createSelector,
   createSlice,
   EntityState,
-  PayloadAction,
-  current
+  PayloadAction
 } from '@reduxjs/toolkit';
 import { v4, validate } from 'uuid';
 

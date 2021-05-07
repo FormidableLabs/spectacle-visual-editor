@@ -10,7 +10,8 @@ import {
   ListItem,
   OrderedList,
   UnorderedList,
-  Markdown
+  Markdown,
+  CodePane
 } from 'spectacle';
 import { Slide as InternalSlide } from './slide';
 import { SelectionFrame } from './selection-frame';
@@ -26,7 +27,8 @@ export const SPECTACLE_INTERNAL_OBJECT_MAP = {
   ListItem,
   OrderedList,
   UnorderedList,
-  Markdown
+  Markdown,
+  CodePane
 };
 
 export const SPECTACLE_PREVIEW_OBJECT_MAP = {

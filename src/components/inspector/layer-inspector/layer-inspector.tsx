@@ -11,7 +11,7 @@ import { isDeckElement } from '../../../util/is-deck-element';
 import { SlideElementDragWrapper } from './slide-element-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import styled from 'styled-components';
-import { swapArrayItems } from '../../../util/swap-array-items';
+import { moveArrayItem } from '../../../util/move-array-item';
 
 export const LayerInspector: React.FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
@@ -45,7 +45,7 @@ export const LayerInspector: React.FC = () => {
   const moveItem = React.useCallback(
     (currentIndex: number, nextIndex: number) => {
       setLocalChildren((items) =>
-        swapArrayItems(items, currentIndex, nextIndex)
+        moveArrayItem(items, currentIndex, nextIndex)
       );
     },
     []
@@ -59,7 +59,7 @@ export const LayerInspector: React.FC = () => {
   // Commit the movement of an item immediately
   const moveItemAndCommit = React.useCallback(
     (currentIndex: number, nextIndex: number) => {
-      const swappedItems = swapArrayItems(
+      const swappedItems = moveArrayItem(
         localChildren,
         currentIndex,
         nextIndex

@@ -4,7 +4,7 @@
  * @param idx1 Index of first item
  * @param idx2 Index of second item
  */
-export const swapArrayItems = <T>(items: T[], idx1: number, idx2: number) => {
+export const moveArrayItem = <T>(items: T[], idx1: number, idx2: number) => {
   const clonedItems = [...items];
 
   if (idx1 >= items.length || idx2 >= items.length) {

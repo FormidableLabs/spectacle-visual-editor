@@ -4,7 +4,7 @@ import { ElementControlsProps } from './element-controls-props';
 import { SelectInput } from '../inputs/select';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
-const availableLanguages = (SyntaxHighlighter as any).supportedLanguages.supportedLanguages.map(
+const availableLanguages = (SyntaxHighlighter as any).supportedLanguages.map(
   (language: string) => ({
     title: language,
     value: language

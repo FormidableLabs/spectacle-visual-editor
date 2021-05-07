@@ -158,7 +158,7 @@ export const deckSlice = createSlice({
       const { children: incomingChildren, ...incomingProps } = action.payload;
       selectedElement.props = { ...selectedElement.props, ...incomingProps };
 
-      if (incomingChildren) {
+      if (incomingChildren != null) {
         selectedElement.children = incomingChildren;
       }
     },

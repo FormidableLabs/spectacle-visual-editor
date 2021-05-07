@@ -205,7 +205,6 @@ export const deckSlice = createSlice({
 
     deleteElement: (state) => {
       const selectedElement = getSelectedElementImmer(state);
-      console.log(current(selectedElement));
       if (!selectedElement) return;
 
       const getElementById = (id: string) =>

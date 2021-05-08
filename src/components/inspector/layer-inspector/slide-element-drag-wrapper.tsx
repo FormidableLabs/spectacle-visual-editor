@@ -7,7 +7,10 @@ export interface ElementLocation {
 }
 
 interface Props extends ElementLocation {
-  onDrag: (dragLocation: ElementLocation, hoverLocation: ElementLocation) => void;
+  onDrag: (
+    dragLocation: ElementLocation,
+    hoverLocation: ElementLocation
+  ) => void;
   onDrop: () => void;
 }
 
@@ -39,6 +42,15 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
 
       // Don't replace items with themselves
       if (item.parentIndex === parentIndex && item.index === index) {
+        return;
+      }
+
+      // If parentIndex is undefined, then it is a top-level element
+      // Don't allow drag interactions between a top-level element and its own children
+      if (
+        typeof item.parentIndex === 'undefined' &&
+        item.index === parentIndex
+      ) {
         return;
       }
 

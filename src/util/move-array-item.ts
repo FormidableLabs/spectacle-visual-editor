@@ -1,4 +1,8 @@
-export const moveArrayItem = <T>(items: T[], itemIndex: number, destinationIndex: number) => {
+export const moveArrayItem = <T>(
+  items: T[],
+  itemIndex: number,
+  destinationIndex: number
+) => {
   const clonedItems = [...items];
 
   if (itemIndex >= items.length || destinationIndex >= items.length) {

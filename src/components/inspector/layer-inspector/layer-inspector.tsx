@@ -8,7 +8,10 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch } from 'react-redux';
 import { isDeckElement } from '../../../util/is-deck-element';
-import { ElementLocation, SlideElementDragWrapper } from './slide-element-drag-wrapper';
+import {
+  ElementLocation,
+  SlideElementDragWrapper
+} from './slide-element-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import styled from 'styled-components';
 import { moveArrayItem } from '../../../util/move-array-item';
@@ -31,7 +34,9 @@ export const LayerInspector: React.FC = () => {
   const reorderSlideElements = React.useCallback(
     (nextElements: ConstructedDeckElement[]) => {
       const nextIds = nextElements.map((element) => element?.id) || [];
-      dispatch(deckSlice.actions.reorderActiveSlideElements(nextIds));
+      dispatch(
+        deckSlice.actions.reorderActiveSlideElements({ elementIds: nextIds })
+      );
     },
     [dispatch]
   );
@@ -49,7 +54,11 @@ export const LayerInspector: React.FC = () => {
           return localChildren;
         }
 
-        return moveArrayItem(localChildren, currentLocation.index, nextLocation.index)
+        return moveArrayItem(
+          localChildren,
+          currentLocation.index,
+          nextLocation.index
+        );
       });
     },
     []
@@ -93,6 +102,30 @@ export const LayerInspector: React.FC = () => {
                 showMoveUpButton={index - 1 > -1}
                 showMoveDownButton={index + 1 < localChildren.length}
               />
+              {Array.isArray(element.children) && (
+                <ElementChildrenContainer>
+                  {element.children.map((childElement, childIndex) => (
+                    <SlideElementDragWrapper
+                      key={childElement.id}
+                      index={childIndex}
+                      parentIndex={index}
+                      onDrop={() => {}}
+                      onDrag={() => {}}
+                    >
+                      <ElementCard
+                        element={childElement}
+                        isActive={childElement.id === activeElementId}
+                        onMouseDown={() => setActiveElementId(childElement.id)}
+                        showMoveUpButton={childIndex - 1 > -1}
+                        showMoveDownButton={
+                          childIndex + 1 <
+                          (element.children as ConstructedDeckElement[]).length
+                        }
+                      />
+                    </SlideElementDragWrapper>
+                  ))}
+                </ElementChildrenContainer>
+              )}
             </SlideElementDragWrapper>
           ))}
         </DndProvider>
@@ -104,4 +137,8 @@ export const LayerInspector: React.FC = () => {
 const GridContainer = styled.div`
   display: grid;
   grid-row-gap: 10px;
+`;
+
+const ElementChildrenContainer = styled.div`
+  margin-left: 16px;
 `;

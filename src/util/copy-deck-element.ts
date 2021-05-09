@@ -4,7 +4,7 @@ import { DeckElement, DeckElementMap } from '../types/deck-elements';
 export const copyDeckElement = (
   elementId: string,
   getElementById: (id: string) => DeckElement | undefined
-) => {
+): { id: string; elements: DeckElementMap } | undefined => {
   const elementToCopy = getElementById(elementId);
   if (!elementToCopy) {
     return;
@@ -37,6 +37,9 @@ export const copyDeckElement = (
       id: v4(),
       children: elementChildren.copiedChildrenIds
     };
+    elementChildren.copiedChildrenIds.forEach((id) => {
+      elementChildren.copiedChildrenElements[id].parent = copiedElement.id;
+    });
   } else {
     copiedElement = {
       ...elementToCopy,

@@ -7,12 +7,8 @@ import {
   isBoxElement,
   isImageElement,
   isMdElement,
-<<<<<<< HEAD
   isCodePaneElement,
   isGridElement
-=======
-  isCodePaneElement
->>>>>>> f6508a17c22bf7e223fac8f319bb763544108881
 } from './validators';
 import { MdFormatControls } from './md-format-controls';
 import { ImageControls } from './image-controls';

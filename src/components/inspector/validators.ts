@@ -21,3 +21,6 @@ export const isImageElement = (element: ConstructedDeckElement | null) =>
 
 export const isTextElement = (element: ConstructedDeckElement | null) =>
   Boolean(element && ['Heading', 'Text'].includes(element?.component));
+
+export const isCodePaneElement = (element: ConstructedDeckElement | null) =>
+  Boolean(element && ['CodePane'].includes(element?.component));

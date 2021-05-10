@@ -1,7 +1,7 @@
 import { DeckElement } from '../../types/deck-elements';
 import { FLEX_DIRECTION } from '../../constants/flex-direction-options';
 
-export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
+export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
   HEADING: {
     component: 'Markdown',
     children: '# Oh Hello There'
@@ -40,5 +40,10 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id'>> = {
       width: '500px',
       height: `auto`
     }
+  },
+  CODEPANE: {
+    component: 'CodePane',
+    props: { language: 'javascript' },
+    children: 'let name = "Carlos";'
   }
 };

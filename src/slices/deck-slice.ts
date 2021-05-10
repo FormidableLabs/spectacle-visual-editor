@@ -261,7 +261,6 @@ export const deckSlice = createSlice({
         selectedElement = getSelectedElementImmer(state);
       }
       if (copiedElement) {
-        elementsAdapter.addMany(state.elements, copiedElement.elements);
         if (
           selectedElement &&
           CONTAINER_ELEMENTS.includes(selectedElement.component) &&
@@ -273,11 +272,14 @@ export const deckSlice = createSlice({
               children: [...selectedElement.children, copiedElement.id]
             }
           });
+          copiedElement.elements[copiedElement.id].parent = selectedElement.id;
         } else {
           const activeSlide = getActiveSlideImmer(state);
           if (!activeSlide) return;
+          copiedElement.elements[copiedElement.id].parent = activeSlide.id;
           activeSlide.children.push(copiedElement.id);
         }
+        elementsAdapter.addMany(state.elements, copiedElement.elements);
       }
     },
 

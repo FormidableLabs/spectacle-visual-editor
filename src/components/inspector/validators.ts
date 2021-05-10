@@ -8,7 +8,10 @@ export const isValidCSSColor = (color: string) =>
   isValidColorName(color) || isValidHSL(color) || isValidRGB(color);
 
 export const isBoxElement = (element: ConstructedDeckElement | null) =>
-  Boolean(element && CONTAINER_ELEMENTS.includes(element?.component));
+  Boolean(element?.component?.includes('FlexBox') && CONTAINER_ELEMENTS.includes(element?.component));
+
+export const isGridElement = (element: ConstructedDeckElement | null) =>
+  Boolean(element?.component?.includes('Grid') && CONTAINER_ELEMENTS.includes(element?.component));
 
 export const isMdElement = (element: ConstructedDeckElement | null) =>
   Boolean(element?.component?.includes('Markdown'));

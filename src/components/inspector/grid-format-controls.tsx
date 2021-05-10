@@ -1,5 +1,6 @@
 import { TextInputField } from 'evergreen-ui';
-import React, { useEffect, FocusEvent, ChangeEvent, useState } from 'react';
+import React, { FocusEvent, ChangeEvent, useState } from 'react';
+import { GRID_COMPONENT_PROPS } from '../../constants/grid-format-options';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
 import { ElementControlsProps } from './element-controls-props';
 
@@ -12,7 +13,8 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
   const rowNumber = selectedElement?.props?.componentProps?.rowNumber || '1';
   const columnGapSpace =
     selectedElement?.props?.componentProps?.columnGapSpace || '0px';
-  const rowGapSpace = selectedElement?.props?.componentProps?.rowGapSpace || '0px';
+  const rowGapSpace =
+    selectedElement?.props?.componentProps?.rowGapSpace || '0px';
   const columnWidth = selectedElement?.props?.componentProps?.columnWidth || '';
   const rowHeight = selectedElement?.props?.componentProps?.rowHeight || '';
 
@@ -27,9 +29,11 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
 
   /* Convert number of columns (integer) to a CSS percentage for grids */
   const convertNumberToGridPercent = (number: number, width: string) => {
-    return 'repeat(' + number + ', ' + (width ? width + ')' : 100 / number + '%)');
+    return (
+      'repeat(' + number + ', ' + (width ? width + ')' : 100 / number + '%)')
+    );
   };
-  
+
   const onChangeDefaultProps = (propName: string, val: string) => {
     if (selectedElement) {
       editableElementChanged({
@@ -60,7 +64,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
             setInputState({ ...inputState, columnNumber: value });
             onChangeComponentProps('columnNumber', value);
             onChangeDefaultProps(
-              'gridTemplateColumns',
+              GRID_COMPONENT_PROPS.GRID_TEMPLATE_COLUMNS,
               convertNumberToGridPercent(parseInt(value), columnWidth)
             );
           } else {
@@ -73,7 +77,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
           if (Number.isInteger(parseInt(value))) {
             onChangeComponentProps('columnNumber', value);
             onChangeDefaultProps(
-              'gridTemplateColumns',
+              GRID_COMPONENT_PROPS.GRID_TEMPLATE_COLUMNS,
               convertNumberToGridPercent(parseInt(value), columnWidth)
             );
           }
@@ -89,7 +93,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
             setInputState({ ...inputState, rowNumber: value });
             onChangeComponentProps('rowNumber', value);
             onChangeDefaultProps(
-              'gridTemplateRows',
+              GRID_COMPONENT_PROPS.GRID_TEMPLATE_ROWS,
               convertNumberToGridPercent(parseInt(value), rowHeight)
             );
           } else {
@@ -102,7 +106,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
           if (Number.isInteger(parseInt(value))) {
             onChangeComponentProps('rowNumber', value);
             onChangeDefaultProps(
-              'gridTemplateRows',
+              GRID_COMPONENT_PROPS.GRID_TEMPLATE_ROWS,
               convertNumberToGridPercent(parseInt(value), rowHeight)
             );
           }
@@ -117,7 +121,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
           if (isValidCSSSize(value)) {
             setInputState({ ...inputState, columnGapSpace: value });
             onChangeComponentProps('columnGapSpace', value);
-            onChangeDefaultProps('gridColumnGap', value);
+            onChangeDefaultProps(GRID_COMPONENT_PROPS.GRID_COLUMN_GAP, value);
           } else {
             setInputState({ ...inputState });
           }
@@ -127,7 +131,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
           setInputState({ ...inputState, columnGapSpace: value });
           if (Number.isInteger(parseInt(value))) {
             onChangeComponentProps('columnGapSpace', value);
-            onChangeDefaultProps('gridColumnGap', value);
+            onChangeDefaultProps(GRID_COMPONENT_PROPS.GRID_COLUMN_GAP, value);
           }
         }}
       />
@@ -140,7 +144,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
           if (isValidCSSSize(value)) {
             setInputState({ ...inputState, rowGapSpace: value });
             onChangeComponentProps('rowGapSpace', value);
-            onChangeDefaultProps('gridRowGap', value);
+            onChangeDefaultProps(GRID_COMPONENT_PROPS.GRID_ROW_GAP, value);
           } else {
             setInputState({ ...inputState });
           }
@@ -150,13 +154,14 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
           setInputState({ ...inputState, rowGapSpace: value });
           if (Number.isInteger(parseInt(value))) {
             onChangeComponentProps('rowGapSpace', value);
-            onChangeDefaultProps('gridRowGap', value);
+            onChangeDefaultProps(GRID_COMPONENT_PROPS.GRID_ROW_GAP, value);
           }
         }}
       />
 
       <TextInputField
         label="Column Width"
+        description="Evenly distributes by default"
         value={inputState.columnWidth}
         onBlur={(e: FocusEvent<HTMLInputElement>) => {
           const { value } = e.target;
@@ -164,7 +169,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
             setInputState({ ...inputState, columnWidth: value });
             onChangeComponentProps('columnWidth', value);
             onChangeDefaultProps(
-              'gridTemplateColumns',
+              GRID_COMPONENT_PROPS.GRID_TEMPLATE_COLUMNS,
               convertNumberToGridPercent(columnNumber, value)
             );
           } else {
@@ -177,15 +182,16 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
           if (isValidCSSSize(value)) {
             onChangeComponentProps('columnWidth', value);
             onChangeDefaultProps(
-              'gridTemplateColumns',
-              convertNumberToGridPercent(columnNumber,value)
+              GRID_COMPONENT_PROPS.GRID_TEMPLATE_COLUMNS,
+              convertNumberToGridPercent(columnNumber, value)
             );
           }
         }}
       />
 
-<TextInputField
+      <TextInputField
         label="Row Height"
+        description="Evenly distributes by default"
         value={inputState.rowHeight}
         onBlur={(e: FocusEvent<HTMLInputElement>) => {
           const { value } = e.target;
@@ -193,7 +199,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
             setInputState({ ...inputState, rowHeight: value });
             onChangeComponentProps('rowHeight', value);
             onChangeDefaultProps(
-              'gridTemplateRows',
+              GRID_COMPONENT_PROPS.GRID_TEMPLATE_ROWS,
               convertNumberToGridPercent(rowNumber, value)
             );
           } else {
@@ -206,8 +212,8 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
           if (isValidCSSSize(value)) {
             onChangeComponentProps('rowHeight', value);
             onChangeDefaultProps(
-              'gridTemplateRows',
-              convertNumberToGridPercent(rowNumber,value)
+              GRID_COMPONENT_PROPS.GRID_TEMPLATE_ROWS,
+              convertNumberToGridPercent(rowNumber, value)
             );
           }
         }}

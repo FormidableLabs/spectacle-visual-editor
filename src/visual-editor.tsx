@@ -13,8 +13,9 @@ import {
 import { sampleElementsData, sampleSlidesData } from './sample-slides-data';
 import { deckSlice } from './slices/deck-slice';
 import { useEditorActions, useSlideNodes, useSlideScale } from './hooks';
+import { RouteComponentProps } from '@reach/router';
 
-export const VisualEditor = () => {
+export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const dispatch = useDispatch();
   const { activeSlideNode, slideNodes } = useSlideNodes();
   const { handleCanvasMouseDown, handleSlideSelected } = useEditorActions();

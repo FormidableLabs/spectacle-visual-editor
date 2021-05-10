@@ -3,10 +3,17 @@ import { Pane } from './inspector-styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { deckSlice, selectedElementSelector } from '../../slices/deck-slice';
 import { BoxFormatControls } from './box-format-controls';
-import { isBoxElement, isGridElement, isImageElement, isMdElement } from './validators';
+import {
+  isBoxElement,
+  isImageElement,
+  isMdElement,
+  isCodePaneElement,
+  isGridElement
+} from './validators';
 import { MdFormatControls } from './md-format-controls';
 import { ImageControls } from './image-controls';
 import { FlexDirectionControls } from './flex-direction-controls';
+import { CodePaneFormatControls } from './codepane-format-controls';
 import { GridFormatControls } from './grid-format-controls';
 
 export const FormatInspector = () => {
@@ -33,11 +40,13 @@ export const FormatInspector = () => {
             </>
           );
         } else if (isGridElement(selectedElement)) {
-          return <GridFormatControls {...props}/>;
+          return <GridFormatControls {...props} />;
         } else if (isMdElement(selectedElement)) {
           return <MdFormatControls {...props} />;
         } else if (isImageElement(selectedElement)) {
           return <ImageControls {...props} />;
+        } else if (isCodePaneElement(selectedElement)) {
+          return <CodePaneFormatControls {...props} />;
         }
       })()}
     </Pane>

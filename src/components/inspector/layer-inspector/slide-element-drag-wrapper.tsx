@@ -11,7 +11,7 @@ interface Props extends ElementLocation {
     dragLocation: ElementLocation,
     hoverLocation: ElementLocation
   ) => void;
-  onDrop: () => void;
+  onDrop: (dropLocation: ElementLocation) => void;
 }
 
 /**
@@ -35,27 +35,22 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
       };
     },
 
-    hover(item: ElementLocation, monitor) {
+    hover(draggedItem: ElementLocation, monitor) {
       if (!ref.current) {
         return;
       }
 
-      // Don't replace items with themselves
-      if (item.parentIndex === parentIndex && item.index === index) {
-        return;
-      }
+      const hoverTarget: ElementLocation = { index, parentIndex };
 
-      // If parentIndex is undefined, then it is a top-level element
-      // Don't allow drag interactions between a top-level element and its own children
+      // Don't allow an item to drop on itself
+      // Don't allow nested elements to interact outside its parent context
       if (
-        typeof item.parentIndex === 'undefined' &&
-        item.index === parentIndex
+        (draggedItem.parentIndex === hoverTarget.parentIndex &&
+          draggedItem.index === hoverTarget.index) ||
+        draggedItem.parentIndex !== hoverTarget.parentIndex
       ) {
         return;
       }
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
 
       // Determine rectangle on screen
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
@@ -75,19 +70,24 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
       // When dragging upwards, only move when the cursor is above 50%
 
       // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+      if (
+        draggedItem.index < hoverTarget.index &&
+        hoverClientY < hoverMiddleY
+      ) {
         return;
       }
 
       // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+      if (
+        draggedItem.index > hoverTarget.index &&
+        hoverClientY > hoverMiddleY
+      ) {
         return;
       }
 
       // Time to actually perform the action
-      onDrag(item, { parentIndex, index });
-
-      item.index = hoverIndex;
+      onDrag(draggedItem, hoverTarget);
+      draggedItem.index = hoverTarget.index;
     }
   });
 
@@ -98,8 +98,8 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
       return { parentIndex, index };
     },
 
-    end() {
-      onDrop();
+    end(dropLocation: ElementLocation) {
+      onDrop(dropLocation);
     },
 
     collect: (monitor) => ({

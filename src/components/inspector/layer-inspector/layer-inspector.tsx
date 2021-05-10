@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRootSelector } from '../../../store';
 import useOnClickOutside from 'react-cool-onclickoutside';
+import { cloneDeep } from 'lodash-es';
 import { ConstructedDeckElement } from '../../../types/deck-elements';
 import { activeSlideSelector, deckSlice } from '../../../slices/deck-slice';
 import { Pane } from '../inspector-styles';
@@ -18,11 +19,11 @@ import { moveArrayItem } from '../../../util/move-array-item';
 
 export const LayerInspector: React.FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
-  const activeSlideChildren = React.useMemo(
+  const activeSlideElements = React.useMemo(
     () => (activeSlide?.children || []).filter(isDeckElement),
     [activeSlide]
   );
-  const [localChildren, setLocalChildren] = React.useState(activeSlideChildren);
+  const [localElements, setLocalElements] = React.useState(activeSlideElements);
   const [activeElementId, setActiveElementId] = React.useState<null | string>(
     null
   );
@@ -31,31 +32,45 @@ export const LayerInspector: React.FC = () => {
   });
   const dispatch = useDispatch();
 
-  const reorderSlideElements = React.useCallback(
-    (nextElements: ConstructedDeckElement[]) => {
-      const nextIds = nextElements.map((element) => element?.id) || [];
-      dispatch(
-        deckSlice.actions.reorderActiveSlideElements({ elementIds: nextIds })
-      );
-    },
-    [dispatch]
-  );
-
   // Keep local children in sync with slide children
   React.useEffect(() => {
-    setLocalChildren(activeSlideChildren);
-  }, [activeSlideChildren]);
+    setLocalElements(activeSlideElements);
+  }, [activeSlideElements]);
 
   // Move a local item as its dragged
-  const moveItem = React.useCallback(
+  const moveElement = React.useCallback(
     (currentLocation: ElementLocation, nextLocation: ElementLocation) => {
-      setLocalChildren((localChildren) => {
+      setLocalElements((localElements) => {
+        // Only allow movement within the same parent context for now
+        if (currentLocation.parentIndex !== nextLocation.parentIndex) {
+          return localElements;
+        }
+
+        // If parentIndex is defined, then the element is nested
+        // If it is not defined, the element is a top-level element
         if (typeof currentLocation.parentIndex === 'number') {
-          return localChildren;
+          if (!Array.isArray(localElements[currentLocation.parentIndex].children)) {
+            return localElements;
+          }
+
+          const clonedLocalElements = cloneDeep(localElements);
+          const clonedElementChildren = clonedLocalElements[
+            currentLocation.parentIndex
+          ].children as ConstructedDeckElement[];
+          const reorderedElementChildren = moveArrayItem(
+            clonedElementChildren,
+            currentLocation.index,
+            nextLocation.index
+          );
+
+          clonedLocalElements[
+            currentLocation.parentIndex
+          ].children = reorderedElementChildren;
+          return clonedLocalElements;
         }
 
         return moveArrayItem(
-          localChildren,
+          localElements,
           currentLocation.index,
           nextLocation.index
         );
@@ -65,42 +80,80 @@ export const LayerInspector: React.FC = () => {
   );
 
   // Update the order with the local order
-  const commitChangedOrder = React.useCallback(() => {
-    reorderSlideElements(localChildren);
-  }, [localChildren, reorderSlideElements]);
+  const commitChangedOrder = React.useCallback(
+    (dropLocation: ElementLocation) => {
+      const elementsToUpdate =
+        typeof dropLocation.parentIndex === 'number'
+          ? localElements[dropLocation.parentIndex].children
+          : localElements;
+
+      if (!Array.isArray(elementsToUpdate)) {
+        return;
+      }
+
+      dispatch(
+        deckSlice.actions.reorderActiveSlideElements({
+          elementIds: elementsToUpdate.map((element) => element.id),
+          parentId:
+            typeof dropLocation.parentIndex === 'number'
+              ? localElements[dropLocation.parentIndex].id
+              : undefined
+        })
+      );
+    },
+    [localElements]
+  );
 
   // Commit the movement of an item immediately
-  const moveItemAndCommit = React.useCallback(
-    (currentIndex: number, nextIndex: number) => {
-      const swappedItems = moveArrayItem(
-        localChildren,
+  const moveElementAndCommit = React.useCallback(
+    (currentIndex: number, nextIndex: number, parentIndex?: number) => {
+      const elementsToReorder =
+        typeof parentIndex === 'number'
+          ? localElements[parentIndex].children
+          : localElements;
+
+      if (!Array.isArray(elementsToReorder)) {
+        return;
+      }
+
+      const reorderedElements = moveArrayItem(
+        elementsToReorder,
         currentIndex,
         nextIndex
       );
-      reorderSlideElements(swappedItems);
+
+      dispatch(
+        deckSlice.actions.reorderActiveSlideElements({
+          elementIds: reorderedElements.map((element) => element.id),
+          parentId:
+            typeof parentIndex === 'number'
+              ? localElements[parentIndex].id
+              : undefined
+        })
+      );
     },
-    [localChildren, reorderSlideElements]
+    [localElements]
   );
 
   return (
     <Pane>
       <GridContainer ref={containerRef}>
         <DndProvider backend={HTML5Backend}>
-          {localChildren.map((element, index) => (
+          {localElements.map((element, index) => (
             <SlideElementDragWrapper
               key={element.id}
               index={index}
               onDrop={commitChangedOrder}
-              onDrag={moveItem}
+              onDrag={moveElement}
             >
               <ElementCard
                 element={element}
                 isActive={element.id === activeElementId}
                 onMouseDown={() => setActiveElementId(element.id)}
-                onMoveUpClick={() => moveItemAndCommit(index, index - 1)}
-                onMoveDownClick={() => moveItemAndCommit(index, index + 1)}
+                onMoveUpClick={() => moveElementAndCommit(index, index - 1)}
+                onMoveDownClick={() => moveElementAndCommit(index, index + 1)}
                 showMoveUpButton={index - 1 > -1}
-                showMoveDownButton={index + 1 < localChildren.length}
+                showMoveDownButton={index + 1 < localElements.length}
               />
               {Array.isArray(element.children) && (
                 <ElementChildrenContainer>
@@ -109,13 +162,27 @@ export const LayerInspector: React.FC = () => {
                       key={childElement.id}
                       index={childIndex}
                       parentIndex={index}
-                      onDrop={() => {}}
-                      onDrag={() => {}}
+                      onDrop={commitChangedOrder}
+                      onDrag={moveElement}
                     >
                       <ElementCard
                         element={childElement}
                         isActive={childElement.id === activeElementId}
                         onMouseDown={() => setActiveElementId(childElement.id)}
+                        onMoveUpClick={() =>
+                          moveElementAndCommit(
+                            childIndex,
+                            childIndex - 1,
+                            index
+                          )
+                        }
+                        onMoveDownClick={() =>
+                          moveElementAndCommit(
+                            childIndex,
+                            childIndex + 1,
+                            index
+                          )
+                        }
                         showMoveUpButton={childIndex - 1 > -1}
                         showMoveDownButton={
                           childIndex + 1 <

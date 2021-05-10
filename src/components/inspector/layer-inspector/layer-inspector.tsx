@@ -49,7 +49,9 @@ export const LayerInspector: React.FC = () => {
         // If parentIndex is defined, then the element is nested
         // If it is not defined, the element is a top-level element
         if (typeof currentLocation.parentIndex === 'number') {
-          if (!Array.isArray(localElements[currentLocation.parentIndex].children)) {
+          if (
+            !Array.isArray(localElements[currentLocation.parentIndex].children)
+          ) {
             return localElements;
           }
 
@@ -101,7 +103,7 @@ export const LayerInspector: React.FC = () => {
         })
       );
     },
-    [localElements]
+    [dispatch, localElements]
   );
 
   // Commit the movement of an item immediately
@@ -132,7 +134,7 @@ export const LayerInspector: React.FC = () => {
         })
       );
     },
-    [localElements]
+    [dispatch, localElements]
   );
 
   return (

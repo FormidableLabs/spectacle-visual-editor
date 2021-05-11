@@ -34,7 +34,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
     );
   };
 
-  const onChangeDefaultProps = (propName: string, val: string) => {
+  const onChangeDefaultProps = (propName: string, val: string | number) => {
     if (selectedElement) {
       editableElementChanged({
         [propName]: val
@@ -42,7 +42,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
     }
   };
 
-  const onChangeComponentProps = (propName: string, val: string) => {
+  const onChangeComponentProps = (propName: string, val: string | number) => {
     if (selectedElement) {
       editableElementChanged({
         componentProps: {
@@ -60,15 +60,16 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
         value={inputState.columnNumber}
         onBlur={(e: FocusEvent<HTMLInputElement>) => {
           const { value } = e.target;
-          if (Number.isInteger(parseInt(value))) {
-            setInputState({ ...inputState, columnNumber: value });
-            onChangeComponentProps('columnNumber', value);
+          const parsedValue = parseInt(value);
+          if (Number.isInteger(parsedValue)) {
+            setInputState({ ...inputState, columnNumber: parsedValue });
+            onChangeComponentProps('columnNumber', parsedValue);
             onChangeDefaultProps(
               GRID_COMPONENT_PROPS.GRID_TEMPLATE_COLUMNS,
-              convertNumberToGridPercent(parseInt(value), columnWidth)
+              convertNumberToGridPercent(parsedValue, columnWidth)
             );
           } else {
-            setInputState({ ...inputState });
+            setInputState({ ...inputState, columnNumber });
           }
         }}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -89,15 +90,16 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
         value={inputState.rowNumber}
         onBlur={(e: FocusEvent<HTMLInputElement>) => {
           const { value } = e.target;
-          if (Number.isInteger(parseInt(value))) {
-            setInputState({ ...inputState, rowNumber: value });
-            onChangeComponentProps('rowNumber', value);
+          const parsedValue = parseInt(value);
+          if (Number.isInteger(parsedValue)) {
+            setInputState({ ...inputState, rowNumber: parsedValue });
+            onChangeComponentProps('rowNumber', parsedValue);
             onChangeDefaultProps(
               GRID_COMPONENT_PROPS.GRID_TEMPLATE_ROWS,
-              convertNumberToGridPercent(parseInt(value), rowHeight)
+              convertNumberToGridPercent(parsedValue, rowHeight)
             );
           } else {
-            setInputState({ ...inputState });
+            setInputState({ ...inputState, rowNumber });
           }
         }}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -123,13 +125,13 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
             onChangeComponentProps('columnGapSpace', value);
             onChangeDefaultProps(GRID_COMPONENT_PROPS.GRID_COLUMN_GAP, value);
           } else {
-            setInputState({ ...inputState });
+            setInputState({ ...inputState, columnGapSpace });
           }
         }}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           const { value } = e.target;
           setInputState({ ...inputState, columnGapSpace: value });
-          if (Number.isInteger(parseInt(value))) {
+          if (isValidCSSSize(value)) {
             onChangeComponentProps('columnGapSpace', value);
             onChangeDefaultProps(GRID_COMPONENT_PROPS.GRID_COLUMN_GAP, value);
           }
@@ -146,13 +148,13 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
             onChangeComponentProps('rowGapSpace', value);
             onChangeDefaultProps(GRID_COMPONENT_PROPS.GRID_ROW_GAP, value);
           } else {
-            setInputState({ ...inputState });
+            setInputState({ ...inputState, rowGapSpace });
           }
         }}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           const { value } = e.target;
           setInputState({ ...inputState, rowGapSpace: value });
-          if (Number.isInteger(parseInt(value))) {
+          if (isValidCSSSize(value)) {
             onChangeComponentProps('rowGapSpace', value);
             onChangeDefaultProps(GRID_COMPONENT_PROPS.GRID_ROW_GAP, value);
           }
@@ -173,7 +175,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
               convertNumberToGridPercent(columnNumber, value)
             );
           } else {
-            setInputState({ ...inputState });
+            setInputState({ ...inputState, columnWidth });
           }
         }}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -203,7 +205,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
               convertNumberToGridPercent(rowNumber, value)
             );
           } else {
-            setInputState({ ...inputState });
+            setInputState({ ...inputState, rowHeight });
           }
         }}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {

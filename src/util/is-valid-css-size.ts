@@ -9,7 +9,10 @@ export const isValidCSSSize = (size: string | number) => {
     }
     const suffix = size.slice(size.length - 2);
     const value = parseFloat(size);
-    return !isNaN(value) && SUPPORTED_CSS_SUFFIXES.includes(suffix);
+    return (
+      !isNaN(value) &&
+      (SUPPORTED_CSS_SUFFIXES.includes(suffix) || suffix.slice(1) === '%')
+    );
   } else {
     return false;
   }

@@ -17,6 +17,10 @@ describe('is-valid-css-size', () => {
     expect(isValidCSSSize(0)).toBeTruthy();
   });
 
+  test('validates a percent size', () => {
+    expect(isValidCSSSize('30%')).toBeTruthy();
+  });
+
   test('validates the string-based number 0', () => {
     expect(isValidCSSSize('0')).toBeTruthy();
   });

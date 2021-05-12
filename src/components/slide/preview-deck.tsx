@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { navigate } from '@reach/router';
+import { navigate, RouteComponentProps } from '@reach/router';
 import { Deck } from 'spectacle';
 import { generatePreviewSlideTree } from './slide-generator';
 import { useSelector } from 'react-redux';
@@ -14,7 +14,7 @@ const Message = styled.div`
   z-index: 1;
 `;
 
-export const PreviewDeck = () => {
+export const PreviewDeck: React.FC<RouteComponentProps> = () => {
   const [slideNodes, setSlideNodes] = useState<React.ReactNode>();
   const slideJson = useRootSelector(slidesSelector);
   const theme = useSelector(themeSelector);

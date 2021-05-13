@@ -72,7 +72,9 @@ export const TextControls: React.FC<Props> = ({
     if (!marginDoubleValue) {
       // clear marginX & marginY. Set margin to last input value
       const {
+        /* eslint-disable  @typescript-eslint/no-unused-vars */
         marginX,
+        /* eslint-disable  @typescript-eslint/no-unused-vars */
         marginY,
         ...rest
       } = selectedElement?.props?.componentProps;

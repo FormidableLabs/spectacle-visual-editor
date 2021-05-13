@@ -28,7 +28,7 @@ type DeckState = {
   elements: EntityState<DeckElement>;
   activeSlideId: null | string;
   selectedEditableElementId: null | string;
-  copiedElementId: null | string;
+  copiedElement: null | { id: string; elements: DeckElementMap };
   theme: SpectacleTheme;
 };
 
@@ -55,7 +55,7 @@ const initialState: DeckState = {
   elements: elementsAdapter.getInitialState(),
   activeSlideId: null,
   selectedEditableElementId: null,
-  copiedElementId: null,
+  copiedElement: null,
   theme: defaultTheme
 };
 
@@ -245,22 +245,30 @@ export const deckSlice = createSlice({
       if (!state.selectedEditableElementId) {
         return;
       }
-      state.copiedElementId = state.selectedEditableElementId;
-    },
 
-    pasteElement: (state) => {
-      if (!state.copiedElementId) return;
-      let selectedElement: DeckElement | undefined = undefined;
       const getElementById = (id: string) =>
         elementsAdapter.getSelectors().selectById(state.elements, id);
+
       const copiedElement = copyDeckElement(
-        state.copiedElementId,
+        state.selectedEditableElementId,
         getElementById
       );
+
+      if (copiedElement) {
+        state.copiedElement = copiedElement;
+      }
+    },
+
+    pasteElement: function (state) {
+      if (!state.copiedElement) return;
+
+      let selectedElement: DeckElement | undefined = undefined;
+
       if (state.selectedEditableElementId) {
         selectedElement = getSelectedElementImmer(state);
       }
-      if (copiedElement) {
+
+      if (state.copiedElement) {
         if (
           selectedElement &&
           CONTAINER_ELEMENTS.includes(selectedElement.component) &&
@@ -269,17 +277,32 @@ export const deckSlice = createSlice({
           elementsAdapter.updateOne(state.elements, {
             id: selectedElement.id,
             changes: {
-              children: [...selectedElement.children, copiedElement.id]
+              children: [...selectedElement.children, state.copiedElement.id]
             }
           });
-          copiedElement.elements[copiedElement.id].parent = selectedElement.id;
+          state.copiedElement.elements[state.copiedElement.id].parent =
+            selectedElement.id;
         } else {
           const activeSlide = getActiveSlideImmer(state);
           if (!activeSlide) return;
-          copiedElement.elements[copiedElement.id].parent = activeSlide.id;
-          activeSlide.children.push(copiedElement.id);
+          state.copiedElement.elements[state.copiedElement.id].parent =
+            activeSlide.id;
+          activeSlide.children.push(state.copiedElement.id);
         }
-        elementsAdapter.addMany(state.elements, copiedElement.elements);
+        elementsAdapter.addMany(state.elements, state.copiedElement.elements);
+      }
+
+      // Re-copy the pasted element so that when pasted again it gets a unique set of IDs
+      const getElementById = (id: string) =>
+        elementsAdapter.getSelectors().selectById(state.elements, id);
+
+      const copiedElement = copyDeckElement(
+        state.copiedElement.id,
+        getElementById
+      );
+
+      if (copiedElement) {
+        state.copiedElement = copiedElement;
       }
     },
 

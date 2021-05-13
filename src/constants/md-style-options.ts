@@ -22,10 +22,13 @@ export enum LIST_TEXT_ALIGN_OPTIONS {
   RIGHT = 'right'
 }
 
-export enum LIST_COMPONENT_PROPS {
+export enum MD_COMPONENT_PROPS {
   LIST_STYLE_TYPE = 'listStyleType',
   COLOR = 'color',
   FONT_SIZE = 'fontSize',
   FONT_WEIGHT = 'fontWeight',
-  TEXT_ALIGN = 'textAlign'
+  TEXT_ALIGN = 'textAlign',
+  MARGIN = 'margin',
+  MARGIN_HORIZONTAL = 'marginX',
+  MARGIN_VERTICAL = 'marginY'
 }

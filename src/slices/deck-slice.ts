@@ -330,18 +330,24 @@ export const deckSlice = createSlice({
       slidesAdapter.setAll(state.slides, newSlides);
     },
 
-    /**
-     * Reorder the elements of the active slide given an array of ID for new order
-     * @param state The draft state
-     * @param action Array of IDs
-     */
-    reorderActiveSlideElements: (state, action: PayloadAction<string[]>) => {
-      const activeSlide = getActiveSlideImmer(state);
-      if (!activeSlide || !Array.isArray(action.payload)) {
-        return;
+    reorderActiveSlideElements: (
+      state,
+      action: PayloadAction<{ parentId?: string; elementIds: string[] }>
+    ) => {
+      if (!action.payload.parentId) {
+        const activeSlide = getActiveSlideImmer(state);
+
+        if (!activeSlide) {
+          return;
+        }
+
+        activeSlide.children = action.payload.elementIds;
       }
 
-      activeSlide.children = action.payload;
+      elementsAdapter.updateOne(state.elements, {
+        id: action.payload.parentId as string,
+        changes: { children: action.payload.elementIds }
+      });
     },
 
     applyLayoutToSlide: (

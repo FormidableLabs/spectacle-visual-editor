@@ -22,7 +22,6 @@ export const MdInput: React.FC<Props> = ({ label, value, onValueChange }) => {
         width="auto"
         height="150px"
         showGutter={false}
-        focus
       />
     </FormField>
   );

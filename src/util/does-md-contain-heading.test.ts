@@ -14,7 +14,8 @@ const pairs = [
   [`###### I'm a header`, true],
   [`####### I'm a header`, false],
   [`Hello I'm text ####### I'm a header`, false],
-  [`Hello I'm text ###### I'm a header`, false]
+  [`Hello I'm text ###### I'm a header`, false],
+  [`Hello\n## I'm a header on second line`, true]
 ];
 
 describe('doesMdContainList', () => {

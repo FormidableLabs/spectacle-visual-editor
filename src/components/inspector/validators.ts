@@ -1,11 +1,10 @@
-import { isValidColorName, isValidHSL, isValidRGB } from 'is-valid-css-color';
+import { colord } from 'colord';
 import {
   ConstructedDeckElement,
   CONTAINER_ELEMENTS
 } from '../../types/deck-elements';
 
-export const isValidCSSColor = (color: string) =>
-  isValidColorName(color) || isValidHSL(color) || isValidRGB(color);
+export const isValidCSSColor = (color: string) => colord(color).isValid();
 
 export const isBoxElement = (element: ConstructedDeckElement | null) =>
   Boolean(element && CONTAINER_ELEMENTS.includes(element?.component));

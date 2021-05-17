@@ -4722,6 +4722,11 @@ color-name@~1.1.4:
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
 
+colord@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/colord/-/colord-1.7.0.tgz#2d2b3df19ebe81d72e626c5604e8e3e5867bb5d8"
+  integrity sha512-/9I83NehU/HvAKGTSEZrFFEubYHknzGMpSDOee2JBTqk42qbYd+EOKfN22gmh7kysTwdpNfbJGgfUiqGkLul0A==
+
 colorette@^1.2.1, colorette@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/colorette/-/colorette-1.2.2.tgz#cbcc79d5e99caea2dbf10eb3a26fd8b3e6acfa94"
@@ -8044,11 +8049,6 @@ is-typedarray@^1.0.0, is-typedarray@~1.0.0:
   resolved "https://registry.yarnpkg.com/is-typedarray/-/is-typedarray-1.0.0.tgz#e479c80858df0c1b11ddda6940f96011fcda4a9a"
   integrity sha1-5HnICFjfDBsR3dppQPlgEfzaSpo=
 
-is-valid-css-color@^2.0.0:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/is-valid-css-color/-/is-valid-css-color-2.0.3.tgz#0bc6e0b75ebc034393803425468195c53a7ef340"
-  integrity sha512-mKjYkmPDn85d6bldC9nTB08O1wuAJ9eCCojGoi3dfMmrm50485pXVRHZQOuq9/D93gHhJvehEvR5DFFjoJL2Nw==
-
 is-what@^3.3.1, is-what@^3.7.1:
   version "3.14.1"
   resolved "https://registry.yarnpkg.com/is-what/-/is-what-3.14.1.tgz#e1222f46ddda85dead0fd1c9df131760e77755c1"
@@ -10712,6 +10712,11 @@ react-color@^2.17.0:
     prop-types "^15.5.10"
     reactcss "^1.2.0"
     tinycolor2 "^1.4.1"
+
+react-colorful@^5.1.4:
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/react-colorful/-/react-colorful-5.1.4.tgz#7391568db7c0a4163436bfb076e5da8ef394e87c"
+  integrity sha512-WOEpRNz8Oo2SEU4eYQ279jEKFSjpFPa9Vi2U/K0DGwP9wOQ8wYkJcNSd5Qbv1L8OFvyKDCbWekjftXaU5mbmtg==
 
 react-cool-onclickoutside@^1.6.1:
   version "1.6.1"
@@ -13528,8 +13533,10 @@ watchpack@^1.7.4:
   resolved "https://registry.yarnpkg.com/watchpack/-/watchpack-1.7.5.tgz#1267e6c55e0b9b5be44c2023aed5437a2c26c453"
   integrity sha512-9P3MWk6SrKjHsGkLT2KHXdQ/9SNkyoJbabxnKOoJepsvJjJG8uYTR3yTPxPQvNDI3w4Nz1xnE0TLHK4RIVe/MQ==
   dependencies:
+    chokidar "^3.4.1"
     graceful-fs "^4.1.2"
     neo-async "^2.5.0"
+    watchpack-chokidar2 "^2.0.1"
   optionalDependencies:
     chokidar "^3.4.1"
     watchpack-chokidar2 "^2.0.1"

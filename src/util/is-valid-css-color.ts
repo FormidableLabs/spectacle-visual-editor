@@ -1,9 +1,9 @@
-import { isValidColorName, isValidHSL, isValidRGB } from 'is-valid-css-color';
+import { colord } from 'colord';
 
 export const isValidCSSColor = (color: string) => {
   if (!color) {
     return false;
   }
 
-  return isValidColorName(color) || isValidHSL(color) || isValidRGB(color);
+  return colord(color).isValid();
 };

@@ -7,12 +7,14 @@ import {
   isBoxElement,
   isImageElement,
   isMdElement,
-  isCodePaneElement
+  isCodePaneElement,
+  isGridElement
 } from './validators';
 import { MdFormatControls } from './md-format-controls';
 import { ImageControls } from './image-controls';
 import { FlexDirectionControls } from './flex-direction-controls';
 import { CodePaneFormatControls } from './codepane-format-controls';
+import { GridFormatControls } from './grid-format-controls';
 
 export const FormatInspector = () => {
   const dispatch = useDispatch();
@@ -37,6 +39,8 @@ export const FormatInspector = () => {
               <FlexDirectionControls {...props} />
             </>
           );
+        } else if (isGridElement(selectedElement)) {
+          return <GridFormatControls {...props} />;
         } else if (isMdElement(selectedElement)) {
           return <MdFormatControls {...props} />;
         } else if (isImageElement(selectedElement)) {

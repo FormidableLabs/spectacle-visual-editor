@@ -247,5 +247,6 @@ const InsertItems: { title: string; element: typeof ELEMENTS[number] }[] = [
   { title: 'List', element: ELEMENTS.LIST },
   { title: 'Box', element: ELEMENTS.BOX },
   { title: 'Image', element: ELEMENTS.IMAGE },
+  { title: 'Grid', element: ELEMENTS.GRID },
   { title: 'CodePane', element: ELEMENTS.CODEPANE }
 ];

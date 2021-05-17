@@ -10,9 +10,10 @@ export type SPECTACLE_ELEMENTS =
   | 'Markdown'
   | 'FlexBox'
   | 'Image'
+  | 'Grid'
   | 'CodePane';
 export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];
-export const CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox'];
+export const CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Grid'];
 
 export type DeckElementMap = { [id: string]: DeckElement };
 

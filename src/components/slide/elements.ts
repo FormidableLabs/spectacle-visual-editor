@@ -24,6 +24,15 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     },
     children: []
   },
+  GRID: {
+    component: 'Grid',
+    props: {
+      width: '100%',
+      height: '100%',
+      gridTemplateColumns: '100%',
+      gridTemplateRows: '100%'
+    }
+  },
   IMAGE: {
     component: 'Image',
     props: {

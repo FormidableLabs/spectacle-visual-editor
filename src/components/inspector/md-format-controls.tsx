@@ -2,8 +2,11 @@ import React from 'react';
 import { MdInput } from '../inputs/md';
 import { useThrottleFn } from 'react-use';
 import { doesMdContainList } from '../../util/does-md-contain-list';
+import { doesMdContainHeader } from '../../util/does-md-contain-heading';
 import { ListControls } from './list-controls';
 import { ElementControlsProps } from './element-controls-props';
+import { MarkdownControls } from './markdown-controls';
+import { TextControls } from './text-controls';
 
 export const MdFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
@@ -19,6 +22,12 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
     [selectedElement]
   );
 
+  const doesContentContainHeader = useThrottleFn(
+    (el) => doesMdContainHeader(String(el?.children)),
+    500,
+    [selectedElement]
+  );
+
   return (
     <React.Fragment>
       <MdInput
@@ -27,7 +36,16 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
         onValueChange={(val) => editableElementChanged({ children: val })}
       />
       {doesContentContainList && (
-        <ListControls {...{ selectedElement, editableElementChanged }} />
+        <>
+          <MarkdownControls {...{ selectedElement, editableElementChanged }} />
+          <ListControls {...{ selectedElement, editableElementChanged }} />
+        </>
+      )}
+      {!doesContentContainHeader && !doesContentContainList && (
+        <>
+          <MarkdownControls {...{ selectedElement, editableElementChanged }} />
+          <TextControls {...{ selectedElement, editableElementChanged }} />
+        </>
       )}
     </React.Fragment>
   );

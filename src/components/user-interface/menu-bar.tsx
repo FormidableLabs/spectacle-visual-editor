@@ -65,10 +65,7 @@ export const MenuBar = () => {
 
   const shouldNestableElementsBeDisabled = (insertItem: SPECTACLE_ELEMENTS) => {
     if (selectedElement) {
-      return (
-        nonNestableElements.includes(selectedElement?.component) &&
-        nonNestableElements.includes(insertItem)
-      );
+      return nonNestableElements.includes(insertItem);
     } else {
       return false;
     }

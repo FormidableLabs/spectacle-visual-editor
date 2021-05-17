@@ -28,30 +28,30 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
     rowHeight: displayState.rowHeight
   });
 
-  const handleDefaultElementChanged = (
-    propName: string,
-    val: string | number
-  ) => {
-    if (selectedElement) {
-      editableElementChanged({
-        [propName]: val
-      });
-    }
-  };
-
-  const handleComponentElementChanged = (
-    propName: string,
-    val: string | number
-  ) => {
-    if (selectedElement) {
-      editableElementChanged({
-        componentProps: {
-          ...selectedElement.props?.componentProps,
+  const handleDefaultElementChanged = useCallback(
+    (propName: string, val: string | number) => {
+      if (selectedElement) {
+        editableElementChanged({
           [propName]: val
-        }
-      });
-    }
-  };
+        });
+      }
+    },
+    [editableElementChanged, selectedElement]
+  );
+
+  const handleComponentElementChanged = useCallback(
+    (propName: string, val: string | number) => {
+      if (selectedElement) {
+        editableElementChanged({
+          componentProps: {
+            ...selectedElement.props?.componentProps,
+            [propName]: val
+          }
+        });
+      }
+    },
+    [editableElementChanged, selectedElement]
+  );
 
   const handleOnEvent = useCallback(
     (options: {
@@ -87,7 +87,12 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
         );
       }
     },
-    [displayState]
+    [
+      handleComponentElementChanged,
+      handleDefaultElementChanged,
+      inputState,
+      displayState
+    ]
   );
 
   return (

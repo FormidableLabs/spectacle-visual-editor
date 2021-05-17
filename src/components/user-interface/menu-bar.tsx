@@ -8,7 +8,8 @@ import {
   Position,
   Pane,
   Dialog,
-  toaster
+  toaster,
+  Tooltip
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,7 +23,10 @@ import {
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
 import { ELEMENTS } from '../slide/elements';
-import { CONTAINER_ELEMENTS } from '../../types/deck-elements';
+import {
+  CONTAINER_ELEMENTS,
+  SPECTACLE_ELEMENTS
+} from '../../types/deck-elements';
 import { useMousetrap } from 'spectacle';
 import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 
@@ -58,6 +62,17 @@ export const MenuBar = () => {
     },
     []
   );
+
+  const shouldNestableElementsBeDisabled = (insertItem: SPECTACLE_ELEMENTS) => {
+    if (selectedElement) {
+      return (
+        nonNestableElements.includes(selectedElement?.component) &&
+        nonNestableElements.includes(insertItem)
+      );
+    } else {
+      return false;
+    }
+  };
 
   return (
     <MenuBarContainer>
@@ -111,17 +126,41 @@ export const MenuBar = () => {
           <Menu>
             <Menu.Group>
               {InsertItems.map((item) => (
-                <Menu.Item
+                <TooltipConditionalWrapper
+                  condition={shouldNestableElementsBeDisabled(
+                    item.element.component
+                  )}
                   key={item.title}
-                  onSelect={() => {
-                    dispatch(
-                      deckSlice.actions.elementAddedToActiveSlide(item.element)
+                  wrapper={(children) => {
+                    return (
+                      <Tooltip
+                        content={
+                          'This element can only be able to be added to root-level slides'
+                        }
+                        position={Position.RIGHT}
+                      >
+                        {children}
+                      </Tooltip>
                     );
-                    close();
                   }}
                 >
-                  {item.title}
-                </Menu.Item>
+                  <Menu.Item
+                    key={item.title}
+                    disabled={shouldNestableElementsBeDisabled(
+                      item.element.component
+                    )}
+                    onSelect={() => {
+                      dispatch(
+                        deckSlice.actions.elementAddedToActiveSlide(
+                          item.element
+                        )
+                      );
+                      close();
+                    }}
+                  >
+                    {item.title}
+                  </Menu.Item>
+                </TooltipConditionalWrapper>
               ))}
             </Menu.Group>
           </Menu>
@@ -245,8 +284,25 @@ const InsertItems: { title: string; element: typeof ELEMENTS[number] }[] = [
   { title: 'Heading', element: ELEMENTS.HEADING },
   { title: 'Text Box', element: ELEMENTS.TEXT },
   { title: 'List', element: ELEMENTS.LIST },
-  { title: 'Box', element: ELEMENTS.BOX },
   { title: 'Image', element: ELEMENTS.IMAGE },
+  { title: 'Box', element: ELEMENTS.BOX },
   { title: 'Grid', element: ELEMENTS.GRID },
   { title: 'CodePane', element: ELEMENTS.CODEPANE }
 ];
+
+const nonNestableElements: SPECTACLE_ELEMENTS[] = [
+  ELEMENTS.BOX.component,
+  ELEMENTS.GRID.component
+];
+
+type TooltipConditonalWrapperProps = {
+  children: React.ReactElement;
+  condition: boolean;
+  wrapper: (children: React.ReactElement) => JSX.Element;
+};
+
+const TooltipConditionalWrapper: React.FC<TooltipConditonalWrapperProps> = ({
+  condition,
+  wrapper,
+  children
+}) => (condition ? wrapper(children) : children);

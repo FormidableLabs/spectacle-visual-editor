@@ -17,7 +17,8 @@ import {
   deckSlice,
   hasPastSelector,
   hasFutureSelector,
-  selectedElementSelector
+  selectedElementSelector,
+  slidesSelector
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
@@ -43,6 +44,7 @@ export const MenuBar = () => {
   const hasPast = useSelector(hasPastSelector);
   const hasFuture = useSelector(hasFutureSelector);
   const selectedElement = useSelector(selectedElementSelector);
+  const slides = useSelector(slidesSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
@@ -50,6 +52,7 @@ export const MenuBar = () => {
     dispatch(deckSlice.actions.copyElement());
     toaster.success('Element copied!');
   };
+
   useMousetrap(
     {
       [KEYBOARD_SHORTCUTS.COPY]: () => copyElement(),
@@ -78,8 +81,9 @@ export const MenuBar = () => {
                 Add Slide
               </Menu.Item>
               <Menu.Item
+                disabled={slides.length === 1} // Must have at least one slide
                 onSelect={() => {
-                  dispatch(deckSlice.actions.deleteSlide());
+                  dispatch(deckSlice.actions.deleteSlide(null));
                   close();
                 }}
               >

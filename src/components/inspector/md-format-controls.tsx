@@ -7,6 +7,7 @@ import { ListControls } from './list-controls';
 import { ElementControlsProps } from './element-controls-props';
 import { MarkdownControls } from './markdown-controls';
 import { TextControls } from './text-controls';
+import { Accordion } from '../user-interface/accordion';
 
 export const MdFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
@@ -30,11 +31,13 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
 
   return (
     <React.Fragment>
-      <MdInput
-        label="Content"
-        value={String(selectedElement?.children)}
-        onValueChange={(val) => editableElementChanged({ children: val })}
-      />
+      <Accordion label="Markdown Content">
+        <MdInput
+          label="Content"
+          value={String(selectedElement?.children)}
+          onValueChange={(val) => editableElementChanged({ children: val })}
+        />
+      </Accordion>
       {doesContentContainList && (
         <>
           <MarkdownControls {...{ selectedElement, editableElementChanged }} />
@@ -43,8 +46,12 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
       )}
       {!doesContentContainHeader && !doesContentContainList && (
         <>
-          <MarkdownControls {...{ selectedElement, editableElementChanged }} />
-          <TextControls {...{ selectedElement, editableElementChanged }} />
+          <Accordion label="Formatting">
+            <MarkdownControls
+              {...{ selectedElement, editableElementChanged }}
+            />
+            <TextControls {...{ selectedElement, editableElementChanged }} />
+          </Accordion>
         </>
       )}
     </React.Fragment>

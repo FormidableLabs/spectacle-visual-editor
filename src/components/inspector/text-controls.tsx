@@ -109,10 +109,20 @@ export const TextControls: React.FC<Props> = ({
   };
 
   return (
-    <Container>
+    <Container label="Margins">
+      <SwitchContainer label="Use single value for margin">
+        <Switch
+          checked={marginDoubleValue}
+          onChange={() => {
+            toggleMarginDoubleValue();
+            onToggle();
+          }}
+        />
+      </SwitchContainer>
+
       {marginDoubleValue ? (
         <TextInputField
-          label="Margin"
+          label="Margin size"
           value={inputState.margin}
           onBlur={(e: FocusEvent<HTMLInputElement>) => {
             const { value } = e.target;
@@ -136,7 +146,7 @@ export const TextControls: React.FC<Props> = ({
       ) : (
         <>
           <TextInputField
-            label="Margin Horizontal"
+            label="Horizontal margin size"
             value={inputState.horizontalMargin}
             onBlur={(e: FocusEvent<HTMLInputElement>) => {
               const { value } = e.target;
@@ -164,7 +174,7 @@ export const TextControls: React.FC<Props> = ({
             }}
           />
           <TextInputField
-            label="Margin Vertical"
+            label="Vertical margin size"
             value={inputState.verticalMargin}
             onBlur={(e: FocusEvent<HTMLInputElement>) => {
               const { value } = e.target;
@@ -193,21 +203,29 @@ export const TextControls: React.FC<Props> = ({
           />
         </>
       )}
-      <FormField label="Use Single Value For Margin">
-        <Switch
-          checked={marginDoubleValue}
-          onChange={() => {
-            toggleMarginDoubleValue();
-            onToggle();
-          }}
-        />
-      </FormField>
     </Container>
   );
 };
 
-const Container = styled.div`
+const Container = styled(FormField)`
   display: grid;
-  grid-gap: 10px;
   margin-top: 10px;
+
+  > div {
+    margin-bottom: 12px;
+
+    label {
+      font-weight: 400;
+    }
+  }
+`;
+
+const SwitchContainer = styled(FormField)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  > label {
+    margin-right: 10px;
+  }
 `;

@@ -13,7 +13,7 @@ interface Props {
 
 export const MdInput: React.FC<Props> = ({ label, value, onValueChange }) => {
   return (
-    <FormField label={label}>
+    <FormField label={label} marginBottom={24}>
       <AceEditor
         mode="markdown"
         theme="textmate"

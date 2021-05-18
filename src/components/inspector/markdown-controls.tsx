@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FocusEvent, useState } from 'react';
 import { ConstructedDeckElement } from '../../types/deck-elements';
-import { TextInputField } from 'evergreen-ui';
+import { SegmentedControl, TextInputField } from 'evergreen-ui';
 import { SelectInput } from '../inputs/select';
 import styled from 'styled-components';
 import {
@@ -12,6 +12,7 @@ import { ColorPickerInput } from '../inputs/color';
 import { useRootSelector } from '../../store';
 import { themeSelector } from '../../slices/deck-slice';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
+import { SegmentedInput } from '../inputs/segmented';
 
 interface Props {
   selectedElement: ConstructedDeckElement | null;
@@ -41,7 +42,10 @@ export const MarkdownControls: React.FC<Props> = ({
     fontSize
   });
 
-  const onChangeComponentProps = (propName: string, val: string) => {
+  const onChangeComponentProps = (
+    propName: string,
+    val: string | number | boolean
+  ) => {
     if (selectedElement) {
       editableElementChanged({
         componentProps: {
@@ -65,47 +69,46 @@ export const MarkdownControls: React.FC<Props> = ({
         }
         value={inputState.color}
       />
-      <TextInputField
-        label="Font Size"
-        value={inputState.fontSize}
-        onBlur={(e: FocusEvent<HTMLInputElement>) => {
-          const { value } = e.target;
-          if (isValidCSSSize(value)) {
-            setInputState({ ...inputState, fontSize: value });
-            onChangeComponentProps(MD_COMPONENT_PROPS.FONT_SIZE, value);
-          } else {
-            setInputState({ ...inputState, fontSize });
+      <SplitContainer>
+        <TextInputField
+          label="Font Size"
+          value={inputState.fontSize}
+          onBlur={(e: FocusEvent<HTMLInputElement>) => {
+            const { value } = e.target;
+            if (isValidCSSSize(value)) {
+              setInputState({ ...inputState, fontSize: value });
+              onChangeComponentProps(MD_COMPONENT_PROPS.FONT_SIZE, value);
+            } else {
+              setInputState({ ...inputState, fontSize });
+            }
+          }}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            const { value } = e.target;
+            if (isValidCSSSize(value)) {
+              setInputState({ ...inputState, fontSize: value });
+              onChangeComponentProps(MD_COMPONENT_PROPS.FONT_SIZE, value);
+            } else {
+              setInputState({ ...inputState, fontSize: value });
+            }
+          }}
+        />
+        <SelectInput
+          label="Font Weight"
+          value={fontWeight}
+          options={Object.values(LIST_FONT_WEIGHT_OPTIONS).map((op) => ({
+            value: op,
+            title: op
+          }))}
+          onValueChange={(value) =>
+            onChangeComponentProps(MD_COMPONENT_PROPS.FONT_WEIGHT, value)
           }
-        }}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          const { value } = e.target;
-          if (isValidCSSSize(value)) {
-            setInputState({ ...inputState, fontSize: value });
-            onChangeComponentProps(MD_COMPONENT_PROPS.FONT_SIZE, value);
-          } else {
-            setInputState({ ...inputState, fontSize: value });
-          }
-        }}
-      />
-      <SelectInput
-        label="Font Weight"
-        value={fontWeight}
-        options={Object.values(LIST_FONT_WEIGHT_OPTIONS).map((op) => ({
-          value: op,
-          title: op
-        }))}
-        onValueChange={(value) =>
-          onChangeComponentProps(MD_COMPONENT_PROPS.FONT_WEIGHT, value)
-        }
-      />
-      <SelectInput
+        />
+      </SplitContainer>
+      <SegmentedInput
         label="Text Align"
+        options={Object.values(LIST_TEXT_ALIGN_OPTIONS)}
         value={textAlign}
-        options={Object.values(LIST_TEXT_ALIGN_OPTIONS).map((op) => ({
-          value: op,
-          title: op
-        }))}
-        onValueChange={(value) =>
+        onChange={(value) =>
           onChangeComponentProps(MD_COMPONENT_PROPS.TEXT_ALIGN, value)
         }
       />
@@ -117,4 +120,19 @@ const Container = styled.div`
   display: grid;
   grid-gap: 10px;
   margin-top: 10px;
+
+  > div {
+    margin-bottom: 6px;
+  }
+`;
+
+const SplitContainer = styled.div`
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-column-gap: 10px;
+  width: calc(100% - 10px);
+
+  > div {
+    margin-bottom: 6px;
+  }
 `;

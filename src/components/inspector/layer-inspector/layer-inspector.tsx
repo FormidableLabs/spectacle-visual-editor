@@ -1,44 +1,45 @@
-import React from 'react';
+import React, { FC, useState, useMemo, useEffect, useCallback } from 'react';
 import { useRootSelector } from '../../../store';
-import useOnClickOutside from 'react-cool-onclickoutside';
 import { cloneDeep } from 'lodash-es';
 import { ConstructedDeckElement } from '../../../types/deck-elements';
-import { activeSlideSelector, deckSlice } from '../../../slices/deck-slice';
+import {
+  activeSlideSelector,
+  selectedElementSelector,
+  deckSlice
+} from '../../../slices/deck-slice';
 import { Pane } from '../inspector-styles';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import styled, { createGlobalStyle } from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
 import {
   ElementLocation,
   SlideElementDragWrapper
 } from './slide-element-drag-wrapper';
 import { ElementCard } from './layers-element-card';
-import styled from 'styled-components';
 import { moveArrayItem } from '../../../util/move-array-item';
+import { defaultTheme } from 'evergreen-ui';
 
-export const LayerInspector: React.FC = () => {
+export const LayerInspector: FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
-  const activeSlideElements = React.useMemo(
+  const activeSlideElements = useMemo(
     () => (activeSlide?.children || []).filter(isDeckElement),
     [activeSlide]
   );
-  const [localElements, setLocalElements] = React.useState(activeSlideElements);
-  const [activeElementId, setActiveElementId] = React.useState<null | string>(
-    null
-  );
-  const containerRef = useOnClickOutside(() => {
-    setActiveElementId(null);
-  });
+  const [localElements, setLocalElements] = useState(activeSlideElements);
+  const selectedElement = useSelector(selectedElementSelector);
+  const [collapsedLayers, setCollapsedLayers] = useState<Array<String>>([]);
+
   const dispatch = useDispatch();
 
   // Keep local children in sync with slide children
-  React.useEffect(() => {
+  useEffect(() => {
     setLocalElements(activeSlideElements);
   }, [activeSlideElements]);
 
   // Move a local item as its dragged
-  const moveElement = React.useCallback(
+  const moveElement = useCallback(
     (currentLocation: ElementLocation, nextLocation: ElementLocation) => {
       setLocalElements((localElements) => {
         // Only allow movement within the same parent context for now
@@ -82,7 +83,7 @@ export const LayerInspector: React.FC = () => {
   );
 
   // Update the order with the local order
-  const commitChangedOrder = React.useCallback(
+  const commitChangedOrder = useCallback(
     (dropLocation: ElementLocation) => {
       const elementsToUpdate =
         typeof dropLocation.parentIndex === 'number'
@@ -106,60 +107,58 @@ export const LayerInspector: React.FC = () => {
     [dispatch, localElements]
   );
 
-  // Commit the movement of an item immediately
-  const moveElementAndCommit = React.useCallback(
-    (currentIndex: number, nextIndex: number, parentIndex?: number) => {
-      const elementsToReorder =
-        typeof parentIndex === 'number'
-          ? localElements[parentIndex].children
-          : localElements;
-
-      if (!Array.isArray(elementsToReorder)) {
-        return;
-      }
-
-      const reorderedElements = moveArrayItem(
-        elementsToReorder,
-        currentIndex,
-        nextIndex
-      );
-
-      dispatch(
-        deckSlice.actions.reorderActiveSlideElements({
-          elementIds: reorderedElements.map((element) => element.id),
-          parentId:
-            typeof parentIndex === 'number'
-              ? localElements[parentIndex].id
-              : undefined
-        })
-      );
+  const selectElement = useCallback(
+    (id) => {
+      dispatch(deckSlice.actions.editableElementSelected(id));
     },
-    [dispatch, localElements]
+    [dispatch]
   );
 
+  const handleExpand = useCallback((id) => {
+    setCollapsedLayers((currentCollapsedLayers) => {
+      if (currentCollapsedLayers.includes(id)) {
+        return currentCollapsedLayers.filter((layerId) => layerId !== id);
+      } else {
+        return [...currentCollapsedLayers, id];
+      }
+    });
+  }, []);
+
   return (
-    <Pane>
-      <GridContainer ref={containerRef}>
+    <>
+      <GrabbingStyles />
+
+      <Pane>
+        <Title>Layers</Title>
+
         <DndProvider backend={HTML5Backend}>
-          {localElements.map((element, index) => (
-            <SlideElementDragWrapper
-              key={element.id}
-              index={index}
-              onDrop={commitChangedOrder}
-              onDrag={moveElement}
-            >
-              <ElementCard
-                element={element}
-                isActive={element.id === activeElementId}
-                onMouseDown={() => setActiveElementId(element.id)}
-                onMoveUpClick={() => moveElementAndCommit(index, index - 1)}
-                onMoveDownClick={() => moveElementAndCommit(index, index + 1)}
-                showMoveUpButton={index - 1 > -1}
-                showMoveDownButton={index + 1 < localElements.length}
-              />
-              {Array.isArray(element.children) && (
-                <ElementChildrenContainer>
-                  {element.children.map((childElement, childIndex) => (
+          {localElements.map((element, index) => {
+            const isSelected = element.id === selectedElement?.id;
+            const isExpanded = !collapsedLayers.includes(element.id);
+            const isChildSelected =
+              Array.isArray(element.children) &&
+              !!element.children.find(
+                (child) => child.id === selectedElement?.id
+              );
+
+            return (
+              <SlideElementDragWrapper
+                key={element.id}
+                index={index}
+                onDrop={commitChangedOrder}
+                onDrag={moveElement}
+              >
+                <ElementCard
+                  element={element}
+                  isSelected={isSelected}
+                  isExpanded={isExpanded}
+                  isParentSelected={!isExpanded && isChildSelected}
+                  handleExpand={() => handleExpand(element.id)}
+                  onClick={() => selectElement(element.id)}
+                />
+                {isExpanded &&
+                  Array.isArray(element.children) &&
+                  element.children.map((childElement, childIndex) => (
                     <SlideElementDragWrapper
                       key={childElement.id}
                       index={childIndex}
@@ -169,45 +168,34 @@ export const LayerInspector: React.FC = () => {
                     >
                       <ElementCard
                         element={childElement}
-                        isActive={childElement.id === activeElementId}
-                        onMouseDown={() => setActiveElementId(childElement.id)}
-                        onMoveUpClick={() =>
-                          moveElementAndCommit(
-                            childIndex,
-                            childIndex - 1,
-                            index
-                          )
-                        }
-                        onMoveDownClick={() =>
-                          moveElementAndCommit(
-                            childIndex,
-                            childIndex + 1,
-                            index
-                          )
-                        }
-                        showMoveUpButton={childIndex - 1 > -1}
-                        showMoveDownButton={
-                          childIndex + 1 <
-                          (element.children as ConstructedDeckElement[]).length
-                        }
+                        isSelected={childElement.id === selectedElement?.id}
+                        isParentSelected={isSelected}
+                        onClick={() => selectElement(childElement.id)}
+                        isChildElement
                       />
                     </SlideElementDragWrapper>
                   ))}
-                </ElementChildrenContainer>
-              )}
-            </SlideElementDragWrapper>
-          ))}
+              </SlideElementDragWrapper>
+            );
+          })}
         </DndProvider>
-      </GridContainer>
-    </Pane>
+      </Pane>
+    </>
   );
 };
 
-const GridContainer = styled.div`
-  display: grid;
-  grid-row-gap: 10px;
+const Title = styled.div`
+  border-top: ${defaultTheme.scales.neutral.N6} 1px solid;
+  padding: 10px;
+  color: ${defaultTheme.scales.neutral.N9};
+  font-size: 0.9em;
+  font-weight: 500;
 `;
 
-const ElementChildrenContainer = styled.div`
-  margin-left: 16px;
+export const GrabbingStyles = createGlobalStyle`
+  body.is-dragging {
+    &, * {
+      cursor: grabbing !important;
+    }
+  }
 `;

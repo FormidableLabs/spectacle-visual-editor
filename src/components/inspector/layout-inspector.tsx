@@ -97,7 +97,7 @@ export const LayoutInspector = () => {
   }, []);
 
   return (
-    <Pane>
+    <Pane padding={10}>
       <Dialog
         isShown={dialogOpen}
         intent="danger"

@@ -37,10 +37,11 @@ export const Inspector = () => {
         return {
           [InspectorTab.Document]: <DocumentInspector />,
           [InspectorTab.Format]: <FormatInspector />,
-          [InspectorTab.Layout]: <LayoutInspector />,
-          [InspectorTab.Layers]: <LayerInspector />
+          [InspectorTab.Layout]: <LayoutInspector />
         }[activeTab];
       })()}
+
+      <LayerInspector />
     </InspectorContainer>
   );
 };

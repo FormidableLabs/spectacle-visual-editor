@@ -132,7 +132,7 @@ export const MenuBar = () => {
                     return (
                       <Tooltip
                         content={
-                          'This element can only be added to root-level slides'
+                          'This element can only be added to the root level of slides'
                         }
                         position={Position.RIGHT}
                       >

@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FocusEvent, useState } from 'react';
 import { ConstructedDeckElement } from '../../types/deck-elements';
-import { SegmentedControl, TextInputField } from 'evergreen-ui';
+import { TextInputField } from 'evergreen-ui';
 import { SelectInput } from '../inputs/select';
 import styled from 'styled-components';
 import {

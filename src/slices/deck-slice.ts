@@ -173,6 +173,7 @@ export const deckSlice = createSlice({
     deleteSlide: (state, action) => {
       // The slide ID to delete can be passed via action.payload
       // If a slide ID is not provided, we assume the slide to delete is the active one
+      const activeSlide = getActiveSlideImmer(state);
       const slideToDelete = action.payload
         ? state.slides.entities[action.payload]
         : getActiveSlideImmer(state);
@@ -191,9 +192,11 @@ export const deckSlice = createSlice({
 
       slidesAdapter.removeOne(state.slides, slideToDelete.id);
 
-      state.activeSlideId = slidesAdapter
-        .getSelectors()
-        .selectAll(state.slides)[0].id;
+      if (slideToDelete?.id === activeSlide?.id) {
+        state.activeSlideId = slidesAdapter
+          .getSelectors()
+          .selectAll(state.slides)[0].id;
+      }
     },
 
     updateThemeColors: (state, action) => {

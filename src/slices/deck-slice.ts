@@ -27,6 +27,7 @@ type DeckState = {
   slides: EntityState<DeckSlide>;
   elements: EntityState<DeckElement>;
   activeSlideId: null | string;
+  hoveredEditableElementId: null | string;
   selectedEditableElementId: null | string;
   copiedElement: null | { id: string; elements: DeckElementMap };
   theme: SpectacleTheme;
@@ -54,6 +55,7 @@ const initialState: DeckState = {
   slides: slidesAdapter.getInitialState(),
   elements: elementsAdapter.getInitialState(),
   activeSlideId: null,
+  hoveredEditableElementId: null,
   selectedEditableElementId: null,
   copiedElement: null,
   theme: defaultTheme
@@ -147,6 +149,10 @@ export const deckSlice = createSlice({
 
       elementsAdapter.addOne(state.elements, newElement);
       state.selectedEditableElementId = newElementId;
+    },
+
+    editableElementHovered: (state, action) => {
+      state.hoveredEditableElementId = action.payload;
     },
 
     editableElementSelected: (state, action) => {
@@ -411,6 +417,8 @@ const elementsEntitySelector = (state: RootState) =>
 
 export const activeSlideIdSelector = (state: RootState) =>
   state.deck.present.activeSlideId;
+export const hoveredEditableElementIdSelector = (state: RootState) =>
+  state.deck.present.hoveredEditableElementId;
 export const selectedEditableElementIdSelector = (state: RootState) =>
   state.deck.present.selectedEditableElementId;
 export const themeSelector = (state: RootState) => state.deck.present.theme;

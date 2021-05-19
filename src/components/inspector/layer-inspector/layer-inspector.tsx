@@ -5,7 +5,8 @@ import { ConstructedDeckElement } from '../../../types/deck-elements';
 import {
   activeSlideSelector,
   selectedElementSelector,
-  deckSlice
+  deckSlice,
+  hoveredEditableElementIdSelector
 } from '../../../slices/deck-slice';
 import { Pane } from '../inspector-styles';
 import { DndProvider } from 'react-dnd';
@@ -29,6 +30,7 @@ export const LayerInspector: FC = () => {
   );
   const [localElements, setLocalElements] = useState(activeSlideElements);
   const selectedElement = useSelector(selectedElementSelector);
+  const hoveredElementId = useSelector(hoveredEditableElementIdSelector);
   const [collapsedLayers, setCollapsedLayers] = useState<Array<String>>([]);
 
   const dispatch = useDispatch();
@@ -107,6 +109,17 @@ export const LayerInspector: FC = () => {
     [dispatch, localElements]
   );
 
+  const hoverElement = useCallback(
+    (id) => {
+      dispatch(deckSlice.actions.editableElementHovered(id));
+    },
+    [dispatch]
+  );
+
+  const unhoverElement = useCallback(() => {
+    dispatch(deckSlice.actions.editableElementHovered(null));
+  }, [dispatch]);
+
   const selectElement = useCallback(
     (id) => {
       dispatch(deckSlice.actions.editableElementSelected(id));
@@ -133,6 +146,7 @@ export const LayerInspector: FC = () => {
 
         <DndProvider backend={HTML5Backend}>
           {localElements.map((element, index) => {
+            const isHovered = element.id === hoveredElementId;
             const isSelected = element.id === selectedElement?.id;
             const isExpanded = !collapsedLayers.includes(element.id);
             const isChildSelected =
@@ -150,11 +164,14 @@ export const LayerInspector: FC = () => {
               >
                 <ElementCard
                   element={element}
+                  isHovered={isHovered}
                   isSelected={isSelected}
                   isExpanded={isExpanded}
                   isParentSelected={!isExpanded && isChildSelected}
                   handleExpand={() => handleExpand(element.id)}
                   onClick={() => selectElement(element.id)}
+                  onMouseEnter={() => hoverElement(element.id)}
+                  onMouseLeave={unhoverElement}
                 />
                 {isExpanded &&
                   Array.isArray(element.children) &&
@@ -168,10 +185,13 @@ export const LayerInspector: FC = () => {
                     >
                       <ElementCard
                         element={childElement}
+                        isHovered={childElement.id === hoveredElementId}
                         isSelected={childElement.id === selectedElement?.id}
                         isParentSelected={isSelected}
-                        onClick={() => selectElement(childElement.id)}
                         isChildElement
+                        onClick={() => selectElement(childElement.id)}
+                        onMouseEnter={() => hoverElement(childElement.id)}
+                        onMouseLeave={unhoverElement}
                       />
                     </SlideElementDragWrapper>
                   ))}

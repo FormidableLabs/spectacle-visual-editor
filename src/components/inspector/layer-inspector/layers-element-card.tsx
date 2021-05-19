@@ -24,12 +24,15 @@ const ELEMENT_ICONS = {
 };
 
 interface Props {
-  isSelected?: boolean;
-  isParentSelected?: boolean;
+  isHovered: boolean;
+  isSelected: boolean;
+  isParentSelected: boolean;
   isChildElement?: boolean;
   isExpanded?: boolean;
   element: ConstructedDeckElement;
-  onClick?: (e: MouseEvent<HTMLDivElement>) => void;
+  onClick: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseEnter: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave: (e: MouseEvent<HTMLDivElement>) => void;
   handleExpand?: () => void;
 }
 
@@ -39,11 +42,14 @@ interface Props {
  */
 export const ElementCard: React.FC<Props> = ({
   element,
+  isHovered,
   isSelected,
   isParentSelected,
   isChildElement,
   isExpanded,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
   handleExpand
 }) => {
   const hasChildren = Array.isArray(element.children);
@@ -62,10 +68,13 @@ export const ElementCard: React.FC<Props> = ({
     <Layer
       role="button"
       title={element.component}
+      isHovered={isHovered}
       isSelected={isSelected}
       isParentSelected={isParentSelected}
       isChildElement={isChildElement}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <Icon
         icon={ELEMENT_ICONS[element.component as keyof typeof ELEMENT_ICONS]}
@@ -93,6 +102,7 @@ export const ElementCard: React.FC<Props> = ({
 
 const Layer = styled.div<{
   isSelected?: boolean;
+  isHovered?: boolean;
   isParentSelected?: boolean;
   isChildElement?: boolean;
 }>`
@@ -109,16 +119,11 @@ const Layer = styled.div<{
   background: ${(props) =>
     props.isSelected
       ? defaultTheme.scales.blue.B3A
+      : props.isHovered
+      ? defaultTheme.scales.neutral.N2A
       : props.isParentSelected
       ? defaultTheme.scales.blue.B1A
       : 'none'};
-
-  &:hover {
-    background: ${(props) =>
-      props.isSelected || props.isParentSelected
-        ? defaultTheme.scales.blue.B3A
-        : defaultTheme.scales.neutral.N2A};
-  }
 
   &:focus {
     border: 1px solid ${defaultTheme.palette.blue.base};

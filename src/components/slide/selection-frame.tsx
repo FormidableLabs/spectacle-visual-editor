@@ -11,22 +11,21 @@ import Moveable, { OnResizeEnd } from 'react-moveable';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   deckSlice,
+  hoveredEditableElementIdSelector,
   selectedEditableElementIdSelector
 } from '../../slices/deck-slice';
 import { RESIZABLE_ELEMENTS } from '../../types/deck-elements';
 
-const Wrapper = styled.div<{ isSelected: boolean }>`
+const Wrapper = styled.div<{ isHovered: boolean; isSelected: boolean }>`
   display: contents;
 
   > div {
     outline: ${(props) =>
-      props.isSelected ? `2px solid ${props.theme.colors.secondary}` : ''};
-    &:hover {
-      outline: ${(props) =>
-        props.isSelected
-          ? `2px solid ${props.theme.colors.secondary}`
-          : `1px solid ${props.theme.colors.primary}`};
-    }
+      props.isSelected
+        ? `2px solid ${props.theme.colors.secondary}`
+        : props.isHovered
+        ? `1px solid ${props.theme.colors.primary}`
+        : ''};
   }
 `;
 
@@ -41,6 +40,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const dispatch = useDispatch();
   const editableElementId = useSelector(selectedEditableElementIdSelector);
   const [target, setTarget] = useState<HTMLElement | null>(null);
+  const hoveredElementId = useSelector(hoveredEditableElementIdSelector);
 
   /**
    * Moveable can't detect size of image until it is loaded,
@@ -96,11 +96,28 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     }
   }, [imgSrc]);
 
+  const hoverElement = useCallback(
+    (id) => (e: MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      dispatch(deckSlice.actions.editableElementHovered(id));
+    },
+    [dispatch]
+  );
+
+  const unhoverElement = useCallback(() => {
+    dispatch(deckSlice.actions.editableElementHovered(null));
+  }, [dispatch]);
+
+  const isHovered = hoveredElementId === children.props.id;
   const isSelected = editableElementId === children.props.id;
 
   return (
     <>
       <Wrapper
+        isHovered={isHovered}
+        isSelected={isSelected}
+        onMouseOver={hoverElement(children.props.id)}
+        onMouseLeave={unhoverElement}
         onMouseDown={(e: MouseEvent<HTMLDivElement>) => {
           if (
             (e.target as HTMLElement).classList.contains('moveable-control')
@@ -113,7 +130,6 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
             deckSlice.actions.editableElementSelected(children.props.id)
           );
         }}
-        isSelected={isSelected}
       >
         {cloneElement(children, {
           ref,

@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import {
-  Button,
   defaultTheme,
   Menu,
   Popover,
@@ -12,16 +11,12 @@ import {
   Tooltip,
   IconButton,
   PlusIcon,
-  FloppyDiskIcon,
-  EyeOpenIcon,
   UndoIcon,
   RedoIcon,
   CutIcon,
   DuplicateIcon,
   ClipboardIcon,
   MenuIcon,
-  ZoomInIcon,
-  GridIcon,
   GridViewIcon,
   TrashIcon
 } from 'evergreen-ui';
@@ -127,7 +122,11 @@ export const MenuBar = () => {
             </Menu>
           )}
         >
-          <StyledIconButton fill="#1070ca" icon={MenuIcon} appearance="minimal" />
+          <StyledIconButton
+            fill="#1070ca"
+            icon={MenuIcon}
+            appearance="minimal"
+          />
         </Popover>
       </MenuSection>
       <SectionDivider />
@@ -179,7 +178,11 @@ export const MenuBar = () => {
           )}
         >
           <Tooltip content="Insert">
-            <StyledIconButton fill="#1070ca" icon={PlusIcon} appearance="minimal" />
+            <StyledIconButton
+              fill="#1070ca"
+              icon={PlusIcon}
+              appearance="minimal"
+            />
           </Tooltip>
         </Popover>
         <Popover
@@ -209,7 +212,11 @@ export const MenuBar = () => {
           )}
         >
           <Tooltip content="Slides">
-            <StyledIconButton fill="#1070ca" icon={GridViewIcon} appearance="minimal" />
+            <StyledIconButton
+              fill="#1070ca"
+              icon={GridViewIcon}
+              appearance="minimal"
+            />
           </Tooltip>
         </Popover>
       </MenuSection>
@@ -217,7 +224,7 @@ export const MenuBar = () => {
       <MenuSection>
         <Tooltip content="Undo ⌘Z">
           <StyledIconButton
-          fill="#1070ca" 
+            fill="#1070ca"
             icon={UndoIcon}
             appearance="minimal"
             disabled={!hasPast}
@@ -228,7 +235,7 @@ export const MenuBar = () => {
         </Tooltip>
         <Tooltip content="Redo ⇧⌘Z">
           <StyledIconButton
-          fill="#1070ca" 
+            fill="#1070ca"
             icon={RedoIcon}
             appearance="minimal"
             disabled={!hasFuture}
@@ -239,7 +246,7 @@ export const MenuBar = () => {
         </Tooltip>
         <Tooltip content="Cut ⌘X">
           <StyledIconButton
-          fill="#1070ca" 
+            fill="#1070ca"
             icon={CutIcon}
             appearance="minimal"
             disabled={!selectedElement}
@@ -248,7 +255,7 @@ export const MenuBar = () => {
         </Tooltip>
         <Tooltip content="Copy ⌘C">
           <StyledIconButton
-          fill="#1070ca" 
+            fill="#1070ca"
             icon={DuplicateIcon}
             appearance="minimal"
             disabled={!selectedElement}
@@ -259,7 +266,7 @@ export const MenuBar = () => {
         </Tooltip>
         <Tooltip content="Paste ⌘P">
           <StyledIconButton
-          fill="#1070ca" 
+            fill="#1070ca"
             icon={ClipboardIcon}
             appearance="minimal"
             onClick={() => {
@@ -287,7 +294,7 @@ export const MenuBar = () => {
 
         <Tooltip content="Delete ⌘D">
           <StyledIconButton
-            fill="#D14343" 
+            fill="#D14343"
             icon={TrashIcon}
             appearance="minimal"
             intent="danger"
@@ -350,6 +357,7 @@ const SectionDivider = styled.div`
 const StyledIconButton = styled(IconButton)`
   svg {
     /* Need to override inline style */
-    ${(props) => (props.disabled ? null : 'fill: ' + props.fill + '!important;')}
+    ${(props) =>
+      props.disabled ? null : 'fill: ' + props.fill + '!important;'}
   }
 `;

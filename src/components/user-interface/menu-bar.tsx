@@ -9,7 +9,21 @@ import {
   Pane,
   Dialog,
   toaster,
-  Tooltip
+  Tooltip,
+  IconButton,
+  PlusIcon,
+  FloppyDiskIcon,
+  EyeOpenIcon,
+  UndoIcon,
+  RedoIcon,
+  CutIcon,
+  DuplicateIcon,
+  ClipboardIcon,
+  MenuIcon,
+  ZoomInIcon,
+  GridIcon,
+  GridViewIcon,
+  TrashIcon
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
@@ -79,204 +93,218 @@ export const MenuBar = () => {
       <LogoContainer>
         <SpectacleLogo size={32} />
       </LogoContainer>
-      <Popover
-        position={Position.BOTTOM_LEFT}
-        content={({ close }) => (
-          <Menu>
-            <Menu.Group>
-              <Menu.Item
-                onSelect={() => {
-                  dispatch(deckSlice.actions.newSlideAdded());
-                  close();
-                }}
-              >
-                Add Slide
-              </Menu.Item>
-              <Menu.Item
-                disabled={slides.length === 1} // Must have at least one slide
-                onSelect={() => {
-                  dispatch(deckSlice.actions.deleteSlide(null));
-                  close();
-                }}
-              >
-                Delete Slide
-              </Menu.Item>
-            </Menu.Group>
-            <Menu.Divider />
-            <Menu.Group>
-              <Menu.Item onSelect={() => {}} secondaryText={<span>⌘S</span>}>
-                Save
-              </Menu.Item>
-              <Menu.Item
-                onSelect={() => {
-                  handleOpenPreviewWindow();
-                  close();
-                }}
-              >
-                Preview Deck...
-              </Menu.Item>
-            </Menu.Group>
-          </Menu>
-        )}
-      >
-        <Button appearance="minimal">File</Button>
-      </Popover>
-      <Popover
-        position={Position.BOTTOM_LEFT}
-        content={({ close }) => (
-          <Menu>
-            <Menu.Group>
-              {InsertItems.map((item) => (
-                <TooltipConditionalWrapper
-                  condition={shouldNestableElementsBeDisabled(
-                    item.element.component
-                  )}
-                  key={item.title}
-                  wrapper={(children) => {
-                    return (
-                      <Tooltip
-                        content={
-                          'This element can only be added to the root level of slides'
-                        }
-                        position={Position.RIGHT}
-                      >
-                        {children}
-                      </Tooltip>
-                    );
+      <MenuSection>
+        <Popover
+          position={Position.BOTTOM_LEFT}
+          content={({ close }) => (
+            <Menu>
+              <Menu.Group>
+                <Menu.Item onSelect={() => {}} secondaryText={<span>⌘S</span>}>
+                  Save
+                </Menu.Item>
+                <Menu.Item
+                  onSelect={() => {
+                    handleOpenPreviewWindow();
+                    close();
                   }}
                 >
-                  <Menu.Item
-                    key={item.title}
-                    disabled={shouldNestableElementsBeDisabled(
+                  Present Deck
+                </Menu.Item>
+              </Menu.Group>
+              <Menu.Divider />
+              <Menu.OptionsGroup
+                title="Preview Size"
+                options={[
+                  { label: 'To fit', value: 'fit' },
+                  { label: 'Actual size', value: '1' }
+                ]}
+                selected={scale}
+                onChange={(selected) => {
+                  dispatch(settingsSlice.actions.updateScale(selected));
+                  close();
+                }}
+              />
+            </Menu>
+          )}
+        >
+          <StyledIconButton fill="#1070ca" icon={MenuIcon} appearance="minimal" />
+        </Popover>
+      </MenuSection>
+      <SectionDivider />
+      <MenuSection>
+        <Popover
+          position={Position.BOTTOM_LEFT}
+          content={({ close }) => (
+            <Menu>
+              <Menu.Group>
+                {InsertItems.map((item) => (
+                  <TooltipConditionalWrapper
+                    condition={shouldNestableElementsBeDisabled(
                       item.element.component
                     )}
-                    onSelect={() => {
-                      dispatch(
-                        deckSlice.actions.elementAddedToActiveSlide(
-                          item.element
-                        )
+                    key={item.title}
+                    wrapper={(children) => {
+                      return (
+                        <Tooltip
+                          content={
+                            'This element can only be added to the root level of slides'
+                          }
+                          position={Position.RIGHT}
+                        >
+                          {children}
+                        </Tooltip>
                       );
-                      close();
                     }}
                   >
-                    {item.title}
-                  </Menu.Item>
-                </TooltipConditionalWrapper>
-              ))}
-            </Menu.Group>
-          </Menu>
-        )}
-      >
-        <Button appearance="minimal">Insert</Button>
-      </Popover>
-      <Popover
-        position={Position.BOTTOM_LEFT}
-        content={({ close }) => (
-          <Menu>
-            <Menu.Group>
-              <Menu.Item
-                disabled={!hasPast}
-                secondaryText={<span>⌘Z</span>}
-                onSelect={() => {
-                  dispatch(UndoActionCreators.undo());
-                  close();
-                }}
-              >
-                Undo
-              </Menu.Item>
-              <Menu.Item
-                disabled={!hasFuture}
-                secondaryText={<span>⇧⌘Z</span>}
-                onSelect={() => {
-                  dispatch(UndoActionCreators.redo());
-                  close();
-                }}
-              >
-                Redo
-              </Menu.Item>
-            </Menu.Group>
-            <Menu.Group>
-              <Menu.Item secondaryText={<span>⌘X</span>}>Cut</Menu.Item>
-              <Menu.Item
-                secondaryText={<span>⌘C</span>}
-                disabled={!selectedElement}
-                onSelect={() => {
-                  copyElement();
-                  close();
-                }}
-              >
-                Copy
-              </Menu.Item>
-              <Menu.Item
-                secondaryText={<span>⌘V</span>}
-                onSelect={() => {
-                  dispatch(deckSlice.actions.pasteElement());
-                  close();
-                }}
-              >
-                Paste
-              </Menu.Item>
-            </Menu.Group>
-            <Menu.Group>
-              <Pane>
-                <Dialog
-                  isShown={dialogOpen}
-                  intent="danger"
-                  onConfirm={(close) => {
-                    dispatch(deckSlice.actions.deleteElement());
+                    <Menu.Item
+                      key={item.title}
+                      disabled={shouldNestableElementsBeDisabled(
+                        item.element.component
+                      )}
+                      onSelect={() => {
+                        dispatch(
+                          deckSlice.actions.elementAddedToActiveSlide(
+                            item.element
+                          )
+                        );
+                        close();
+                      }}
+                    >
+                      {item.title}
+                    </Menu.Item>
+                  </TooltipConditionalWrapper>
+                ))}
+              </Menu.Group>
+            </Menu>
+          )}
+        >
+          <Tooltip content="Insert">
+            <StyledIconButton fill="#1070ca" icon={PlusIcon} appearance="minimal" />
+          </Tooltip>
+        </Popover>
+        <Popover
+          position={Position.BOTTOM_LEFT}
+          content={({ close }) => (
+            <Menu>
+              <Menu.Group>
+                <Menu.Item
+                  onSelect={() => {
+                    dispatch(deckSlice.actions.newSlideAdded());
                     close();
                   }}
-                  onCloseComplete={toggleDialog}
-                  hasHeader={false}
-                  confirmLabel="Delete"
                 >
-                  Deleting this container from the slide will also delete the
-                  elements inside it. Do you wish to delete this container?
-                </Dialog>
-              </Pane>
-              <Menu.Item
-                secondaryText={<span>⌘D</span>}
-                onSelect={() => {
-                  if (
-                    selectedElement &&
-                    CONTAINER_ELEMENTS.includes(selectedElement.component)
-                  ) {
-                    toggleDialog();
-                  } else {
-                    dispatch(deckSlice.actions.deleteElement());
+                  Add Slide
+                </Menu.Item>
+                <Menu.Item
+                  disabled={slides.length === 1} // Must have at least one slide
+                  onSelect={() => {
+                    dispatch(deckSlice.actions.deleteSlide(null));
                     close();
-                  }
-                }}
-              >
-                Delete
-              </Menu.Item>
-            </Menu.Group>
-          </Menu>
-        )}
-      >
-        <Button appearance="minimal">Edit</Button>
-      </Popover>
-      <Popover
-        position={Position.BOTTOM_LEFT}
-        content={({ close }) => (
-          <Menu>
-            <Menu.OptionsGroup
-              title="Zoom"
-              options={[
-                { label: 'To fit', value: 'fit' },
-                { label: 'Actual size', value: '1' }
-              ]}
-              selected={scale}
-              onChange={(selected) => {
-                dispatch(settingsSlice.actions.updateScale(selected));
+                  }}
+                >
+                  Delete Slide
+                </Menu.Item>
+              </Menu.Group>
+            </Menu>
+          )}
+        >
+          <Tooltip content="Slides">
+            <StyledIconButton fill="#1070ca" icon={GridViewIcon} appearance="minimal" />
+          </Tooltip>
+        </Popover>
+      </MenuSection>
+      <SectionDivider />
+      <MenuSection>
+        <Tooltip content="Undo ⌘Z">
+          <StyledIconButton
+          fill="#1070ca" 
+            icon={UndoIcon}
+            appearance="minimal"
+            disabled={!hasPast}
+            onClick={() => {
+              dispatch(UndoActionCreators.undo());
+            }}
+          />
+        </Tooltip>
+        <Tooltip content="Redo ⇧⌘Z">
+          <StyledIconButton
+          fill="#1070ca" 
+            icon={RedoIcon}
+            appearance="minimal"
+            disabled={!hasFuture}
+            onClick={() => {
+              dispatch(UndoActionCreators.redo());
+            }}
+          />
+        </Tooltip>
+        <Tooltip content="Cut ⌘X">
+          <StyledIconButton
+          fill="#1070ca" 
+            icon={CutIcon}
+            appearance="minimal"
+            disabled={!selectedElement}
+            onClick={() => {}}
+          />
+        </Tooltip>
+        <Tooltip content="Copy ⌘C">
+          <StyledIconButton
+          fill="#1070ca" 
+            icon={DuplicateIcon}
+            appearance="minimal"
+            disabled={!selectedElement}
+            onClick={() => {
+              copyElement();
+            }}
+          />
+        </Tooltip>
+        <Tooltip content="Paste ⌘P">
+          <StyledIconButton
+          fill="#1070ca" 
+            icon={ClipboardIcon}
+            appearance="minimal"
+            onClick={() => {
+              dispatch(deckSlice.actions.pasteElement());
+            }}
+          />
+        </Tooltip>
+
+        <Pane>
+          <Dialog
+            isShown={dialogOpen}
+            intent="danger"
+            onConfirm={(close) => {
+              dispatch(deckSlice.actions.deleteElement());
+              close();
+            }}
+            onCloseComplete={toggleDialog}
+            hasHeader={false}
+            confirmLabel="Delete"
+          >
+            Deleting this container from the slide will also delete the elements
+            inside it. Do you wish to delete this container?
+          </Dialog>
+        </Pane>
+
+        <Tooltip content="Delete ⌘D">
+          <StyledIconButton
+            fill="#D14343" 
+            icon={TrashIcon}
+            appearance="minimal"
+            intent="danger"
+            onClick={() => {
+              if (
+                selectedElement &&
+                CONTAINER_ELEMENTS.includes(selectedElement.component)
+              ) {
+                toggleDialog();
+              } else {
+                dispatch(deckSlice.actions.deleteElement());
                 close();
-              }}
-            />
-          </Menu>
-        )}
-      >
-        <Button appearance="minimal">View</Button>
-      </Popover>
+              }
+            }}
+          />
+        </Tooltip>
+      </MenuSection>
     </MenuBarContainer>
   );
 };
@@ -307,3 +335,21 @@ const TooltipConditionalWrapper: React.FC<TooltipConditonalWrapperProps> = ({
   wrapper,
   children
 }) => (condition ? wrapper(children) : children);
+
+const MenuSection = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: 0 8px;
+`;
+
+const SectionDivider = styled.div`
+  height: 65%;
+  border-left: 1px solid ${defaultTheme.scales.neutral.N4A};
+`;
+
+const StyledIconButton = styled(IconButton)`
+  svg {
+    /* Need to override inline style */
+    ${(props) => (props.disabled ? null : 'fill: ' + props.fill + '!important;')}
+  }
+`;

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, FocusEvent, useCallback, useState } from 'react';
 import { ConstructedDeckElement } from '../../types/deck-elements';
 import { FormField, TextInputField, Switch } from 'evergreen-ui';
 import styled from 'styled-components';
@@ -48,26 +48,6 @@ export const TextControls: React.FC<Props> = ({
     verticalMargin
   });
 
-  useEffect(() => {
-    if (isSingleMargin) {
-      editableElementChanged({
-        componentProps: {
-          ...selectedElement?.props?.componentProps,
-          margin
-        }
-      });
-    } else {
-      editableElementChanged({
-        componentProps: {
-          ...selectedElement?.props?.componentProps,
-          margin: '',
-          marginX: horizontalMargin,
-          marginY: verticalMargin
-        }
-      });
-    }
-  }, []);
-
   const onToggle = () => {
     if (!marginDoubleValue) {
       // clear marginX & marginY. Set margin to last input value
@@ -97,16 +77,19 @@ export const TextControls: React.FC<Props> = ({
     }
   };
 
-  const onChangeComponentProps = (propName: string, val: string) => {
-    if (selectedElement) {
-      editableElementChanged({
-        componentProps: {
-          ...selectedElement.props?.componentProps,
-          [propName]: val
-        }
-      });
-    }
-  };
+  const onChangeComponentProps = useCallback(
+    (propName: string, val: string) => {
+      if (selectedElement) {
+        editableElementChanged({
+          componentProps: {
+            ...selectedElement.props?.componentProps,
+            [propName]: val
+          }
+        });
+      }
+    },
+    [editableElementChanged, selectedElement]
+  );
 
   return (
     <Container label="Margins">

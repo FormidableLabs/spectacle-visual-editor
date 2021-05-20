@@ -370,8 +370,8 @@ const MenuSection = styled.div`
   flex-direction: row;
   margin: 0 8px;
 
-  > button {
-    margin: 0 3px;
+  > div {
+    margin: 0 2px;
   }
 `;
 

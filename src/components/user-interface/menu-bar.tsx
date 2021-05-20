@@ -16,9 +16,11 @@ import {
   CutIcon,
   DuplicateIcon,
   ClipboardIcon,
-  MenuIcon,
   GridViewIcon,
-  TrashIcon
+  TrashIcon,
+  FloppyDiskIcon,
+  ZoomInIcon,
+  FullscreenIcon
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
@@ -89,45 +91,14 @@ export const MenuBar = () => {
         <SpectacleLogo size={32} />
       </LogoContainer>
       <MenuSection>
-        <Popover
-          position={Position.BOTTOM_LEFT}
-          content={({ close }) => (
-            <Menu>
-              <Menu.Group>
-                <Menu.Item onSelect={() => {}} secondaryText={<span>⌘S</span>}>
-                  Save
-                </Menu.Item>
-                <Menu.Item
-                  onSelect={() => {
-                    handleOpenPreviewWindow();
-                    close();
-                  }}
-                >
-                  Present Deck
-                </Menu.Item>
-              </Menu.Group>
-              <Menu.Divider />
-              <Menu.OptionsGroup
-                title="Preview Size"
-                options={[
-                  { label: 'To fit', value: 'fit' },
-                  { label: 'Actual size', value: '1' }
-                ]}
-                selected={scale}
-                onChange={(selected) => {
-                  dispatch(settingsSlice.actions.updateScale(selected));
-                  close();
-                }}
-              />
-            </Menu>
-          )}
-        >
+        <Tooltip content="Save ⌘S">
           <StyledIconButton
             fill="#1070ca"
-            icon={MenuIcon}
+            icon={FloppyDiskIcon}
             appearance="minimal"
+            onClick={() => {}}
           />
-        </Popover>
+        </Tooltip>
       </MenuSection>
       <SectionDivider />
       <MenuSection>
@@ -223,56 +194,66 @@ export const MenuBar = () => {
       <SectionDivider />
       <MenuSection>
         <Tooltip content="Undo ⌘Z">
-          <StyledIconButton
-            fill="#1070ca"
-            icon={UndoIcon}
-            appearance="minimal"
-            disabled={!hasPast}
-            onClick={() => {
-              dispatch(UndoActionCreators.undo());
-            }}
-          />
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={UndoIcon}
+              appearance="minimal"
+              disabled={!hasPast}
+              onClick={() => {
+                dispatch(UndoActionCreators.undo());
+              }}
+            />
+          </div>
         </Tooltip>
         <Tooltip content="Redo ⇧⌘Z">
-          <StyledIconButton
-            fill="#1070ca"
-            icon={RedoIcon}
-            appearance="minimal"
-            disabled={!hasFuture}
-            onClick={() => {
-              dispatch(UndoActionCreators.redo());
-            }}
-          />
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={RedoIcon}
+              appearance="minimal"
+              disabled={!hasFuture}
+              onClick={() => {
+                dispatch(UndoActionCreators.redo());
+              }}
+            />
+          </div>
         </Tooltip>
         <Tooltip content="Cut ⌘X">
-          <StyledIconButton
-            fill="#1070ca"
-            icon={CutIcon}
-            appearance="minimal"
-            disabled={!selectedElement}
-            onClick={() => {}}
-          />
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={CutIcon}
+              appearance="minimal"
+              disabled={!selectedElement}
+              onClick={() => {}}
+            />
+          </div>
         </Tooltip>
         <Tooltip content="Copy ⌘C">
-          <StyledIconButton
-            fill="#1070ca"
-            icon={DuplicateIcon}
-            appearance="minimal"
-            disabled={!selectedElement}
-            onClick={() => {
-              copyElement();
-            }}
-          />
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={DuplicateIcon}
+              appearance="minimal"
+              disabled={!selectedElement}
+              onClick={() => {
+                copyElement();
+              }}
+            />
+          </div>
         </Tooltip>
         <Tooltip content="Paste ⌘P">
-          <StyledIconButton
-            fill="#1070ca"
-            icon={ClipboardIcon}
-            appearance="minimal"
-            onClick={() => {
-              dispatch(deckSlice.actions.pasteElement());
-            }}
-          />
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={ClipboardIcon}
+              appearance="minimal"
+              onClick={() => {
+                dispatch(deckSlice.actions.pasteElement());
+              }}
+            />
+          </div>
         </Tooltip>
 
         <Pane>
@@ -312,6 +293,47 @@ export const MenuBar = () => {
           />
         </Tooltip>
       </MenuSection>
+
+      <SectionDivider />
+      <MenuSection>
+        <Tooltip content="Present Deck">
+          <StyledIconButton
+            fill="#1070ca"
+            icon={FullscreenIcon}
+            appearance="minimal"
+            onClick={() => {
+              handleOpenPreviewWindow();
+            }}
+          />
+        </Tooltip>
+        <Popover
+          position={Position.BOTTOM_LEFT}
+          content={() => (
+            <Menu>
+              <Menu.OptionsGroup
+                title="Preview Size"
+                options={[
+                  { label: 'To fit', value: 'fit' },
+                  { label: 'Actual size', value: '1' }
+                ]}
+                selected={scale}
+                onChange={(selected) => {
+                  dispatch(settingsSlice.actions.updateScale(selected));
+                  close();
+                }}
+              />
+            </Menu>
+          )}
+        >
+          <Tooltip content="Preview Size">
+            <StyledIconButton
+              fill="#1070ca"
+              icon={ZoomInIcon}
+              appearance="minimal"
+            />
+          </Tooltip>
+        </Popover>
+      </MenuSection>
     </MenuBarContainer>
   );
 };
@@ -347,6 +369,10 @@ const MenuSection = styled.div`
   display: flex;
   flex-direction: row;
   margin: 0 8px;
+
+  > button {
+    margin: 0 3px;
+  }
 `;
 
 const SectionDivider = styled.div`

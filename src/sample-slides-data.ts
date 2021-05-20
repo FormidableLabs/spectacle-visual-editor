@@ -38,7 +38,8 @@ export const sampleElementsData: DeckElementMap = {
     id: childId1,
     props: {
       height: '100%',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      backgroundColor: '#ebe5da'
     },
     children: [childId2, childId3],
     parent: sampleSlidesData[0].id
@@ -52,17 +53,6 @@ export const sampleElementsData: DeckElementMap = {
       }
     },
     children: '## Spectacle',
-    parent: childId1
-  },
-  [childId3]: {
-    component: 'FlexBox',
-    id: childId3,
-    props: {
-      backgroundColor: 'yellowgreen',
-      width: 200,
-      height: 100,
-      flexDirection: 'column'
-    },
     parent: childId1
   },
   [childId4]: {

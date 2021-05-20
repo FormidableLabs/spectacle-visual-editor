@@ -39,7 +39,7 @@ export const sampleElementsData: DeckElementMap = {
     props: {
       height: '100%',
       flexDirection: 'column',
-      backgroundColor: '#ebe5da'
+      backgroundColor: '#2a3668'
     },
     children: [childId2, childId3],
     parent: sampleSlidesData[0].id

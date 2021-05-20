@@ -8,17 +8,17 @@ import {
   defaultTheme,
   Icon,
   IconButton,
-  MugshotIcon,
+  MediaIcon,
   NewGridItemIcon,
-  TextHighlightIcon
+  AlignLeftIcon
 } from 'evergreen-ui';
 import { isImageElement, isMdElement } from '../validators';
 import { ConstructedDeckElement } from '../../../types/deck-elements';
 
 const ELEMENT_ICONS = {
   FlexBox: ColumnLayoutIcon,
-  Markdown: TextHighlightIcon,
-  Image: MugshotIcon,
+  Markdown: AlignLeftIcon,
+  Image: MediaIcon,
   Grid: NewGridItemIcon,
   CodePane: CodeIcon
 };

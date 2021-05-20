@@ -19,7 +19,9 @@ import { RESIZABLE_ELEMENTS } from '../../types/deck-elements';
 const Wrapper = styled.div<{ isHovered: boolean; isSelected: boolean }>`
   display: contents;
 
-  > div {
+  > div,
+  > img,
+  > pre {
     outline: ${(props) =>
       props.isSelected
         ? `2px solid ${props.theme.colors.secondary}`

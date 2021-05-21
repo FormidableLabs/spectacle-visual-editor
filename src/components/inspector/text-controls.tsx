@@ -66,7 +66,14 @@ export const TextControls: React.FC<Props> = ({
         }
       });
     }
-  }, []);
+  }, [
+    selectedElement?.props?.componentProps,
+    horizontalMargin,
+    verticalMargin,
+    editableElementChanged,
+    isSingleMargin,
+    margin
+  ]);
 
   const onToggle = () => {
     if (!marginDoubleValue) {

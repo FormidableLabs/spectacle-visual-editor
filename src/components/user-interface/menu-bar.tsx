@@ -30,7 +30,8 @@ import {
   hasPastSelector,
   hasFutureSelector,
   selectedElementSelector,
-  slidesSelector
+  slidesSelector,
+  hasPasteElementSelector
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
@@ -58,21 +59,28 @@ export const MenuBar = () => {
   const { scale } = useSelector(settingsSelector);
   const hasPast = useSelector(hasPastSelector);
   const hasFuture = useSelector(hasFutureSelector);
+  const hasPaste = useSelector(hasPasteElementSelector);
   const selectedElement = useSelector(selectedElementSelector);
   const slides = useSelector(slidesSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
-  const copyElement = () => {
+  const copyElement = (message: string) => {
     dispatch(deckSlice.actions.copyElement());
-    toaster.success('Element copied!');
+    toaster.success(message);
   };
 
   useMousetrap(
     {
-      [KEYBOARD_SHORTCUTS.COPY]: () => copyElement(),
+      [KEYBOARD_SHORTCUTS.CUT]: () => {
+        copyElement('Element cut!');
+        dispatch(deckSlice.actions.deleteElement());
+      },
+      [KEYBOARD_SHORTCUTS.COPY]: () => copyElement('Element copied!'),
       [KEYBOARD_SHORTCUTS.PASTE]: () =>
-        dispatch(deckSlice.actions.pasteElement())
+        dispatch(deckSlice.actions.pasteElement()),
+      [KEYBOARD_SHORTCUTS.UNDO]: () => dispatch(UndoActionCreators.undo()),
+      [KEYBOARD_SHORTCUTS.REDO]: () => dispatch(UndoActionCreators.redo())
     },
     []
   );
@@ -226,7 +234,10 @@ export const MenuBar = () => {
               icon={CutIcon}
               appearance="minimal"
               disabled={!selectedElement}
-              onClick={() => {}}
+              onClick={() => {
+                copyElement('Element cut!');
+                dispatch(deckSlice.actions.deleteElement());
+              }}
             />
           </div>
         </Tooltip>
@@ -238,7 +249,7 @@ export const MenuBar = () => {
               appearance="minimal"
               disabled={!selectedElement}
               onClick={() => {
-                copyElement();
+                copyElement('Element copied!');
               }}
             />
           </div>
@@ -249,6 +260,7 @@ export const MenuBar = () => {
               fill="#1070ca"
               icon={ClipboardIcon}
               appearance="minimal"
+              disabled={!hasPaste}
               onClick={() => {
                 dispatch(deckSlice.actions.pasteElement());
               }}

@@ -499,3 +499,6 @@ export const selectedElementSelector = createSelector(
 export const hasPastSelector = (state: RootState) => state.deck.past.length > 1;
 export const hasFutureSelector = (state: RootState) =>
   state.deck.future.length > 0;
+
+export const hasPasteElementSelector = (state: RootState) =>
+  state.deck.present.copiedElement !== null;

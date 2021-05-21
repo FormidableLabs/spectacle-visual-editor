@@ -1,4 +1,10 @@
-import React, { ChangeEvent, FocusEvent, useCallback, useState } from 'react';
+import React, {
+  ChangeEvent,
+  FocusEvent,
+  useCallback,
+  useEffect,
+  useState
+} from 'react';
 import { ConstructedDeckElement } from '../../types/deck-elements';
 import { FormField, TextInputField, Switch } from 'evergreen-ui';
 import styled from 'styled-components';
@@ -47,6 +53,33 @@ export const TextControls: React.FC<Props> = ({
     horizontalMargin,
     verticalMargin
   });
+
+  useEffect(() => {
+    if (isSingleMargin) {
+      editableElementChanged({
+        componentProps: {
+          ...selectedElement?.props?.componentProps,
+          margin
+        }
+      });
+    } else {
+      editableElementChanged({
+        componentProps: {
+          ...selectedElement?.props?.componentProps,
+          margin: '',
+          marginX: horizontalMargin,
+          marginY: verticalMargin
+        }
+      });
+    }
+  }, [
+    selectedElement?.props?.componentProps,
+    horizontalMargin,
+    verticalMargin,
+    editableElementChanged,
+    isSingleMargin,
+    margin
+  ]);
 
   const onToggle = () => {
     if (!marginDoubleValue) {

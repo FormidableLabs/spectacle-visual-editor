@@ -27,6 +27,7 @@ type DeckState = {
   slides: EntityState<DeckSlide>;
   elements: EntityState<DeckElement>;
   activeSlideId: null | string;
+  hoveredEditableElementId: null | string;
   selectedEditableElementId: null | string;
   copiedElement: null | { id: string; elements: DeckElementMap };
   theme: SpectacleTheme;
@@ -54,6 +55,7 @@ const initialState: DeckState = {
   slides: slidesAdapter.getInitialState(),
   elements: elementsAdapter.getInitialState(),
   activeSlideId: null,
+  hoveredEditableElementId: null,
   selectedEditableElementId: null,
   copiedElement: null,
   theme: defaultTheme
@@ -149,6 +151,10 @@ export const deckSlice = createSlice({
       state.selectedEditableElementId = newElementId;
     },
 
+    editableElementHovered: (state, action) => {
+      state.hoveredEditableElementId = action.payload;
+    },
+
     editableElementSelected: (state, action) => {
       state.selectedEditableElementId = action.payload;
     },
@@ -170,24 +176,33 @@ export const deckSlice = createSlice({
         selectedElement.children = incomingChildren;
       }
     },
-    deleteSlide: (state) => {
-      // Users cannot delete all slides otherwise it would break Spectacle
+    deleteSlide: (state, action) => {
+      // The slide ID to delete can be passed via action.payload
+      // If a slide ID is not provided, we assume the slide to delete is the active one
       const activeSlide = getActiveSlideImmer(state);
-      if (state.slides.ids.length === 1 || !activeSlide) return;
+      const slideToDelete = action.payload
+        ? state.slides.entities[action.payload]
+        : getActiveSlideImmer(state);
+
+      // Users cannot delete all slides otherwise it would break Spectacle
+      if (state.slides.ids.length === 1 || !slideToDelete) return;
+
+      let elementsToDelete: string[] = [];
 
       const getElementById = (id: string) =>
         elementsAdapter.getSelectors().selectById(state.elements, id);
 
-      let elementsToDelete: string[] = [];
-
-      elementsToDelete = getChildren(activeSlide.children, getElementById);
+      elementsToDelete = getChildren(slideToDelete.children, getElementById);
 
       elementsAdapter.removeMany(state.elements, elementsToDelete);
 
-      slidesAdapter.removeOne(state.slides, activeSlide.id);
-      state.activeSlideId = slidesAdapter
-        .getSelectors()
-        .selectAll(state.slides)[0].id;
+      slidesAdapter.removeOne(state.slides, slideToDelete.id);
+
+      if (slideToDelete?.id === activeSlide?.id) {
+        state.activeSlideId = slidesAdapter
+          .getSelectors()
+          .selectAll(state.slides)[0].id;
+      }
     },
 
     updateThemeColors: (state, action) => {
@@ -411,6 +426,8 @@ const elementsEntitySelector = (state: RootState) =>
 
 export const activeSlideIdSelector = (state: RootState) =>
   state.deck.present.activeSlideId;
+export const hoveredEditableElementIdSelector = (state: RootState) =>
+  state.deck.present.hoveredEditableElementId;
 export const selectedEditableElementIdSelector = (state: RootState) =>
   state.deck.present.selectedEditableElementId;
 export const themeSelector = (state: RootState) => state.deck.present.theme;

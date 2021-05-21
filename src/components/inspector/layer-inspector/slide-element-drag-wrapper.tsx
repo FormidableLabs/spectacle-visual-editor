@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
 export interface ElementLocation {
@@ -109,6 +109,18 @@ export const SlideElementDragWrapper: React.FC<Props> = ({
 
   const opacity = isDragging ? 0.2 : 1;
   drag(drop(ref));
+
+  useEffect(() => {
+    if (isDragging) {
+      document.body.classList.add('is-dragging');
+    } else {
+      document.body.classList.remove('is-dragging');
+    }
+
+    return () => {
+      document.body.classList.remove('is-dragging');
+    };
+  }, [isDragging]);
 
   return (
     <div

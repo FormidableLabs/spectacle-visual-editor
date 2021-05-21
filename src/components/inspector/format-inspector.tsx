@@ -30,7 +30,7 @@ export const FormatInspector = () => {
   };
 
   return (
-    <Pane>
+    <Pane padding={10}>
       {(() => {
         if (isBoxElement(selectedElement)) {
           return (

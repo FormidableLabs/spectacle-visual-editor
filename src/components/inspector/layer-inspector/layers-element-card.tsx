@@ -1,23 +1,39 @@
 import React, { MouseEvent } from 'react';
-import { ConstructedDeckElement } from '../../../types/deck-elements';
 import styled from 'styled-components';
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  Button,
-  ButtonProps,
-  defaultTheme
+  ChevronLeftIcon,
+  ChevronDownIcon,
+  CodeIcon,
+  ColumnLayoutIcon,
+  defaultTheme,
+  Icon,
+  IconButton,
+  MediaIcon,
+  NewGridItemIcon,
+  AlignLeftIcon
 } from 'evergreen-ui';
 import { isImageElement, isMdElement } from '../validators';
+import { ConstructedDeckElement } from '../../../types/deck-elements';
+
+const ELEMENT_ICONS = {
+  FlexBox: ColumnLayoutIcon,
+  Markdown: AlignLeftIcon,
+  Image: MediaIcon,
+  Grid: NewGridItemIcon,
+  CodePane: CodeIcon
+};
 
 interface Props {
-  isActive?: boolean;
+  isHovered: boolean;
+  isSelected: boolean;
+  isParentSelected: boolean;
+  isChildElement?: boolean;
+  isExpanded?: boolean;
   element: ConstructedDeckElement;
-  onMoveDownClick?: (e: MouseEvent<HTMLButtonElement>) => void;
-  onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
-  onMoveUpClick?: (e: MouseEvent<HTMLButtonElement>) => void;
-  showMoveDownButton?: boolean;
-  showMoveUpButton?: boolean;
+  onClick: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseEnter: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave: (e: MouseEvent<HTMLDivElement>) => void;
+  handleExpand?: () => void;
 }
 
 /**
@@ -26,94 +42,98 @@ interface Props {
  */
 export const ElementCard: React.FC<Props> = ({
   element,
-  isActive,
-  onMoveDownClick,
-  onMouseDown,
-  onMoveUpClick,
-  showMoveDownButton,
-  showMoveUpButton
+  isHovered,
+  isSelected,
+  isParentSelected,
+  isChildElement,
+  isExpanded,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+  handleExpand
 }) => {
-  const elementPreview = React.useMemo(() => {
+  const hasChildren = Array.isArray(element.children);
+
+  const elementTitle = React.useMemo(() => {
     if (isMdElement(element)) {
       return String(element.children);
     } else if (isImageElement(element)) {
       return String(element?.props?.src);
     } else {
-      return `${element.component} Element`;
+      return element.component;
     }
   }, [element]);
 
-  const moveButtonProps: ButtonProps = {
-    appearance: 'minimal',
-    paddingX: 6,
-    paddingY: 2
-  };
-
   return (
-    <CardContainer isActive={isActive} onMouseDown={onMouseDown}>
-      <CardContent>
-        <TitleContainer>{element.component}</TitleContainer>
-        <PreviewContainer>{elementPreview}</PreviewContainer>
-      </CardContent>
+    <Layer
+      role="button"
+      title={element.component}
+      isHovered={isHovered}
+      isSelected={isSelected}
+      isParentSelected={isParentSelected}
+      isChildElement={isChildElement}
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <Icon
+        icon={ELEMENT_ICONS[element.component as keyof typeof ELEMENT_ICONS]}
+        size={14}
+      />
+      <Title>{elementTitle}</Title>
 
-      {(showMoveDownButton || showMoveUpButton) && (
-        <MoveButtonsContainer>
-          {showMoveUpButton && (
-            <Button {...moveButtonProps} onClick={onMoveUpClick}>
-              <ArrowUpIcon size={14} />
-            </Button>
-          )}
-          {showMoveDownButton && (
-            <Button {...moveButtonProps} onClick={onMoveDownClick}>
-              <ArrowDownIcon size={14} />
-            </Button>
-          )}
-        </MoveButtonsContainer>
+      {hasChildren && (
+        <IconButton
+          icon={isExpanded ? ChevronDownIcon : ChevronLeftIcon}
+          height={24}
+          appearance="minimal"
+          marginLeft="auto"
+          onClick={(e: MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            if (handleExpand) {
+              handleExpand();
+            }
+          }}
+        />
       )}
-    </CardContainer>
+    </Layer>
   );
 };
 
-const CardContainer = styled.div<{ isActive?: boolean }>`
-  cursor: move;
+const Layer = styled.div<{
+  isSelected?: boolean;
+  isHovered?: boolean;
+  isParentSelected?: boolean;
+  isChildElement?: boolean;
+}>`
+  cursor: grab;
   display: flex;
-  background-color: ${(props) =>
-    props.isActive ? defaultTheme.colors.background.blueTint : 'white'};
-  border: 1px solid;
-  border-color: ${(props) =>
-    props.isActive
-      ? defaultTheme.palette.blue.base
-      : defaultTheme.colors.border.default};
-  border-radius: 5px;
-  box-shadow: ${defaultTheme.elevations[1]};
+  align-items: center;
   overflow: hidden;
+  height: 36px;
+  padding: 0 10px 0 ${(props) => (props.isChildElement ? '34px' : '10px')};
+  color: ${(props) =>
+    props.isSelected || props.isParentSelected
+      ? defaultTheme.scales.blue.B9
+      : defaultTheme.scales.neutral.N9};
+  background: ${(props) =>
+    props.isSelected
+      ? defaultTheme.scales.blue.B3A
+      : props.isHovered
+      ? defaultTheme.scales.neutral.N2A
+      : props.isParentSelected
+      ? defaultTheme.scales.blue.B1A
+      : 'none'};
 
-  &:hover {
-    background-color: ${defaultTheme.colors.background.blueTint};
+  &:focus {
+    border: 1px solid ${defaultTheme.palette.blue.base};
   }
 `;
 
-const CardContent = styled.div`
-  border-right: 1px solid ${defaultTheme.colors.border.default};
-  flex: 1 0;
-`;
-
-const MoveButtonsContainer = styled.div`
-  align-self: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const TitleContainer = styled.div`
-  border-bottom: 1px solid ${defaultTheme.colors.border.default};
-  color: ${defaultTheme.colors.text};
-  font-weight: bold;
-  padding: 8px;
-`;
-
-const PreviewContainer = styled.pre`
-  margin: 0;
-  overflow-x: auto;
-  padding: 8px;
+const Title = styled.div`
+  margin: 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 1px;
 `;

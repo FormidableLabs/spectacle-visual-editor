@@ -4,7 +4,7 @@ import { ThemeValues } from './theme-values';
 
 export const DocumentInspector = () => {
   return (
-    <Pane>
+    <Pane padding={10}>
       <ThemeValues />
     </Pane>
   );

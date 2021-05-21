@@ -1,8 +1,7 @@
 export enum InspectorTab {
   Document = 'Document',
   Format = 'Format',
-  Layout = 'Layout',
-  Layers = 'Layers'
+  Layout = 'Layout'
 }
 
 export const TabValuesList = Object.values(InspectorTab);

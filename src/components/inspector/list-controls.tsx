@@ -52,15 +52,16 @@ export const ListControls: React.FC<Props> = ({
         }
         options={Object.values(LIST_STYLE_TYPE_OPTIONS).map((op) => ({
           value: op,
-          title: op
+          // Capitalize first letter of option
+          title: op.trim().replace(/^\w/, (c) => c.toUpperCase())
         }))}
       />
-      <FormField label="Animate list items?">
+      <SwitchContainer label="Animate list items">
         <Switch
           checked={shouldAnimateListItems}
           onChange={onToggleAnimatedListItems}
         />
-      </FormField>
+      </SwitchContainer>
     </Container>
   );
 };
@@ -69,4 +70,14 @@ const Container = styled.div`
   display: grid;
   grid-gap: 10px;
   margin-top: 10px;
+`;
+
+const SwitchContainer = styled(FormField)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  > label {
+    margin-right: 10px;
+  }
 `;

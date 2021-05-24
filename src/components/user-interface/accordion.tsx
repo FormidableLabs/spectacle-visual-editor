@@ -11,7 +11,6 @@ const ContentPanel = styled.div<{ open: boolean }>`
   display: block;
   box-sizing: border-box;
   position: relative;
-  overflow: hidden;
   transition: all 500ms ease-in-out;
   height: auto;
 

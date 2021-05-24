@@ -12,7 +12,7 @@ import { Pane } from '../inspector-styles';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
 import {
   ElementLocation,
@@ -138,84 +138,71 @@ export const LayerInspector: FC = () => {
   }, []);
 
   return (
-    <>
-      <GrabbingStyles />
+    <Pane>
+      <Title>Layers</Title>
 
-      <Pane>
-        <Title>Layers</Title>
-
-        <DndProvider backend={HTML5Backend}>
-          {localElements.map((element, index) => {
-            const isHovered = element.id === hoveredElementId;
-            const isSelected = element.id === selectedElement?.id;
-            const isExpanded = !collapsedLayers.includes(element.id);
-            const isChildSelected =
-              Array.isArray(element.children) &&
-              !!element.children.find(
-                (child) => child.id === selectedElement?.id
-              );
-
-            return (
-              <SlideElementDragWrapper
-                key={element.id}
-                index={index}
-                onDrop={commitChangedOrder}
-                onDrag={moveElement}
-              >
-                <ElementCard
-                  element={element}
-                  isHovered={isHovered}
-                  isSelected={isSelected}
-                  isExpanded={isExpanded}
-                  isParentSelected={!isExpanded && isChildSelected}
-                  handleExpand={() => handleExpand(element.id)}
-                  onClick={() => selectElement(element.id)}
-                  onMouseEnter={() => hoverElement(element.id)}
-                  onMouseLeave={unhoverElement}
-                />
-                {isExpanded &&
-                  Array.isArray(element.children) &&
-                  element.children.map((childElement, childIndex) => (
-                    <SlideElementDragWrapper
-                      key={childElement.id}
-                      index={childIndex}
-                      parentIndex={index}
-                      onDrop={commitChangedOrder}
-                      onDrag={moveElement}
-                    >
-                      <ElementCard
-                        element={childElement}
-                        isHovered={childElement.id === hoveredElementId}
-                        isSelected={childElement.id === selectedElement?.id}
-                        isParentSelected={isSelected}
-                        isChildElement
-                        onClick={() => selectElement(childElement.id)}
-                        onMouseEnter={() => hoverElement(childElement.id)}
-                        onMouseLeave={unhoverElement}
-                      />
-                    </SlideElementDragWrapper>
-                  ))}
-              </SlideElementDragWrapper>
+      <DndProvider backend={HTML5Backend}>
+        {localElements.map((element, index) => {
+          const isHovered = element.id === hoveredElementId;
+          const isSelected = element.id === selectedElement?.id;
+          const isExpanded = !collapsedLayers.includes(element.id);
+          const isChildSelected =
+            Array.isArray(element.children) &&
+            !!element.children.find(
+              (child) => child.id === selectedElement?.id
             );
-          })}
-        </DndProvider>
-      </Pane>
-    </>
+
+          return (
+            <SlideElementDragWrapper
+              key={element.id}
+              index={index}
+              onDrop={commitChangedOrder}
+              onDrag={moveElement}
+            >
+              <ElementCard
+                element={element}
+                isHovered={isHovered}
+                isSelected={isSelected}
+                isExpanded={isExpanded}
+                isParentSelected={!isExpanded && isChildSelected}
+                handleExpand={() => handleExpand(element.id)}
+                onClick={() => selectElement(element.id)}
+                onMouseEnter={() => hoverElement(element.id)}
+                onMouseLeave={unhoverElement}
+              />
+              {isExpanded &&
+                Array.isArray(element.children) &&
+                element.children.map((childElement, childIndex) => (
+                  <SlideElementDragWrapper
+                    key={childElement.id}
+                    index={childIndex}
+                    parentIndex={index}
+                    onDrop={commitChangedOrder}
+                    onDrag={moveElement}
+                  >
+                    <ElementCard
+                      element={childElement}
+                      isHovered={childElement.id === hoveredElementId}
+                      isSelected={childElement.id === selectedElement?.id}
+                      isParentSelected={isSelected}
+                      isChildElement
+                      onClick={() => selectElement(childElement.id)}
+                      onMouseEnter={() => hoverElement(childElement.id)}
+                      onMouseLeave={unhoverElement}
+                    />
+                  </SlideElementDragWrapper>
+                ))}
+            </SlideElementDragWrapper>
+          );
+        })}
+      </DndProvider>
+    </Pane>
   );
 };
 
 const Title = styled.div`
-  border-top: ${defaultTheme.scales.neutral.N6} 1px solid;
   padding: 10px;
   color: ${defaultTheme.scales.neutral.N9};
   font-size: 0.9em;
   font-weight: 500;
-`;
-
-export const GrabbingStyles = createGlobalStyle`
-  body.is-dragging {
-    &, * {
-      cursor: grabbing !important;
-    }
-  }
 `;

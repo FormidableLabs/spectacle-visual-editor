@@ -10,6 +10,11 @@ import {
   useSwitchToLayoutInspectorOnSlideAdded
 } from '../../hooks/inspector-hooks';
 import { LayerInspector } from './layer-inspector/layer-inspector';
+import {
+  ResizablePane,
+  ResizablePaneContainer,
+  ResizablePaneSplitter
+} from '../resizable-pane';
 
 export const Inspector = () => {
   const [activeTab, setActiveTab] = useState(InspectorTab.Document);
@@ -33,15 +38,30 @@ export const Inspector = () => {
           ))}
         </Tablist>
       </div>
-      {(() => {
-        return {
-          [InspectorTab.Document]: <DocumentInspector />,
-          [InspectorTab.Format]: <FormatInspector />,
-          [InspectorTab.Layout]: <LayoutInspector />
-        }[activeTab];
-      })()}
 
-      <LayerInspector />
+      <ResizablePaneContainer orientation="vertical">
+        <ResizablePane initialFlex={1 / 3}>
+          {(() => {
+            return {
+              [InspectorTab.Document]: <DocumentInspector />,
+              [InspectorTab.Format]: <FormatInspector />,
+              [InspectorTab.Layout]: <LayoutInspector />
+            }[activeTab];
+          })()}
+        </ResizablePane>
+
+        <ResizablePaneSplitter />
+
+        <ResizablePane initialFlex={1 / 3} minSize={32}>
+          <LayerInspector />
+        </ResizablePane>
+
+        <ResizablePaneSplitter />
+
+        <ResizablePane initialFlex={1 / 3} minSize={32}>
+          Third pane
+        </ResizablePane>
+      </ResizablePaneContainer>
     </InspectorContainer>
   );
 };

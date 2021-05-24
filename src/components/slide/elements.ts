@@ -4,15 +4,24 @@ import { FLEX_DIRECTION } from '../../constants/flex-parent-options';
 export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
   HEADING: {
     component: 'Markdown',
-    children: '# Oh Hello There'
+    children: '# Oh Hello There',
+    props: {
+      componentProps: {}
+    }
   },
   TEXT: {
     component: 'Markdown',
-    children: 'I am text'
+    children: 'I am text',
+    props: {
+      componentProps: {}
+    }
   },
   LIST: {
     component: 'Markdown',
-    children: `- one\n- two\n- three`
+    children: `- one\n- two\n- three`,
+    props: {
+      componentProps: {}
+    }
   },
   BOX: {
     component: 'FlexBox',

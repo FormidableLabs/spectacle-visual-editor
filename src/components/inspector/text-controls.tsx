@@ -54,33 +54,6 @@ export const TextControls: React.FC<Props> = ({
     verticalMargin
   });
 
-  useEffect(() => {
-    if (isSingleMargin) {
-      editableElementChanged({
-        componentProps: {
-          ...selectedElement?.props?.componentProps,
-          margin
-        }
-      });
-    } else {
-      editableElementChanged({
-        componentProps: {
-          ...selectedElement?.props?.componentProps,
-          margin: '',
-          marginX: horizontalMargin,
-          marginY: verticalMargin
-        }
-      });
-    }
-  }, [
-    selectedElement?.props?.componentProps,
-    horizontalMargin,
-    verticalMargin,
-    editableElementChanged,
-    isSingleMargin,
-    margin
-  ]);
-
   const onToggle = () => {
     if (!marginDoubleValue) {
       // clear marginX & marginY. Set margin to last input value

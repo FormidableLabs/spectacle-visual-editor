@@ -12,7 +12,7 @@ import {
 } from './validators';
 import { MdFormatControls } from './md-format-controls';
 import { ImageControls } from './image-controls';
-import { FlexDirectionControls } from './flex-direction-controls';
+import { FlexParentControls } from './flex-parent-controls';
 import { CodePaneFormatControls } from './codepane-format-controls';
 import { GridFormatControls } from './grid-format-controls';
 
@@ -36,7 +36,7 @@ export const FormatInspector = () => {
           return (
             <>
               <BoxFormatControls {...props} />
-              <FlexDirectionControls {...props} />
+              <FlexParentControls {...props} />
             </>
           );
         } else if (isGridElement(selectedElement)) {

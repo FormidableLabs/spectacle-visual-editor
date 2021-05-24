@@ -1,5 +1,5 @@
 import { DeckElement } from '../../types/deck-elements';
-import { FLEX_DIRECTION } from '../../constants/flex-direction-options';
+import { FLEX_DIRECTION } from '../../constants/flex-parent-options';
 
 export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
   HEADING: {

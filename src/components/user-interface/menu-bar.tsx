@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import {
-  Button,
   defaultTheme,
   Menu,
   Popover,
@@ -9,7 +8,19 @@ import {
   Pane,
   Dialog,
   toaster,
-  Tooltip
+  Tooltip,
+  IconButton,
+  PlusIcon,
+  UndoIcon,
+  RedoIcon,
+  CutIcon,
+  DuplicateIcon,
+  ClipboardIcon,
+  GridViewIcon,
+  TrashIcon,
+  FloppyDiskIcon,
+  ZoomInIcon,
+  FullscreenIcon
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,7 +30,8 @@ import {
   hasPastSelector,
   hasFutureSelector,
   selectedElementSelector,
-  slidesSelector
+  slidesSelector,
+  hasPasteElementSelector
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
@@ -47,21 +59,28 @@ export const MenuBar = () => {
   const { scale } = useSelector(settingsSelector);
   const hasPast = useSelector(hasPastSelector);
   const hasFuture = useSelector(hasFutureSelector);
+  const hasPaste = useSelector(hasPasteElementSelector);
   const selectedElement = useSelector(selectedElementSelector);
   const slides = useSelector(slidesSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
-  const copyElement = () => {
+  const copyElement = (message: string) => {
     dispatch(deckSlice.actions.copyElement());
-    toaster.success('Element copied!');
+    toaster.success(message);
   };
 
   useMousetrap(
     {
-      [KEYBOARD_SHORTCUTS.COPY]: () => copyElement(),
+      [KEYBOARD_SHORTCUTS.CUT]: () => {
+        copyElement('Element cut!');
+        dispatch(deckSlice.actions.deleteElement());
+      },
+      [KEYBOARD_SHORTCUTS.COPY]: () => copyElement('Element copied!'),
       [KEYBOARD_SHORTCUTS.PASTE]: () =>
-        dispatch(deckSlice.actions.pasteElement())
+        dispatch(deckSlice.actions.pasteElement()),
+      [KEYBOARD_SHORTCUTS.UNDO]: () => dispatch(UndoActionCreators.undo()),
+      [KEYBOARD_SHORTCUTS.REDO]: () => dispatch(UndoActionCreators.redo())
     },
     []
   );
@@ -79,204 +98,254 @@ export const MenuBar = () => {
       <LogoContainer>
         <SpectacleLogo size={32} />
       </LogoContainer>
-      <Popover
-        position={Position.BOTTOM_LEFT}
-        content={({ close }) => (
-          <Menu>
-            <Menu.Group>
-              <Menu.Item
-                onSelect={() => {
-                  dispatch(deckSlice.actions.newSlideAdded());
-                  close();
-                }}
-              >
-                Add Slide
-              </Menu.Item>
-              <Menu.Item
-                disabled={slides.length === 1} // Must have at least one slide
-                onSelect={() => {
-                  dispatch(deckSlice.actions.deleteSlide(null));
-                  close();
-                }}
-              >
-                Delete Slide
-              </Menu.Item>
-            </Menu.Group>
-            <Menu.Divider />
-            <Menu.Group>
-              <Menu.Item onSelect={() => {}} secondaryText={<span>⌘S</span>}>
-                Save
-              </Menu.Item>
-              <Menu.Item
-                onSelect={() => {
-                  handleOpenPreviewWindow();
-                  close();
-                }}
-              >
-                Preview Deck...
-              </Menu.Item>
-            </Menu.Group>
-          </Menu>
-        )}
-      >
-        <Button appearance="minimal">File</Button>
-      </Popover>
-      <Popover
-        position={Position.BOTTOM_LEFT}
-        content={({ close }) => (
-          <Menu>
-            <Menu.Group>
-              {InsertItems.map((item) => (
-                <TooltipConditionalWrapper
-                  condition={shouldNestableElementsBeDisabled(
-                    item.element.component
-                  )}
-                  key={item.title}
-                  wrapper={(children) => {
-                    return (
-                      <Tooltip
-                        content={
-                          'This element can only be added to the root level of slides'
-                        }
-                        position={Position.RIGHT}
-                      >
-                        {children}
-                      </Tooltip>
-                    );
-                  }}
-                >
-                  <Menu.Item
-                    key={item.title}
-                    disabled={shouldNestableElementsBeDisabled(
+      <MenuSection>
+        <Tooltip content="Save ⌘S">
+          <StyledIconButton
+            fill="#1070ca"
+            icon={FloppyDiskIcon}
+            appearance="minimal"
+            onClick={() => {}}
+          />
+        </Tooltip>
+      </MenuSection>
+      <SectionDivider />
+      <MenuSection>
+        <Popover
+          position={Position.BOTTOM_LEFT}
+          content={({ close }) => (
+            <Menu>
+              <Menu.Group>
+                {InsertItems.map((item) => (
+                  <TooltipConditionalWrapper
+                    condition={shouldNestableElementsBeDisabled(
                       item.element.component
                     )}
-                    onSelect={() => {
-                      dispatch(
-                        deckSlice.actions.elementAddedToActiveSlide(
-                          item.element
-                        )
+                    key={item.title}
+                    wrapper={(children) => {
+                      return (
+                        <Tooltip
+                          content={
+                            'This element can only be added to the root level of slides'
+                          }
+                          position={Position.RIGHT}
+                        >
+                          {children}
+                        </Tooltip>
                       );
-                      close();
                     }}
                   >
-                    {item.title}
-                  </Menu.Item>
-                </TooltipConditionalWrapper>
-              ))}
-            </Menu.Group>
-          </Menu>
-        )}
-      >
-        <Button appearance="minimal">Insert</Button>
-      </Popover>
-      <Popover
-        position={Position.BOTTOM_LEFT}
-        content={({ close }) => (
-          <Menu>
-            <Menu.Group>
-              <Menu.Item
-                disabled={!hasPast}
-                secondaryText={<span>⌘Z</span>}
-                onSelect={() => {
-                  dispatch(UndoActionCreators.undo());
-                  close();
-                }}
-              >
-                Undo
-              </Menu.Item>
-              <Menu.Item
-                disabled={!hasFuture}
-                secondaryText={<span>⇧⌘Z</span>}
-                onSelect={() => {
-                  dispatch(UndoActionCreators.redo());
-                  close();
-                }}
-              >
-                Redo
-              </Menu.Item>
-            </Menu.Group>
-            <Menu.Group>
-              <Menu.Item secondaryText={<span>⌘X</span>}>Cut</Menu.Item>
-              <Menu.Item
-                secondaryText={<span>⌘C</span>}
-                disabled={!selectedElement}
-                onSelect={() => {
-                  copyElement();
-                  close();
-                }}
-              >
-                Copy
-              </Menu.Item>
-              <Menu.Item
-                secondaryText={<span>⌘V</span>}
-                onSelect={() => {
-                  dispatch(deckSlice.actions.pasteElement());
-                  close();
-                }}
-              >
-                Paste
-              </Menu.Item>
-            </Menu.Group>
-            <Menu.Group>
-              <Pane>
-                <Dialog
-                  isShown={dialogOpen}
-                  intent="danger"
-                  onConfirm={(close) => {
-                    dispatch(deckSlice.actions.deleteElement());
+                    <Menu.Item
+                      key={item.title}
+                      disabled={shouldNestableElementsBeDisabled(
+                        item.element.component
+                      )}
+                      onSelect={() => {
+                        dispatch(
+                          deckSlice.actions.elementAddedToActiveSlide(
+                            item.element
+                          )
+                        );
+                        close();
+                      }}
+                    >
+                      {item.title}
+                    </Menu.Item>
+                  </TooltipConditionalWrapper>
+                ))}
+              </Menu.Group>
+            </Menu>
+          )}
+        >
+          <Tooltip content="Insert">
+            <StyledIconButton
+              fill="#1070ca"
+              icon={PlusIcon}
+              appearance="minimal"
+            />
+          </Tooltip>
+        </Popover>
+        <Popover
+          position={Position.BOTTOM_LEFT}
+          content={({ close }) => (
+            <Menu>
+              <Menu.Group>
+                <Menu.Item
+                  onSelect={() => {
+                    dispatch(deckSlice.actions.newSlideAdded());
                     close();
                   }}
-                  onCloseComplete={toggleDialog}
-                  hasHeader={false}
-                  confirmLabel="Delete"
                 >
-                  Deleting this container from the slide will also delete the
-                  elements inside it. Do you wish to delete this container?
-                </Dialog>
-              </Pane>
-              <Menu.Item
-                secondaryText={<span>⌘D</span>}
-                onSelect={() => {
-                  if (
-                    selectedElement &&
-                    CONTAINER_ELEMENTS.includes(selectedElement.component)
-                  ) {
-                    toggleDialog();
-                  } else {
-                    dispatch(deckSlice.actions.deleteElement());
+                  Add Slide
+                </Menu.Item>
+                <Menu.Item
+                  disabled={slides.length === 1} // Must have at least one slide
+                  onSelect={() => {
+                    dispatch(deckSlice.actions.deleteSlide(null));
                     close();
-                  }
-                }}
-              >
-                Delete
-              </Menu.Item>
-            </Menu.Group>
-          </Menu>
-        )}
-      >
-        <Button appearance="minimal">Edit</Button>
-      </Popover>
-      <Popover
-        position={Position.BOTTOM_LEFT}
-        content={({ close }) => (
-          <Menu>
-            <Menu.OptionsGroup
-              title="Zoom"
-              options={[
-                { label: 'To fit', value: 'fit' },
-                { label: 'Actual size', value: '1' }
-              ]}
-              selected={scale}
-              onChange={(selected) => {
-                dispatch(settingsSlice.actions.updateScale(selected));
-                close();
+                  }}
+                >
+                  Delete Slide
+                </Menu.Item>
+              </Menu.Group>
+            </Menu>
+          )}
+        >
+          <Tooltip content="Slides">
+            <StyledIconButton
+              fill="#1070ca"
+              icon={GridViewIcon}
+              appearance="minimal"
+            />
+          </Tooltip>
+        </Popover>
+      </MenuSection>
+      <SectionDivider />
+      <MenuSection>
+        <Tooltip content="Undo ⌘Z">
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={UndoIcon}
+              appearance="minimal"
+              disabled={!hasPast}
+              onClick={() => {
+                dispatch(UndoActionCreators.undo());
               }}
             />
-          </Menu>
-        )}
-      >
-        <Button appearance="minimal">View</Button>
-      </Popover>
+          </div>
+        </Tooltip>
+        <Tooltip content="Redo ⇧⌘Z">
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={RedoIcon}
+              appearance="minimal"
+              disabled={!hasFuture}
+              onClick={() => {
+                dispatch(UndoActionCreators.redo());
+              }}
+            />
+          </div>
+        </Tooltip>
+        <Tooltip content="Cut ⌘X">
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={CutIcon}
+              appearance="minimal"
+              disabled={!selectedElement}
+              onClick={() => {
+                copyElement('Element cut!');
+                dispatch(deckSlice.actions.deleteElement());
+              }}
+            />
+          </div>
+        </Tooltip>
+        <Tooltip content="Copy ⌘C">
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={DuplicateIcon}
+              appearance="minimal"
+              disabled={!selectedElement}
+              onClick={() => {
+                copyElement('Element copied!');
+              }}
+            />
+          </div>
+        </Tooltip>
+        <Tooltip content="Paste ⌘P">
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={ClipboardIcon}
+              appearance="minimal"
+              disabled={!hasPaste}
+              onClick={() => {
+                dispatch(deckSlice.actions.pasteElement());
+              }}
+            />
+          </div>
+        </Tooltip>
+
+        <Pane>
+          <Dialog
+            isShown={dialogOpen}
+            intent="danger"
+            onConfirm={(close) => {
+              dispatch(deckSlice.actions.deleteElement());
+              close();
+            }}
+            onCloseComplete={toggleDialog}
+            hasHeader={false}
+            confirmLabel="Delete"
+          >
+            Deleting this container from the slide will also delete the elements
+            inside it. Do you wish to delete this container?
+          </Dialog>
+        </Pane>
+
+        <Tooltip content="Delete ⌘D">
+          <StyledIconButton
+            fill="#D14343"
+            icon={TrashIcon}
+            appearance="minimal"
+            intent="danger"
+            onClick={() => {
+              if (
+                selectedElement &&
+                CONTAINER_ELEMENTS.includes(selectedElement.component)
+              ) {
+                toggleDialog();
+              } else {
+                dispatch(deckSlice.actions.deleteElement());
+                close();
+              }
+            }}
+          />
+        </Tooltip>
+      </MenuSection>
+
+      <SectionDivider />
+      <MenuSection>
+        <Tooltip content="Present Deck">
+          <StyledIconButton
+            fill="#1070ca"
+            icon={FullscreenIcon}
+            appearance="minimal"
+            onClick={() => {
+              handleOpenPreviewWindow();
+            }}
+          />
+        </Tooltip>
+        <Popover
+          position={Position.BOTTOM_LEFT}
+          content={() => (
+            <Menu>
+              <Menu.OptionsGroup
+                title="Preview Size"
+                options={[
+                  { label: 'To fit', value: 'fit' },
+                  { label: 'Actual size', value: '1' }
+                ]}
+                selected={scale}
+                onChange={(selected) => {
+                  dispatch(settingsSlice.actions.updateScale(selected));
+                  close();
+                }}
+              />
+            </Menu>
+          )}
+        >
+          <Tooltip content="Preview Size">
+            <StyledIconButton
+              fill="#1070ca"
+              icon={ZoomInIcon}
+              appearance="minimal"
+            />
+          </Tooltip>
+        </Popover>
+      </MenuSection>
     </MenuBarContainer>
   );
 };
@@ -307,3 +376,26 @@ const TooltipConditionalWrapper: React.FC<TooltipConditonalWrapperProps> = ({
   wrapper,
   children
 }) => (condition ? wrapper(children) : children);
+
+const MenuSection = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: 0 8px;
+
+  > div {
+    margin: 0 2px;
+  }
+`;
+
+const SectionDivider = styled.div`
+  height: 65%;
+  border-left: 1px solid ${defaultTheme.scales.neutral.N4A};
+`;
+
+const StyledIconButton = styled(IconButton)`
+  svg {
+    /* Need to override inline style */
+    ${(props) =>
+      props.disabled ? null : 'fill: ' + props.fill + '!important;'}
+  }
+`;

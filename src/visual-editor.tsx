@@ -40,14 +40,10 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
       <AppBodyStyle />
       <MenuBar />
       <ResizablePanes orientation="horizontal" initialSize={300} minSize={300}>
-        <EditorCanvas
-          key="editor-canvas-pane"
-          ref={canvasRef}
-          onMouseDown={handleCanvasMouseDown}
-        >
+        <EditorCanvas ref={canvasRef} onMouseDown={handleCanvasMouseDown}>
           <SlideViewer scale={scale}>{activeSlideNode}</SlideViewer>
         </EditorCanvas>
-        <Inspector key="inspector-pane" />
+        <Inspector />
       </ResizablePanes>
       <SlideTimeline onSlideClick={handleSlideSelected}>
         {slideNodes}

@@ -50,7 +50,7 @@ const Splitter = styled.div<{ isHorizontal: boolean; isDragging: boolean }>`
   &::after {
     content: '';
     position: absolute;
-    z-index: 1000;
+    z-index: 2;
     width: ${(props) => (props.isHorizontal ? '5px' : '100%')};
     height: ${(props) => (props.isHorizontal ? '100%' : '5px')};
     background: ${defaultTheme.palette.blue.base};

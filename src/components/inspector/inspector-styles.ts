@@ -5,9 +5,8 @@ import { padding, PaddingProps } from 'styled-system';
 export const InspectorContainer = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 0 1 300px;
+  flex: 1;
   background: ${defaultTheme.scales.neutral.N4};
-  border-left: ${defaultTheme.scales.neutral.N6} 1px solid;
   overflow: hidden;
 `;
 

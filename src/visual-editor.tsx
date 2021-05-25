@@ -5,10 +5,10 @@ import {
   AppBodyStyle,
   SlideTimeline,
   EditorBody,
-  EditorContent,
   MenuBar,
   EditorCanvas,
-  Inspector
+  Inspector,
+  ResizablePanes
 } from './components';
 import { sampleElementsData, sampleSlidesData } from './sample-slides-data';
 import { deckSlice } from './slices/deck-slice';
@@ -39,12 +39,16 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
     <EditorBody>
       <AppBodyStyle />
       <MenuBar />
-      <EditorContent>
-        <EditorCanvas ref={canvasRef} onMouseDown={handleCanvasMouseDown}>
+      <ResizablePanes orientation="horizontal" initialSize={300} minSize={300}>
+        <EditorCanvas
+          key="editor-canvas-pane"
+          ref={canvasRef}
+          onMouseDown={handleCanvasMouseDown}
+        >
           <SlideViewer scale={scale}>{activeSlideNode}</SlideViewer>
         </EditorCanvas>
-        <Inspector />
-      </EditorContent>
+        <Inspector key="inspector-pane" />
+      </ResizablePanes>
       <SlideTimeline onSlideClick={handleSlideSelected}>
         {slideNodes}
       </SlideTimeline>

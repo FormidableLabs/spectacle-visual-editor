@@ -8,11 +8,10 @@ import {
   deckSlice,
   hoveredEditableElementIdSelector
 } from '../../../slices/deck-slice';
-import { Pane } from '../inspector-styles';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
 import {
   ElementLocation,
@@ -138,12 +137,10 @@ export const LayerInspector: FC = () => {
   }, []);
 
   return (
-    <>
-      <GrabbingStyles />
+    <Container>
+      <Title>Layers</Title>
 
-      <Pane>
-        <Title>Layers</Title>
-
+      <Layers>
         <DndProvider backend={HTML5Backend}>
           {localElements.map((element, index) => {
             const isHovered = element.id === hoveredElementId;
@@ -199,23 +196,25 @@ export const LayerInspector: FC = () => {
             );
           })}
         </DndProvider>
-      </Pane>
-    </>
+      </Layers>
+    </Container>
   );
 };
 
+const Container = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Layers = styled.div`
+  flex: 1;
+  overflow: auto;
+`;
+
 const Title = styled.div`
-  border-top: ${defaultTheme.scales.neutral.N6} 1px solid;
   padding: 10px;
   color: ${defaultTheme.scales.neutral.N9};
   font-size: 0.9em;
   font-weight: 500;
-`;
-
-export const GrabbingStyles = createGlobalStyle`
-  body.is-dragging {
-    &, * {
-      cursor: grabbing !important;
-    }
-  }
 `;

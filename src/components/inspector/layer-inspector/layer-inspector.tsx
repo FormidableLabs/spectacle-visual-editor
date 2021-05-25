@@ -14,13 +14,14 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import styled, { createGlobalStyle } from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
-import {
-  ElementLocation,
-  SlideElementDragWrapper
-} from './slide-element-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import { moveArrayItem } from '../../../util/move-array-item';
 import { defaultTheme } from 'evergreen-ui';
+
+import {
+  ElementLocation,
+  SlideDragWrapper
+} from './../../slide/slide-viewer/slide-drag-wrapper';
 
 export const LayerInspector: FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
@@ -156,11 +157,13 @@ export const LayerInspector: FC = () => {
               );
 
             return (
-              <SlideElementDragWrapper
+              <SlideDragWrapper
+                type="Element"
                 key={element.id}
                 index={index}
                 onDrop={commitChangedOrder}
-                onDrag={moveElement}
+                moveItem={moveElement}
+                alignment="vertical"
               >
                 <ElementCard
                   element={element}
@@ -176,12 +179,14 @@ export const LayerInspector: FC = () => {
                 {isExpanded &&
                   Array.isArray(element.children) &&
                   element.children.map((childElement, childIndex) => (
-                    <SlideElementDragWrapper
+                    <SlideDragWrapper
+                      type="Element"
                       key={childElement.id}
                       index={childIndex}
                       parentIndex={index}
                       onDrop={commitChangedOrder}
-                      onDrag={moveElement}
+                      moveItem={moveElement}
+                      alignment="vertical"
                     >
                       <ElementCard
                         element={childElement}
@@ -193,9 +198,9 @@ export const LayerInspector: FC = () => {
                         onMouseEnter={() => hoverElement(childElement.id)}
                         onMouseLeave={unhoverElement}
                       />
-                    </SlideElementDragWrapper>
+                    </SlideDragWrapper>
                   ))}
-              </SlideElementDragWrapper>
+              </SlideDragWrapper>
             );
           })}
         </DndProvider>

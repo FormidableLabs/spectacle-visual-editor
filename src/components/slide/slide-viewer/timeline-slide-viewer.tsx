@@ -64,9 +64,12 @@ export const TimelineSlideViewer: React.FC<Props> = ({
   }, [slides]);
 
   // Move a local item as its dragged.
-  const moveItem = React.useCallback((dragIndex, hoverIndex) => {
-    setLocalSlides((items) => moveArrayItem(items, dragIndex, hoverIndex));
-  }, []);
+  const moveItem = React.useCallback(
+    ({ index: dragIndex }, { index: hoverIndex }) => {
+      setLocalSlides((items) => moveArrayItem(items, dragIndex, hoverIndex));
+    },
+    []
+  );
 
   // Commit changes
   const commitChangedOrder = React.useCallback(() => {
@@ -87,6 +90,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
               index={idx}
               moveItem={moveItem}
               onDrop={commitChangedOrder}
+              type="Slide"
             >
               {slide}
             </SlideDragWrapper>

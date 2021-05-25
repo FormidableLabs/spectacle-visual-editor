@@ -29,7 +29,8 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
       backgroundColor: 'limegreen',
       height: 100,
       width: 200,
-      flexDirection: FLEX_DIRECTION.column
+      flexDirection: FLEX_DIRECTION.column,
+      componentProps: {}
     },
     children: []
   },

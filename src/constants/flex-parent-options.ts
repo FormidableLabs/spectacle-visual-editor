@@ -27,3 +27,12 @@ export enum ALIGN_ITEMS {
 }
 
 export const ALIGN_ITEMS_OPTIONS: string[] = Object.values(ALIGN_ITEMS);
+
+export enum FLEX_COMPONENT_PROPS {
+  FLEX_DIRECTION = 'flexDirection',
+  JUSTIFY_CONTENT = 'justifyContent',
+  ALIGN_ITEMS = 'alignItems',
+  PADDING = 'padding',
+  PADDING_HORIZONTAL = 'paddingX',
+  PADDING_VERTICAL = 'paddingY'
+}

@@ -1,9 +1,4 @@
-import React, {
-  ChangeEvent,
-  FocusEvent,
-  useCallback,
-  useState
-} from 'react';
+import React, { ChangeEvent, FocusEvent, useCallback, useState } from 'react';
 import { ElementControlsProps } from './element-controls-props';
 import {
   ALIGN_ITEMS,

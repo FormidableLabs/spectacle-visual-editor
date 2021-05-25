@@ -6,7 +6,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { SlideDragWrapper } from './slide-drag-wrapper';
 import styled, { css } from 'styled-components';
-import { TrashIcon, IconButton, PlusIcon } from 'evergreen-ui';
+import { TrashIcon, IconButton, PlusIcon, Tooltip } from 'evergreen-ui';
 import { useRootSelector } from '../../../store';
 import { moveArrayItem } from '../../../util/move-array-item';
 
@@ -92,30 +92,32 @@ export const TimelineSlideViewer: React.FC<Props> = ({
             </SlideDragWrapper>
 
             {slides.length > 1 && (
-              <DeleteButton>
-                <IconButton
-                  icon={TrashIcon}
-                  appearance="minimal"
-                  onClick={() =>
-                    dispatch(deckSlice.actions.deleteSlide(slide.key))
-                  }
-                  title="Delete Slide"
-                />
-              </DeleteButton>
+              <Tooltip content="Delete Slide">
+                <DeleteButton>
+                  <IconButton
+                    icon={TrashIcon}
+                    appearance="minimal"
+                    onClick={() =>
+                      dispatch(deckSlice.actions.deleteSlide(slide.key))
+                    }
+                  />
+                </DeleteButton>
+              </Tooltip>
             )}
           </Slide>
         ))}
       </DndProvider>
 
-      <IconButton
-        margin={5}
-        width={80}
-        height="auto"
-        icon={PlusIcon}
-        appearance="minimal"
-        onClick={() => dispatch(deckSlice.actions.newSlideAdded())}
-        title="Add Slide"
-      />
+      <Tooltip content="Add Slide">
+        <IconButton
+          margin={5}
+          width={80}
+          height="auto"
+          icon={PlusIcon}
+          appearance="minimal"
+          onClick={() => dispatch(deckSlice.actions.newSlideAdded())}
+        />
+      </Tooltip>
     </SlideViewerWrapper>
   );
 };

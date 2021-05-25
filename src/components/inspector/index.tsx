@@ -10,6 +10,7 @@ import {
   useSwitchToLayoutInspectorOnSlideAdded
 } from '../../hooks/inspector-hooks';
 import { LayerInspector } from './layer-inspector/layer-inspector';
+import { ResizablePanes } from '../resizable-panes';
 
 export const Inspector = () => {
   const [activeTab, setActiveTab] = useState(InspectorTab.Document);
@@ -33,15 +34,18 @@ export const Inspector = () => {
           ))}
         </Tablist>
       </div>
-      {(() => {
-        return {
-          [InspectorTab.Document]: <DocumentInspector />,
-          [InspectorTab.Format]: <FormatInspector />,
-          [InspectorTab.Layout]: <LayoutInspector />
-        }[activeTab];
-      })()}
 
-      <LayerInspector />
+      <ResizablePanes orientation="vertical" initialSize="50%" minSize={32}>
+        {(() => {
+          return {
+            [InspectorTab.Document]: <DocumentInspector />,
+            [InspectorTab.Format]: <FormatInspector />,
+            [InspectorTab.Layout]: <LayoutInspector />
+          }[activeTab];
+        })()}
+
+        <LayerInspector />
+      </ResizablePanes>
     </InspectorContainer>
   );
 };

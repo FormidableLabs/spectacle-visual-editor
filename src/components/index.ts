@@ -36,3 +36,8 @@ export { Accordion } from './user-interface/accordion';
  * Input Components
  */
 export { ColorPickerInput } from './inputs/color';
+
+/**
+ * Resizable panes
+ */
+export { ResizablePanes } from './resizable-panes';

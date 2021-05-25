@@ -13,15 +13,8 @@ import styled from 'styled-components';
 
 type Orientation = 'horizontal' | 'vertical';
 
-type FixedSizeArray<N extends number, T> = N extends 0
-  ? never[]
-  : {
-      0: T;
-      length: N;
-    } & ReadonlyArray<T>;
-
 interface ResizablePanesProps {
-  children: FixedSizeArray<2, ReactElement>;
+  children: [ReactElement, ReactElement];
   initialSize: number | string;
   minSize: number;
   orientation: Orientation;

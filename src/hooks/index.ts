@@ -3,3 +3,4 @@ export { useSlideNodes } from './use-slide-nodes';
 export { useEditorActions } from './use-editor-actions';
 export { useSlideScale } from './use-slide-scale';
 export { useToggle } from './use-toggle';
+export { useStoredPaneSize } from './use-stored-pane-size';

@@ -18,6 +18,7 @@ interface ResizablePanesProps {
   initialSize: number | string;
   minSize: number;
   orientation: Orientation;
+  onResize?: (size: number) => void;
 }
 
 const Container = styled.div<{ isHorizontal: boolean }>`
@@ -33,7 +34,7 @@ const Pane = styled.div<{ isFlexible?: boolean }>`
   ${({ isFlexible }) => isFlexible && 'flex: 1;'}
 `;
 
-const Splitter = styled.div<{ isHorizontal: boolean; isDragging: boolean }>`
+const Splitter = styled.div<{ isHorizontal: boolean; isResizing: boolean }>`
   position: relative;
   flex-shrink: 0;
   width: ${(props) => (props.isHorizontal ? '1px' : '100%')};
@@ -49,7 +50,7 @@ const Splitter = styled.div<{ isHorizontal: boolean; isDragging: boolean }>`
     background: ${defaultTheme.palette.blue.base};
     transform: ${(props) =>
       props.isHorizontal ? 'translateX(-2px)' : 'translateY(-2px)'};
-    opacity: ${(props) => (props.isDragging ? 1 : 0)};
+    opacity: ${(props) => (props.isResizing ? 1 : 0)};
   }
   &:hover::after {
     opacity: 1;
@@ -60,11 +61,12 @@ export const ResizablePanes: FC<ResizablePanesProps> = ({
   orientation,
   initialSize,
   minSize,
-  children
+  children,
+  onResize
 }) => {
   const [paneSize, setPaneSize] = useState(initialSize);
   const [splitterPosition, setSplitterPosition] = useState(0);
-  const [isDragging, setDragging] = useState(false);
+  const [isResizing, setResizing] = useState(false);
   const isHorizontal = orientation === 'horizontal';
 
   const paneRef = createRef<HTMLDivElement>();
@@ -73,14 +75,14 @@ export const ResizablePanes: FC<ResizablePanesProps> = ({
   const onMouseDown = useCallback(
     (e: React.MouseEvent) => {
       setSplitterPosition(isHorizontal ? e.clientX : e.clientY);
-      setDragging(true);
+      setResizing(true);
     },
     [isHorizontal]
   );
 
   const onMove = useCallback(
     (pointerPosition: number) => {
-      if (isDragging && paneSize && splitterPosition) {
+      if (isResizing && paneSize && splitterPosition) {
         const newPaneSize =
           (paneSize as number) - pointerPosition + splitterPosition;
 
@@ -104,7 +106,7 @@ export const ResizablePanes: FC<ResizablePanesProps> = ({
         setPaneSize(newPaneSize);
       }
     },
-    [isHorizontal, isDragging, paneSize, splitterPosition, container, minSize]
+    [isHorizontal, isResizing, paneSize, splitterPosition, container, minSize]
   );
 
   const onMouseMove = useCallback(
@@ -116,11 +118,15 @@ export const ResizablePanes: FC<ResizablePanesProps> = ({
   );
 
   const onMouseUp = useCallback(() => {
-    setDragging(false);
-  }, []);
+    setResizing(false);
+
+    if (onResize) {
+      onResize(paneSize as number);
+    }
+  }, [paneSize, onResize]);
 
   useEffect(() => {
-    if (isDragging) {
+    if (isResizing) {
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
     }
@@ -129,7 +135,7 @@ export const ResizablePanes: FC<ResizablePanesProps> = ({
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
-  }, [isDragging, onMouseMove, onMouseUp]);
+  }, [isResizing, onMouseMove, onMouseUp]);
 
   // Convert percentage values to pixels on initial load
   useLayoutEffect(() => {
@@ -143,7 +149,7 @@ export const ResizablePanes: FC<ResizablePanesProps> = ({
   }, [paneSize, paneRef, isHorizontal]);
 
   useEffect(() => {
-    if (isDragging) {
+    if (isResizing) {
       document.body.classList.add('is-resizing', `is-resizing-${orientation}`);
     } else {
       document.body.classList.remove(
@@ -151,7 +157,7 @@ export const ResizablePanes: FC<ResizablePanesProps> = ({
         `is-resizing-${orientation}`
       );
     }
-  }, [isDragging, orientation]);
+  }, [isResizing, orientation]);
 
   const firstPaneStyle = useMemo(() => {
     if (isHorizontal) {
@@ -176,7 +182,7 @@ export const ResizablePanes: FC<ResizablePanesProps> = ({
       </Pane>
       <Splitter
         isHorizontal={isHorizontal}
-        isDragging={isDragging}
+        isResizing={isResizing}
         onMouseDown={onMouseDown}
       />
       <Pane ref={paneRef} style={secondPaneStyle}>

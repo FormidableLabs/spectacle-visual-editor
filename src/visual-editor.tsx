@@ -12,13 +12,27 @@ import {
 } from './components';
 import { sampleElementsData, sampleSlidesData } from './sample-slides-data';
 import { deckSlice } from './slices/deck-slice';
-import { useEditorActions, useSlideNodes, useSlideScale } from './hooks';
+import {
+  useEditorActions,
+  useSlideNodes,
+  useSlideScale,
+  useLocallyStoredState
+} from './hooks';
 import { RouteComponentProps } from '@reach/router';
+import { LocalStorage } from './types/local-storage';
 
 export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const dispatch = useDispatch();
   const { activeSlideNode, slideNodes } = useSlideNodes();
   const { handleCanvasMouseDown, handleSlideSelected } = useEditorActions();
+
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const scale = useSlideScale(canvasRef);
+
+  const [initialSize, onResize] = useLocallyStoredState(
+    LocalStorage.InspectorPaneWidth,
+    300
+  );
 
   useEffect(() => {
     if (Array.isArray(slideNodes) && slideNodes.length > 0) {
@@ -32,14 +46,16 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
     );
   }, [dispatch, slideNodes]);
 
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const scale = useSlideScale(canvasRef);
-
   return (
     <EditorBody>
       <AppBodyStyle />
       <MenuBar />
-      <ResizablePanes orientation="horizontal" initialSize={300} minSize={300}>
+      <ResizablePanes
+        orientation="horizontal"
+        initialSize={initialSize}
+        minSize={300}
+        onResize={onResize}
+      >
         <EditorCanvas ref={canvasRef} onMouseDown={handleCanvasMouseDown}>
           <SlideViewer scale={scale}>{activeSlideNode}</SlideViewer>
         </EditorCanvas>

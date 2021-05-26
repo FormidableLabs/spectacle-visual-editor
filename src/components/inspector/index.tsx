@@ -11,8 +11,14 @@ import {
 } from '../../hooks/inspector-hooks';
 import { LayerInspector } from './layer-inspector/layer-inspector';
 import { ResizablePanes } from '../resizable-panes';
+import { useLocallyStoredState } from '../../hooks';
+import { LocalStorage } from '../../types/local-storage';
 
 export const Inspector = () => {
+  const [initialSize, onResize] = useLocallyStoredState(
+    LocalStorage.LayerPaneHeight,
+    '50%'
+  );
   const [activeTab, setActiveTab] = useState(InspectorTab.Document);
   useSwitchToFormatInspectorOnElementSelected({ setActiveTab });
   useSwitchToLayoutInspectorOnSlideAdded({ setActiveTab });
@@ -35,7 +41,12 @@ export const Inspector = () => {
         </Tablist>
       </div>
 
-      <ResizablePanes orientation="vertical" initialSize="50%" minSize={32}>
+      <ResizablePanes
+        orientation="vertical"
+        initialSize={initialSize}
+        minSize={32}
+        onResize={(size: number) => onResize(String(size))}
+      >
         {(() => {
           return {
             [InspectorTab.Document]: <DocumentInspector />,

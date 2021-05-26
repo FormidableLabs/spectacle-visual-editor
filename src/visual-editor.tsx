@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   SlideViewer,
   AppBodyStyle,
@@ -14,6 +14,7 @@ import { sampleElementsData, sampleSlidesData } from './sample-slides-data';
 import { deckSlice } from './slices/deck-slice';
 import { useEditorActions, useSlideNodes, useSlideScale } from './hooks';
 import { RouteComponentProps } from '@reach/router';
+import { settingsSelector } from './slices/settings-slice';
 
 export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const dispatch = useDispatch();
@@ -33,15 +34,20 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
   }, [dispatch, slideNodes]);
 
   const canvasRef = useRef<HTMLDivElement>(null);
-  const scale = useSlideScale(canvasRef);
+  const slideScale = useSlideScale(canvasRef);
+  const { scale } = useSelector(settingsSelector);
 
   return (
     <EditorBody>
       <AppBodyStyle />
       <MenuBar />
       <ResizablePanes orientation="horizontal" initialSize={300} minSize={300}>
-        <EditorCanvas ref={canvasRef} onMouseDown={handleCanvasMouseDown}>
-          <SlideViewer scale={scale}>{activeSlideNode}</SlideViewer>
+        <EditorCanvas
+          scale={scale}
+          ref={canvasRef}
+          onMouseDown={handleCanvasMouseDown}
+        >
+          <SlideViewer scale={slideScale}>{activeSlideNode}</SlideViewer>
         </EditorCanvas>
         <Inspector />
       </ResizablePanes>

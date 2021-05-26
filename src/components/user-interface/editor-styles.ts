@@ -19,10 +19,10 @@ export const EditorContent = styled.div`
   flex-direction: row;
 `;
 
-export const EditorCanvas = styled.div`
+export const EditorCanvas = styled.div<{ scale: string }>`
   display: flex;
   flex: 1;
-  align-items: center;
+  align-items: ${(props) => (props.scale === 'fit' ? 'center' : 'flex-start')};
   justify-content: center;
   overflow: auto;
 

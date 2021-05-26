@@ -12,9 +12,13 @@ import {
 import { LayerInspector } from './layer-inspector/layer-inspector';
 import { ResizablePanes } from '../resizable-panes';
 import { useStoredPaneSize } from '../../hooks';
+import { LocalStorage } from '../../types/local-storage';
 
 export const Inspector = () => {
-  const { initialSize, onResize } = useStoredPaneSize('INSPECTOR_PANE', '50%');
+  const { initialSize, onResize } = useStoredPaneSize(
+    LocalStorage.LayerPaneHeight,
+    '50%'
+  );
   const [activeTab, setActiveTab] = useState(InspectorTab.Document);
   useSwitchToFormatInspectorOnElementSelected({ setActiveTab });
   useSwitchToLayoutInspectorOnSlideAdded({ setActiveTab });

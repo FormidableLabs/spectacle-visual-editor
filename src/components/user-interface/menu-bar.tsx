@@ -23,6 +23,7 @@ import {
   FullscreenIcon,
   FolderCloseIcon,
   TextInput
+  UploadIcon
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
@@ -46,6 +47,9 @@ import {
 import { useMousetrap } from 'spectacle';
 import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 import { editorSlice } from '../../slices/editor-slice';
+import { useRootSelector } from '../../store';
+
+import { handler } from './../../../netlify/functions/one-page/one-page';
 
 const MenuBarContainer = styled.div`
   width: 100%;
@@ -70,11 +74,11 @@ export const MenuBar = () => {
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
+  const slideJson = useRootSelector(slidesSelector);
   const copyElement = (message: string) => {
     dispatch(deckSlice.actions.copyElement());
     toaster.success(message);
   };
-
   useMousetrap(
     {
       [KEYBOARD_SHORTCUTS.OPEN]: (e) => {
@@ -146,6 +150,31 @@ export const MenuBar = () => {
               appearance="minimal"
               disabled={isSaved}
               onClick={() => dispatch(deckSlice.actions.saveDeck(id))}
+            />
+          </div>
+        </Tooltip>
+      </MenuSection>
+      <MenuSection>
+        <Tooltip content="Generate an html file from your deck">
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={UploadIcon}
+              appearance="minimal"
+              disabled={!slides.length}
+              onClick={async () => {
+                const body = JSON.stringify(slideJson);
+                // @ts-ignore
+                const res = await handler({ body });
+
+                const a = document.createElement('a');
+                a.setAttribute('download', 'deck.html');
+
+                // @ts-ignore
+                a.setAttribute('href', encodeURIComponent(res.body));
+                document.body.appendChild(a);
+                a.click();
+              }}
             />
           </div>
         </Tooltip>

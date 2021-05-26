@@ -4,7 +4,7 @@ import { activeSlideIdSelector, deckSlice } from '../../../slices/deck-slice';
 import { SlideViewerWrapper } from './slide-viewer-wrapper';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { SlideDragWrapper } from './slide-drag-wrapper';
+import { DragWrapper } from '../../helpers/drag-wrapper';
 import styled, { css } from 'styled-components';
 import { TrashIcon, IconButton, PlusIcon, defaultTheme } from 'evergreen-ui';
 import { useRootSelector } from '../../../store';
@@ -100,7 +100,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
           <DndProvider backend={HTML5Backend}>
             {localSlides.map((slide, idx) => (
               <Slide key={slide.key} data-slideid={slide.key}>
-                <SlideDragWrapper
+                <DragWrapper
                   index={idx}
                   type="Slide"
                   onDrag={moveItem}
@@ -108,7 +108,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
                   orientation="horizontal"
                 >
                   {slide}
-                </SlideDragWrapper>
+                </DragWrapper>
 
                 {slides.length > 1 && (
                   <DeleteButton>

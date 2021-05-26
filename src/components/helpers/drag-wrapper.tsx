@@ -23,7 +23,7 @@ interface Props extends ElementLocation {
   orientation: 'horizontal' | 'vertical';
 }
 
-export const SlideDragWrapper: React.FC<Props> = ({
+export const DragWrapper: React.FC<Props> = ({
   children,
   index,
   parentIndex,

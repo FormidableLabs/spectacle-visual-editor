@@ -13,10 +13,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
-import {
-  ElementLocation,
-  SlideDragWrapper
-} from '../../slide/slide-viewer/slide-drag-wrapper';
+import { DragWrapper, ElementLocation } from '../../helpers/drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import { moveArrayItem } from '../../../util/move-array-item';
 import { defaultTheme } from 'evergreen-ui';
@@ -153,7 +150,7 @@ export const LayerInspector: FC = () => {
               );
 
             return (
-              <SlideDragWrapper
+              <DragWrapper
                 key={element.id}
                 index={index}
                 type="Element"
@@ -175,7 +172,7 @@ export const LayerInspector: FC = () => {
                 {isExpanded &&
                   Array.isArray(element.children) &&
                   element.children.map((childElement, childIndex) => (
-                    <SlideDragWrapper
+                    <DragWrapper
                       key={childElement.id}
                       index={childIndex}
                       parentIndex={index}
@@ -194,9 +191,9 @@ export const LayerInspector: FC = () => {
                         onMouseEnter={() => hoverElement(childElement.id)}
                         onMouseLeave={unhoverElement}
                       />
-                    </SlideDragWrapper>
+                    </DragWrapper>
                   ))}
-              </SlideDragWrapper>
+              </DragWrapper>
             );
           })}
         </DndProvider>

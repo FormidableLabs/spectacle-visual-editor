@@ -16,7 +16,7 @@ import {
   useEditorActions,
   useSlideNodes,
   useSlideScale,
-  useStoredPaneSize
+  useLocallyStoredState
 } from './hooks';
 import { RouteComponentProps } from '@reach/router';
 import { LocalStorage } from './types/local-storage';
@@ -29,7 +29,7 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const scale = useSlideScale(canvasRef);
 
-  const { initialSize, onResize } = useStoredPaneSize(
+  const [initialSize, onResize] = useLocallyStoredState(
     LocalStorage.InspectorPaneWidth,
     300
   );

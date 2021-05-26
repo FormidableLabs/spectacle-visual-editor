@@ -11,11 +11,11 @@ import {
 } from '../../hooks/inspector-hooks';
 import { LayerInspector } from './layer-inspector/layer-inspector';
 import { ResizablePanes } from '../resizable-panes';
-import { useStoredPaneSize } from '../../hooks';
+import { useLocallyStoredState } from '../../hooks';
 import { LocalStorage } from '../../types/local-storage';
 
 export const Inspector = () => {
-  const { initialSize, onResize } = useStoredPaneSize(
+  const [initialSize, onResize] = useLocallyStoredState(
     LocalStorage.LayerPaneHeight,
     '50%'
   );
@@ -45,7 +45,7 @@ export const Inspector = () => {
         orientation="vertical"
         initialSize={initialSize}
         minSize={32}
-        onResize={onResize}
+        onResize={(size: number) => onResize(String(size))}
       >
         {(() => {
           return {

@@ -13,10 +13,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
-import {
-  ElementLocation,
-  SlideElementDragWrapper
-} from './slide-element-drag-wrapper';
+import { DragWrapper, ElementLocation } from '../../helpers/drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import { moveArrayItem } from '../../../util/move-array-item';
 import { defaultTheme } from 'evergreen-ui';
@@ -153,11 +150,13 @@ export const LayerInspector: FC = () => {
               );
 
             return (
-              <SlideElementDragWrapper
+              <DragWrapper
                 key={element.id}
                 index={index}
-                onDrop={commitChangedOrder}
+                type="Element"
                 onDrag={moveElement}
+                onDrop={commitChangedOrder}
+                orientation="vertical"
               >
                 <ElementCard
                   element={element}
@@ -173,12 +172,14 @@ export const LayerInspector: FC = () => {
                 {isExpanded &&
                   Array.isArray(element.children) &&
                   element.children.map((childElement, childIndex) => (
-                    <SlideElementDragWrapper
+                    <DragWrapper
                       key={childElement.id}
                       index={childIndex}
                       parentIndex={index}
-                      onDrop={commitChangedOrder}
+                      type="Element"
                       onDrag={moveElement}
+                      onDrop={commitChangedOrder}
+                      orientation="vertical"
                     >
                       <ElementCard
                         element={childElement}
@@ -190,9 +191,9 @@ export const LayerInspector: FC = () => {
                         onMouseEnter={() => hoverElement(childElement.id)}
                         onMouseLeave={unhoverElement}
                       />
-                    </SlideElementDragWrapper>
+                    </DragWrapper>
                   ))}
-              </SlideElementDragWrapper>
+              </DragWrapper>
             );
           })}
         </DndProvider>

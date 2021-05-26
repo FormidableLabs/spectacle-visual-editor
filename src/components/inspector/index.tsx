@@ -15,7 +15,7 @@ import { useLocallyStoredState } from '../../hooks';
 import { LocalStorage } from '../../types/local-storage';
 
 export const Inspector = () => {
-  const [initialSize, onResize] = useLocallyStoredState(
+  const [initialSize, onResize] = useLocallyStoredState<string | number>(
     LocalStorage.LayerPaneHeight,
     '50%'
   );
@@ -45,7 +45,7 @@ export const Inspector = () => {
         orientation="vertical"
         initialSize={initialSize}
         minSize={32}
-        onResize={(size: number) => onResize(String(size))}
+        onResize={onResize}
       >
         {(() => {
           return {

@@ -1,12 +1,18 @@
 import { useDispatch } from 'react-redux';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { activeSlideIdSelector, deckSlice } from '../../../slices/deck-slice';
 import { SlideViewerWrapper } from './slide-viewer-wrapper';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { SlideDragWrapper } from './slide-drag-wrapper';
 import styled, { css } from 'styled-components';
-import { TrashIcon, IconButton, PlusIcon, Tooltip } from 'evergreen-ui';
+import {
+  TrashIcon,
+  IconButton,
+  PlusIcon,
+  Tooltip,
+  defaultTheme
+} from 'evergreen-ui';
 import { useRootSelector } from '../../../store';
 import { moveArrayItem } from '../../../util/move-array-item';
 
@@ -28,6 +34,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
   const [localSlides, setLocalSlides] = React.useState<React.ReactElement[]>(
     []
   );
+  const slidesRef = useRef<HTMLDivElement>(null);
 
   // Flatten out slides, tweak for active slide
   const slides = React.useMemo(() => {
@@ -78,52 +85,87 @@ export const TimelineSlideViewer: React.FC<Props> = ({
     }
   }, [dispatch, localSlides, slides]);
 
+  // Scroll to new slide when added
+  useEffect(() => {
+    const activeSlide = document.querySelector(
+      `[data-slideid="${activeSlideId}"]`
+    );
+
+    if (activeSlide) {
+      activeSlide.scrollIntoView();
+    }
+  }, [activeSlideId, localSlides]);
+
   return (
     <SlideViewerWrapper>
-      <DndProvider backend={HTML5Backend}>
-        {localSlides.map((slide, idx) => (
-          <Slide key={slide.key}>
-            <SlideDragWrapper
-              index={idx}
-              moveItem={moveItem}
-              onDrop={commitChangedOrder}
-            >
-              {slide}
-            </SlideDragWrapper>
+      <Container>
+        <Slides ref={slidesRef}>
+          <DndProvider backend={HTML5Backend}>
+            {localSlides.map((slide, idx) => (
+              <Slide key={slide.key} data-slideid={slide.key}>
+                <SlideDragWrapper
+                  index={idx}
+                  moveItem={moveItem}
+                  onDrop={commitChangedOrder}
+                >
+                  {slide}
+                </SlideDragWrapper>
 
-            {slides.length > 1 && (
-              <Tooltip content="Delete Slide">
-                <DeleteButton>
-                  <IconButton
-                    icon={TrashIcon}
-                    appearance="minimal"
-                    onClick={() =>
-                      dispatch(deckSlice.actions.deleteSlide(slide.key))
-                    }
-                  />
-                </DeleteButton>
-              </Tooltip>
-            )}
-          </Slide>
-        ))}
-      </DndProvider>
+                {slides.length > 1 && (
+                  <Tooltip content="Delete Slide">
+                    <DeleteButton>
+                      <IconButton
+                        icon={TrashIcon}
+                        appearance="minimal"
+                        onClick={() =>
+                          dispatch(deckSlice.actions.deleteSlide(slide.key))
+                        }
+                      />
+                    </DeleteButton>
+                  </Tooltip>
+                )}
+              </Slide>
+            ))}
+          </DndProvider>
+        </Slides>
 
-      <Tooltip content="Add Slide">
-        <IconButton
-          margin={5}
-          width={80}
-          height="auto"
-          icon={PlusIcon}
-          appearance="minimal"
-          onClick={() => dispatch(deckSlice.actions.newSlideAdded())}
-        />
-      </Tooltip>
+        <Tooltip content="Add Slide">
+          <AddButton>
+            <IconButton
+              width={80}
+              height="100%"
+              icon={PlusIcon}
+              appearance="minimal"
+              onClick={() => dispatch(deckSlice.actions.newSlideAdded())}
+            />
+          </AddButton>
+        </Tooltip>
+      </Container>
     </SlideViewerWrapper>
   );
 };
 
+const Container = styled.div`
+  display: flex;
+  background: ${defaultTheme.scales.neutral.N6};
+  border-top: 1px ${defaultTheme.scales.neutral.N7} solid;
+`;
+
+const Slides = styled.div`
+  display: flex;
+  overflow: auto;
+`;
+
 const Slide = styled.div`
   position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  padding: 5px;
+`;
+
+const AddButton = styled.div`
+  height: auto;
+  padding: 5px;
 `;
 
 const DeleteButton = styled.div`

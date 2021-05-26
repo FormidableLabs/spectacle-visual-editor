@@ -23,19 +23,11 @@ interface Props extends ElementLocation {
   orientation: 'horizontal' | 'vertical';
 }
 
-export const DragWrapper: React.FC<Props> = ({
-  children,
-  index,
-  parentIndex,
-  type,
-  onDrag,
-  onDrop,
-  orientation
-}) => {
+export const DragWrapper: React.FC<Props> = (props) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
   const [{ handlerId }, drop] = useDrop({
-    accept: type,
+    accept: props.type,
 
     collect(monitor) {
       return {
@@ -48,26 +40,27 @@ export const DragWrapper: React.FC<Props> = ({
 
       const dragIndex = item.index;
       const dragParent = item.parentIndex;
-      const hoverIndex = index;
+      const hoverIndex = props.index;
 
       // Don't replace items with themselves
       if (dragIndex === hoverIndex) return;
       // Don't allow nested elements to interact outside their parent context
-      if (parentIndex !== dragParent) return;
+      if (props.parentIndex !== dragParent) return;
 
       // Get bounding rectangle of hovered item
       const hoveredItemRect = ref.current?.getBoundingClientRect();
       // Calculate middle position of item being hovered
       const dropThreshold =
-        orientation === 'horizontal'
+        props.orientation === 'horizontal'
           ? (hoveredItemRect.right + hoveredItemRect.left) / 2
           : (hoveredItemRect.bottom + hoveredItemRect.top) / 2;
       // Get position of pointer on screen
       const pointerOffset = monitor.getClientOffset();
       // Calculate relevant position of pointer
       const pointerPosition =
-        (orientation === 'horizontal' ? pointerOffset?.x : pointerOffset?.y) ??
-        0;
+        (props.orientation === 'horizontal'
+          ? pointerOffset?.x
+          : pointerOffset?.y) ?? 0;
 
       // Only move items when the pointer has passed the dropThreshold (50% of item's width/height)
       // Dragging right/down
@@ -76,9 +69,9 @@ export const DragWrapper: React.FC<Props> = ({
       if (dragIndex > hoverIndex && pointerPosition > dropThreshold) return;
 
       // Time to actually perform the action
-      onDrag(
+      props.onDrag(
         { index: dragIndex, parentIndex: item.parentIndex },
-        { index: hoverIndex, parentIndex }
+        { index: hoverIndex, parentIndex: props.parentIndex }
       );
 
       item.index = hoverIndex;
@@ -86,18 +79,18 @@ export const DragWrapper: React.FC<Props> = ({
   });
 
   const [{ isDragging }, drag] = useDrag({
-    type,
+    type: props.type,
 
     item: () => {
       return {
-        id: (children as React.ReactElement).props?.id,
-        index,
-        parentIndex
+        id: (props.children as React.ReactElement).props?.id,
+        index: props.index,
+        parentIndex: props.parentIndex
       };
     },
 
     end(dropLocation: ElementLocation) {
-      onDrop(dropLocation);
+      props.onDrop(dropLocation);
     },
 
     collect: (monitor) => ({
@@ -126,7 +119,7 @@ export const DragWrapper: React.FC<Props> = ({
       style={{ display: 'inherit', opacity }}
       data-handler-id={handlerId}
     >
-      {children}
+      {props.children}
     </div>
   );
 };

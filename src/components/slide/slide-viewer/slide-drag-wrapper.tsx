@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
 /**
@@ -8,22 +8,34 @@ import { useDrag, useDrop } from 'react-dnd';
  * - This is based off of the example in: https://react-dnd.github.io/react-dnd/examples/sortable/simple
  */
 
-interface Props {
+export interface ElementLocation {
   index: number;
-  moveItem(dragIndex: number, hoverIndex: number): void;
-  onDrop(): void;
+  parentIndex?: number;
+}
+
+interface Props extends ElementLocation {
+  type: 'Slide' | 'Element';
+  onDrag: (
+    dragLocation: ElementLocation,
+    hoverLocation: ElementLocation
+  ) => void;
+  onDrop: (dropLocation: ElementLocation) => void;
+  orientation: 'horizontal' | 'vertical';
 }
 
 export const SlideDragWrapper: React.FC<Props> = ({
   children,
   index,
-  moveItem,
-  onDrop
+  parentIndex,
+  type,
+  onDrag,
+  onDrop,
+  orientation
 }) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
   const [{ handlerId }, drop] = useDrop({
-    accept: 'Slide',
+    accept: type,
 
     collect(monitor) {
       return {
@@ -31,54 +43,69 @@ export const SlideDragWrapper: React.FC<Props> = ({
       };
     },
 
-    hover(item: { index: number }, monitor) {
-      if (!ref.current) {
-        return;
-      }
+    hover(item: { index: number; parentIndex: number }, monitor) {
+      if (!ref.current) return;
+
       const dragIndex = item.index;
+      const dragParent = item.parentIndex;
       const hoverIndex = index;
+
       // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
+      if (dragIndex === hoverIndex) return;
+      // Don't allow nested elements to interact outside its parent context
+      if (parentIndex !== dragParent) return;
+
       // Determine rectangle on screen
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
       // Get horizontal middle
-      const hoverMiddleX =
-        (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+      const hoverMiddlePosition =
+        orientation === 'horizontal'
+          ? (hoverBoundingRect.right - hoverBoundingRect.left) / 2
+          : (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
+      const pointerOffset = monitor.getClientOffset();
       // Get pixels to the left
-      const hoverClientX = (clientOffset?.x || 0) - hoverBoundingRect.left;
+      const hoverClientPosition =
+        orientation === 'horizontal'
+          ? (pointerOffset?.x || 0) - hoverBoundingRect.left
+          : (pointerOffset?.y || 0) - hoverBoundingRect.top;
       // Only perform the move when the mouse has crossed half of the items width
       // When dragging right, only move when the cursor is past 50%
       // When dragging left, only move when the cursor is before 50%
 
       // Dragging right
-      if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
+      if (dragIndex < hoverIndex && hoverClientPosition < hoverMiddlePosition) {
         return;
       }
 
       // Dragging right
-      if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
+      if (dragIndex > hoverIndex && hoverClientPosition > hoverMiddlePosition) {
         return;
       }
 
       // Time to actually perform the action
-      moveItem(dragIndex, hoverIndex);
+      onDrag(
+        { index: dragIndex, parentIndex: item.parentIndex },
+        { index: hoverIndex, parentIndex }
+      );
 
       item.index = hoverIndex;
     }
   });
 
   const [{ isDragging }, drag] = useDrag({
-    type: 'Slide',
+    type,
+
     item: () => {
-      return { id: (children as React.ReactElement).props.id, index };
+      return {
+        id: (children as React.ReactElement).props?.id,
+        index,
+        parentIndex
+      };
     },
 
-    end() {
-      onDrop();
+    end(dropLocation: ElementLocation) {
+      onDrop(dropLocation);
     },
 
     collect: (monitor) => ({
@@ -86,8 +113,20 @@ export const SlideDragWrapper: React.FC<Props> = ({
     })
   });
 
-  const opacity = isDragging ? 0 : 1;
+  const opacity = isDragging ? 0.2 : 1;
   drag(drop(ref));
+
+  useEffect(() => {
+    if (isDragging) {
+      document.body.classList.add('is-dragging');
+    } else {
+      document.body.classList.remove('is-dragging');
+    }
+
+    return () => {
+      document.body.classList.remove('is-dragging');
+    };
+  }, [isDragging]);
 
   return (
     <div

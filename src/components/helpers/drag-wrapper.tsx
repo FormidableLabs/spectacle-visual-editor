@@ -52,36 +52,28 @@ export const DragWrapper: React.FC<Props> = ({
 
       // Don't replace items with themselves
       if (dragIndex === hoverIndex) return;
-      // Don't allow nested elements to interact outside its parent context
+      // Don't allow nested elements to interact outside their parent context
       if (parentIndex !== dragParent) return;
 
-      // Determine rectangle on screen
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
-      // Get horizontal middle
-      const hoverMiddlePosition =
+      // Get bounding rectangle of hovered item
+      const hoveredItemRect = ref.current?.getBoundingClientRect();
+      // Calculate middle position of item being hovered
+      const dropThreshold =
         orientation === 'horizontal'
-          ? (hoverBoundingRect.right - hoverBoundingRect.left) / 2
-          : (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      // Determine mouse position
+          ? (hoveredItemRect.right + hoveredItemRect.left) / 2
+          : (hoveredItemRect.bottom + hoveredItemRect.top) / 2;
+      // Get position of pointer on screen
       const pointerOffset = monitor.getClientOffset();
-      // Get pixels to the left
-      const hoverClientPosition =
-        orientation === 'horizontal'
-          ? (pointerOffset?.x || 0) - hoverBoundingRect.left
-          : (pointerOffset?.y || 0) - hoverBoundingRect.top;
-      // Only perform the move when the mouse has crossed half of the items width
-      // When dragging right, only move when the cursor is past 50%
-      // When dragging left, only move when the cursor is before 50%
+      // Calculate relevant position of pointer
+      const pointerPosition =
+        (orientation === 'horizontal' ? pointerOffset?.x : pointerOffset?.y) ??
+        0;
 
-      // Dragging right
-      if (dragIndex < hoverIndex && hoverClientPosition < hoverMiddlePosition) {
-        return;
-      }
-
-      // Dragging right
-      if (dragIndex > hoverIndex && hoverClientPosition > hoverMiddlePosition) {
-        return;
-      }
+      // Only move items when the pointer has passed the dropThreshold (50% of item's width/height)
+      // Dragging right/down
+      if (dragIndex < hoverIndex && pointerPosition < dropThreshold) return;
+      // Dragging left/up
+      if (dragIndex > hoverIndex && pointerPosition > dropThreshold) return;
 
       // Time to actually perform the action
       onDrag(

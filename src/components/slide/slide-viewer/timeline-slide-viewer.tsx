@@ -1,5 +1,11 @@
 import { useDispatch } from 'react-redux';
-import React, { useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { activeSlideIdSelector, deckSlice } from '../../../slices/deck-slice';
 import { SlideViewerWrapper } from './slide-viewer-wrapper';
 import { DndProvider } from 'react-dnd';
@@ -25,13 +31,11 @@ export const TimelineSlideViewer: React.FC<Props> = ({
 }) => {
   const activeSlideId = useRootSelector(activeSlideIdSelector);
   const dispatch = useDispatch();
-  const [localSlides, setLocalSlides] = React.useState<React.ReactElement[]>(
-    []
-  );
+  const [localSlides, setLocalSlides] = useState<React.ReactElement[]>([]);
   const slidesRef = useRef<HTMLDivElement>(null);
 
   // Flatten out slides, tweak for active slide
-  const slides = React.useMemo(() => {
+  const slides = useMemo(() => {
     const slideEls = (children instanceof Array
       ? Array.from(children)
       : [children]
@@ -60,9 +64,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
   }, [activeSlideId, children, scale, slideProps]);
 
   // Keep local slides in sync with actual slides
-  React.useEffect(() => {
-    setLocalSlides(slides);
-  }, [slides]);
+  useEffect(() => setLocalSlides(slides), [slides]);
 
   // Move a local item as its dragged.
   const moveItem = React.useCallback(
@@ -73,7 +75,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
   );
 
   // Commit changes
-  const commitChangedOrder = React.useCallback(() => {
+  const commitChangedOrder = useCallback(() => {
     const currentIds = slides?.map((slide) => slide?.props?.id) || [];
     const newIds = localSlides?.map((slide) => slide?.props?.id) || [];
 
@@ -88,9 +90,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
       `[data-slideid="${activeSlideId}"]`
     );
 
-    if (activeSlide) {
-      activeSlide.scrollIntoView();
-    }
+    if (activeSlide) activeSlide.scrollIntoView();
   }, [activeSlideId, localSlides]);
 
   return (

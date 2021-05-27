@@ -8,7 +8,8 @@ import {
   MenuBar,
   EditorCanvas,
   Inspector,
-  ResizablePanes
+  ResizablePanes,
+  SavedDecks
 } from './components';
 import { sampleElementsData, sampleSlidesData } from './sample-slides-data';
 import { deckSlice } from './slices/deck-slice';
@@ -20,6 +21,8 @@ import {
 } from './hooks';
 import { RouteComponentProps } from '@reach/router';
 import { LocalStorage } from './types/local-storage';
+import { defaultTheme } from 'spectacle';
+import { v4 } from 'uuid';
 
 export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const dispatch = useDispatch();
@@ -34,12 +37,18 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
     300
   );
 
+  // Load dummy data
   useEffect(() => {
     if (Array.isArray(slideNodes) && slideNodes.length > 0) {
       return;
     }
     dispatch(
-      deckSlice.actions.deckLoaded({
+      deckSlice.actions.loadDeck({
+        id: v4(),
+        title: 'Dummy Deck',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        theme: defaultTheme,
         slides: sampleSlidesData,
         elements: sampleElementsData
       })
@@ -50,6 +59,7 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
     <EditorBody>
       <AppBodyStyle />
       <MenuBar />
+      <SavedDecks />
       <ResizablePanes
         orientation="horizontal"
         initialSize={initialSize}

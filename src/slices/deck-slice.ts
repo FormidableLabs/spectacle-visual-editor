@@ -23,7 +23,13 @@ import { copyDeckElement } from '../util/copy-deck-element';
 import { ROOT_ELEMENT } from '../templates/basic-layouts';
 import undoable from 'redux-undo';
 import { getChildren } from '../util/get-children';
+import { LocalStorage } from '../types/local-storage';
+import { Deck } from '../types/deck';
+import { toaster } from 'evergreen-ui';
+
 type DeckState = {
+  id: null | string;
+  title: string;
   slides: EntityState<DeckSlide>;
   elements: EntityState<DeckElement>;
   activeSlideId: null | string;
@@ -52,6 +58,8 @@ const getSelectedElementImmer = (state: DeckState) => {
 };
 
 const initialState: DeckState = {
+  id: null,
+  title: '',
   slides: slidesAdapter.getInitialState(),
   elements: elementsAdapter.getInitialState(),
   activeSlideId: null,
@@ -65,13 +73,98 @@ export const deckSlice = createSlice({
   name: 'deck',
   initialState,
   reducers: {
-    deckLoaded: (
-      state,
-      action: PayloadAction<{ slides: DeckSlide[]; elements: DeckElementMap }>
-    ) => {
+    loadDeck: (state, action: PayloadAction<Deck>) => {
+      state.id = action.payload.id;
+      state.title = action.payload.title;
+      state.theme = action.payload.theme || initialState.theme;
+
+      // Reset deck context specific properties
+      state.activeSlideId =
+        action.payload.slides[0]?.id || initialState.activeSlideId;
+      state.hoveredEditableElementId = initialState.hoveredEditableElementId;
+      state.selectedEditableElementId = initialState.selectedEditableElementId;
+      state.copiedElement = initialState.copiedElement;
+
+      slidesAdapter.removeAll(state.slides);
+      elementsAdapter.removeAll(state.elements);
+
       slidesAdapter.addMany(state.slides, action.payload.slides);
       elementsAdapter.addMany(state.elements, action.payload.elements);
-      state.activeSlideId = action.payload.slides[0]?.id || null;
+
+      toaster.success(`Loaded ${action.payload.title || 'Untitled Deck'}`);
+    },
+
+    saveDeck: (state, action?: PayloadAction<string | null>) => {
+      const storedDecks = localStorage.getItem(LocalStorage.SavedDecks);
+      let newStoredDecks: Array<Deck> = [];
+
+      if (storedDecks) {
+        newStoredDecks = JSON.parse(storedDecks);
+      }
+
+      const updatedAt = new Date();
+      const slides = slidesAdapter.getSelectors().selectAll(state.slides);
+      const elements = elementsAdapter.getSelectors().selectAll(state.elements);
+
+      const newDeckData = {
+        updatedAt,
+        title: state.title,
+        theme: state.theme,
+        slides,
+        elements
+      };
+
+      const deckId = action?.payload;
+      const deckIndex = newStoredDecks.findIndex(
+        (storedDeck) => storedDeck.id === deckId
+      );
+
+      if (newStoredDecks[deckIndex]) {
+        // Save existing deck
+        newStoredDecks[deckIndex] = {
+          ...newStoredDecks[deckIndex],
+          ...newDeckData
+        };
+      } else {
+        // Save as new deck
+        const id = v4();
+
+        newStoredDecks.push({
+          ...newDeckData,
+          id,
+          createdAt: updatedAt
+        });
+
+        state.id = id;
+      }
+
+      toaster.success(`Saved ${state.title || 'Untitled Deck'}`);
+
+      localStorage.setItem(
+        LocalStorage.SavedDecks,
+        JSON.stringify(newStoredDecks)
+      );
+    },
+
+    deleteDeck: (state, action: PayloadAction<string | null>) => {
+      const deckId = action.payload;
+      const storedDecks: Deck[] =
+        JSON.parse(localStorage.getItem(LocalStorage.SavedDecks) || '') || [];
+      const newStoredDecks = storedDecks.filter(
+        (storedDeck) => storedDeck.id !== deckId
+      );
+
+      const deck = storedDecks.find((storedDeck) => storedDeck.id === deckId);
+      toaster.success(`Deleted ${deck?.title || 'Untitled Deck'}`);
+
+      localStorage.setItem(
+        LocalStorage.SavedDecks,
+        JSON.stringify(newStoredDecks)
+      );
+    },
+
+    setTitle: (state, action: PayloadAction<string>) => {
+      state.title = action.payload;
     },
 
     activeSlideWasChanged: (state, action: PayloadAction<string>) => {
@@ -423,6 +516,8 @@ export const undoableDeckSliceReducer = undoable(deckSlice.reducer, {
 const slidesEntitySelector = (state: RootState) => state.deck.present.slides;
 const elementsEntitySelector = (state: RootState) =>
   state.deck.present.elements;
+
+export const deckSelector = (state: RootState) => state.deck.present;
 
 export const activeSlideIdSelector = (state: RootState) =>
   state.deck.present.activeSlideId;

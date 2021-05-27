@@ -17,6 +17,7 @@ import { themeSelector } from '../../slices/deck-slice';
 import styled from 'styled-components';
 import { FormField, Switch, TextInputField } from 'evergreen-ui';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
+import { Accordion } from '../user-interface/accordion';
 
 export const FlexParentControls: React.FC<ElementControlsProps> = ({
   selectedElement,
@@ -97,80 +98,54 @@ export const FlexParentControls: React.FC<ElementControlsProps> = ({
 
   return (
     <>
-      <SegmentedInput
-        label="Layout Content"
-        options={Object.values(FLEX_DIRECTION_OPTIONS)}
-        value={flexDirectionValue}
-        onChange={(value) =>
-          handleValueChanged(FLEX_COMPONENT_PROPS.FLEX_DIRECTION, value)
-        }
-      />
-      <SplitContainer>
-        <SelectInput
-          label="Justify Content"
-          value={justifyContentValue}
-          options={convertOptionsToObjects(JUSTIFY_CONTENT_OPTIONS)}
-          onValueChange={(value) =>
-            handleValueChanged(FLEX_COMPONENT_PROPS.JUSTIFY_CONTENT, value)
+      <Accordion label="Flex Options">
+        <SegmentedInput
+          label="Layout Content"
+          options={Object.values(FLEX_DIRECTION_OPTIONS)}
+          value={flexDirectionValue}
+          onChange={(value) =>
+            handleValueChanged(FLEX_COMPONENT_PROPS.FLEX_DIRECTION, value)
           }
         />
-        <SelectInput
-          label="Align Items"
-          value={alignItemsValue}
-          options={convertOptionsToObjects(ALIGN_ITEMS_OPTIONS)}
-          onValueChange={(value) =>
-            handleValueChanged(FLEX_COMPONENT_PROPS.ALIGN_ITEMS, value)
-          }
-        />
-      </SplitContainer>
-
-      <Container label="Padding">
-        <SwitchContainer label="Use single value for padding">
-          <Switch
-            checked={paddingDoubleValue}
-            onChange={() => {
-              togglePaddingDoubleValue();
-              onToggle();
-            }}
+        <SplitContainer>
+          <SelectInput
+            label="Justify Content"
+            value={justifyContentValue}
+            options={convertOptionsToObjects(JUSTIFY_CONTENT_OPTIONS)}
+            onValueChange={(value) =>
+              handleValueChanged(FLEX_COMPONENT_PROPS.JUSTIFY_CONTENT, value)
+            }
           />
-        </SwitchContainer>
-
-        {paddingDoubleValue ? (
-          <TextInputField
-            label="Padding size"
-            value={inputState.padding}
-            onBlur={(e: FocusEvent<HTMLInputElement>) => {
-              const { value } = e.target;
-              if (isValidCSSSize(value)) {
-                setInputState({ ...inputState, padding: value });
-                handleValueChanged(FLEX_COMPONENT_PROPS.PADDING, value);
-              } else {
-                setInputState({ ...inputState, padding });
-              }
-            }}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              const { value } = e.target;
-              if (isValidCSSSize(value)) {
-                setInputState({ ...inputState, padding: value });
-                handleValueChanged(FLEX_COMPONENT_PROPS.PADDING, value);
-              } else {
-                setInputState({ ...inputState, padding: value });
-              }
-            }}
+          <SelectInput
+            label="Align Items"
+            value={alignItemsValue}
+            options={convertOptionsToObjects(ALIGN_ITEMS_OPTIONS)}
+            onValueChange={(value) =>
+              handleValueChanged(FLEX_COMPONENT_PROPS.ALIGN_ITEMS, value)
+            }
           />
-        ) : (
-          <>
+        </SplitContainer>
+
+        <Container label="Padding">
+          <SwitchContainer label="Use single value for padding">
+            <Switch
+              checked={paddingDoubleValue}
+              onChange={() => {
+                togglePaddingDoubleValue();
+                onToggle();
+              }}
+            />
+          </SwitchContainer>
+
+          {paddingDoubleValue ? (
             <TextInputField
-              label="Horizontal padding size"
-              value={inputState.horizontalPadding}
+              label="Padding size"
+              value={inputState.padding}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
                 const { value } = e.target;
                 if (isValidCSSSize(value)) {
-                  setInputState({ ...inputState, horizontalPadding: value });
-                  handleValueChanged(
-                    FLEX_COMPONENT_PROPS.PADDING_HORIZONTAL,
-                    value
-                  );
+                  setInputState({ ...inputState, padding: value });
+                  handleValueChanged(FLEX_COMPONENT_PROPS.PADDING, value);
                 } else {
                   setInputState({ ...inputState, padding });
                 }
@@ -178,47 +153,75 @@ export const FlexParentControls: React.FC<ElementControlsProps> = ({
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 const { value } = e.target;
                 if (isValidCSSSize(value)) {
-                  setInputState({ ...inputState, horizontalPadding: value });
-                  handleValueChanged(
-                    FLEX_COMPONENT_PROPS.PADDING_HORIZONTAL,
-                    value
-                  );
+                  setInputState({ ...inputState, padding: value });
+                  handleValueChanged(FLEX_COMPONENT_PROPS.PADDING, value);
                 } else {
-                  setInputState({ ...inputState, horizontalPadding: value });
+                  setInputState({ ...inputState, padding: value });
                 }
               }}
             />
-            <TextInputField
-              label="Vertical padding size"
-              value={inputState.verticalPadding}
-              onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                const { value } = e.target;
-                if (isValidCSSSize(value)) {
-                  setInputState({ ...inputState, verticalPadding: value });
-                  handleValueChanged(
-                    FLEX_COMPONENT_PROPS.PADDING_VERTICAL,
-                    value
-                  );
-                } else {
-                  setInputState({ ...inputState, verticalPadding });
-                }
-              }}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const { value } = e.target;
-                if (isValidCSSSize(value)) {
-                  setInputState({ ...inputState, verticalPadding: value });
-                  handleValueChanged(
-                    FLEX_COMPONENT_PROPS.PADDING_VERTICAL,
-                    value
-                  );
-                } else {
-                  setInputState({ ...inputState, verticalPadding: value });
-                }
-              }}
-            />
-          </>
-        )}
-      </Container>
+          ) : (
+            <>
+              <TextInputField
+                label="Horizontal padding size"
+                value={inputState.horizontalPadding}
+                onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                  const { value } = e.target;
+                  if (isValidCSSSize(value)) {
+                    setInputState({ ...inputState, horizontalPadding: value });
+                    handleValueChanged(
+                      FLEX_COMPONENT_PROPS.PADDING_HORIZONTAL,
+                      value
+                    );
+                  } else {
+                    setInputState({ ...inputState, padding });
+                  }
+                }}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  const { value } = e.target;
+                  if (isValidCSSSize(value)) {
+                    setInputState({ ...inputState, horizontalPadding: value });
+                    handleValueChanged(
+                      FLEX_COMPONENT_PROPS.PADDING_HORIZONTAL,
+                      value
+                    );
+                  } else {
+                    setInputState({ ...inputState, horizontalPadding: value });
+                  }
+                }}
+              />
+              <TextInputField
+                label="Vertical padding size"
+                value={inputState.verticalPadding}
+                onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                  const { value } = e.target;
+                  if (isValidCSSSize(value)) {
+                    setInputState({ ...inputState, verticalPadding: value });
+                    handleValueChanged(
+                      FLEX_COMPONENT_PROPS.PADDING_VERTICAL,
+                      value
+                    );
+                  } else {
+                    setInputState({ ...inputState, verticalPadding });
+                  }
+                }}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  const { value } = e.target;
+                  if (isValidCSSSize(value)) {
+                    setInputState({ ...inputState, verticalPadding: value });
+                    handleValueChanged(
+                      FLEX_COMPONENT_PROPS.PADDING_VERTICAL,
+                      value
+                    );
+                  } else {
+                    setInputState({ ...inputState, verticalPadding: value });
+                  }
+                }}
+              />
+            </>
+          )}
+        </Container>
+      </Accordion>
     </>
   );
 };

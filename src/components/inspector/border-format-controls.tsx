@@ -22,7 +22,8 @@ export const BorderFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
   editableElementChanged
 }) => {
-  const borderStyle = selectedElement?.props?.borderStyle || BORDER_STYLES.NONE;
+  const borderStyle =
+    selectedElement?.props?.borderStyle || BORDER_STYLES.SOLID;
   const borderWidth = selectedElement?.props?.borderWidth || '';
   const borderRadius = selectedElement?.props?.borderRadius || '';
   const hasBorderChecked = selectedElement?.props?.hasBorder;
@@ -56,7 +57,7 @@ export const BorderFormatControls: React.FC<ElementControlsProps> = ({
 
   return (
     <>
-      <Container label="Borders">
+      <Container>
         <SwitchContainer label="Add borders">
           <Switch
             checked={hasBorder}
@@ -124,10 +125,21 @@ export const BorderFormatControls: React.FC<ElementControlsProps> = ({
 
             <TextInputField
               label="Border Radius"
+              description="Allows shorthand properties"
               value={inputState.borderRadius}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
                 const { value } = e.target;
-                if (isValidCSSSize(value)) {
+                if (
+                  value.split(/\s+/).every((term) => {
+                    return (
+                      isValidCSSSize(term) ||
+                      term === 'initial' ||
+                      term === 'inherit' ||
+                      term === 'unset'
+                    );
+                  }) &&
+                  value.split(/\s+/).length <= 4
+                ) {
                   setInputState({ ...inputState, borderRadius: value });
                   handleValueChanged(
                     BORDER_COMPONENT_PROPS.BORDER_RADIUS,

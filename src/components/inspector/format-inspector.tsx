@@ -15,7 +15,6 @@ import { ImageControls } from './image-controls';
 import { FlexParentControls } from './flex-parent-controls';
 import { CodePaneFormatControls } from './codepane-format-controls';
 import { GridFormatControls } from './grid-format-controls';
-import { BorderFormatControls } from './border-format-controls';
 
 export const FormatInspector = () => {
   const dispatch = useDispatch();
@@ -37,7 +36,6 @@ export const FormatInspector = () => {
           return (
             <>
               <BoxFormatControls {...props} />
-              <BorderFormatControls {...props} />
               <FlexParentControls {...props} />
             </>
           );

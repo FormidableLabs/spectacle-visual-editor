@@ -9,7 +9,7 @@ type EditorState = {
 };
 
 const getSavedDecksFromStorage = () =>
-  JSON.parse(localStorage.getItem(LocalStorage.SavedDecks) || '') || [];
+  JSON.parse(localStorage.getItem(LocalStorage.SavedDecks) || '[]');
 
 const initialState: EditorState = {
   savedDecks: getSavedDecksFromStorage(),

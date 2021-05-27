@@ -148,8 +148,9 @@ export const deckSlice = createSlice({
 
     deleteDeck: (state, action: PayloadAction<string | null>) => {
       const deckId = action.payload;
-      const storedDecks: Deck[] =
-        JSON.parse(localStorage.getItem(LocalStorage.SavedDecks) || '') || [];
+      const storedDecks: Deck[] = JSON.parse(
+        localStorage.getItem(LocalStorage.SavedDecks) || '[]'
+      );
       const newStoredDecks = storedDecks.filter(
         (storedDeck) => storedDeck.id !== deckId
       );

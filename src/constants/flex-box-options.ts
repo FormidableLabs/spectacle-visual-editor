@@ -36,3 +36,25 @@ export enum FLEX_COMPONENT_PROPS {
   PADDING_HORIZONTAL = 'paddingX',
   PADDING_VERTICAL = 'paddingY'
 }
+
+export enum BORDER_COMPONENT_PROPS {
+  BORDER_WIDTH = 'borderWidth',
+  BORDER_STYLE = 'borderStyle',
+  BORDER_COLOR = 'borderColor',
+  BORDER_RADIUS = 'borderRadius'
+}
+
+export enum BORDER_STYLES {
+  NONE = 'none',
+  HIDDEN = 'hidden',
+  DOTTED = 'dotted',
+  DASHED = 'dashed',
+  SOLID = 'solid',
+  DOUBLE = 'double',
+  GROOVE = 'groove',
+  RIDGE = 'ridge',
+  INSERT = 'inset',
+  OUTSET = 'outset'
+}
+
+export const BORDER_STYLE_OPTIONS: string[] = Object.values(BORDER_STYLES);

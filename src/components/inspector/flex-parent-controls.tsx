@@ -8,7 +8,7 @@ import {
   FLEX_DIRECTION_OPTIONS,
   JUSTIFY_CONTENT,
   JUSTIFY_CONTENT_OPTIONS
-} from '../../constants/flex-parent-options';
+} from '../../constants/flex-box-options';
 import { SegmentedInput } from '../inputs/segmented';
 import { SelectInput } from '../inputs/select';
 import { useToggle } from '../../hooks';

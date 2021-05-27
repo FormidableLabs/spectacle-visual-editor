@@ -32,11 +32,11 @@ export const FormatInspector = () => {
 
   return (
     <Pane padding={10}>
-      <FreeMovementControls {...props} />
       {(() => {
         if (isBoxElement(selectedElement)) {
           return (
             <>
+              <FreeMovementControls {...props} />
               <BoxFormatControls {...props} />
               <FlexDirectionControls {...props} />
             </>

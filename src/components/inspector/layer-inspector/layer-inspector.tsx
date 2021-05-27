@@ -82,10 +82,10 @@ export const LayerInspector: FC = () => {
 
   // Update the order with the local order
   const commitChangedOrder = useCallback(
-    (dropLocation: ElementLocation) => {
+    (newLocation: ElementLocation) => {
       const elementsToUpdate =
-        typeof dropLocation.parentIndex === 'number'
-          ? localElements[dropLocation.parentIndex].children
+        typeof newLocation.parentIndex === 'number'
+          ? localElements[newLocation.parentIndex].children
           : localElements;
 
       if (!Array.isArray(elementsToUpdate)) {
@@ -96,8 +96,8 @@ export const LayerInspector: FC = () => {
         deckSlice.actions.reorderActiveSlideElements({
           elementIds: elementsToUpdate.map((element) => element.id),
           parentId:
-            typeof dropLocation.parentIndex === 'number'
-              ? localElements[dropLocation.parentIndex].id
+            typeof newLocation.parentIndex === 'number'
+              ? localElements[newLocation.parentIndex].id
               : undefined
         })
       );
@@ -152,7 +152,7 @@ export const LayerInspector: FC = () => {
             return (
               <DragWrapper
                 key={element.id}
-                index={index}
+                item={{ index: index }}
                 type="Element"
                 onDrag={moveElement}
                 onDrop={commitChangedOrder}
@@ -174,8 +174,7 @@ export const LayerInspector: FC = () => {
                   element.children.map((childElement, childIndex) => (
                     <DragWrapper
                       key={childElement.id}
-                      index={childIndex}
-                      parentIndex={index}
+                      item={{ index: childIndex, parentIndex: index }}
                       type="Element"
                       onDrag={moveElement}
                       onDrop={commitChangedOrder}

@@ -40,6 +40,7 @@ export const sampleElementsData: DeckElementMap = {
       height: '100%',
       flexDirection: 'column',
       backgroundColor: '#2a3668',
+      borderColor: '#ffffff',
       componentProps: {}
     },
     children: [childId2, childId3],

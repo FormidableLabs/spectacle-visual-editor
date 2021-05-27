@@ -27,6 +27,7 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     component: 'FlexBox',
     props: {
       backgroundColor: 'limegreen',
+      borderColor: '#ffffff',
       height: 100,
       width: 200,
       flexDirection: FLEX_DIRECTION.column,

@@ -15,6 +15,7 @@ import { ImageControls } from './image-controls';
 import { FlexDirectionControls } from './flex-direction-controls';
 import { CodePaneFormatControls } from './codepane-format-controls';
 import { GridFormatControls } from './grid-format-controls';
+import { FreeMovementControls } from './free-movement-controls';
 
 export const FormatInspector = () => {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ export const FormatInspector = () => {
 
   return (
     <Pane padding={10}>
+      <FreeMovementControls {...props} />
       {(() => {
         if (isBoxElement(selectedElement)) {
           return (

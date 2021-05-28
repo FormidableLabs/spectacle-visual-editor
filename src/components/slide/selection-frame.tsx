@@ -7,7 +7,7 @@ import React, {
   MouseEvent
 } from 'react';
 import styled from 'styled-components';
-import Moveable, { OnResizeEnd } from 'react-moveable';
+import Moveable, { OnDrag, OnDragEnd, OnResizeEnd } from 'react-moveable';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   deckSlice,
@@ -68,6 +68,33 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
       );
       event.target.style.width = '';
       event.target.style.height = '';
+    },
+    [dispatch]
+  );
+
+  const handleOnDragMovement = (event: OnDrag) => {
+    event.target.style.top = `${event.top}px`;
+    event.target.style.left = `${event.left}px`;
+  };
+
+  const handleOnDragMovementEnd = useCallback(
+    (event: OnDragEnd) => {
+      console.log(event);
+      if (event.lastEvent) {
+        dispatch(
+          deckSlice.actions.editableElementChanged({
+            left: `${event.lastEvent.left}px`,
+            top: `${event.lastEvent.top}px`,
+            componentProps: {
+              isFreeMovement: true,
+              positionX: `${event.lastEvent.left}px`,
+              positionY: `${event.lastEvent.top}px`
+            }
+          })
+        );
+        event.target.style.top = '';
+        event.target.style.left = '';
+      }
     },
     [dispatch]
   );
@@ -147,6 +174,9 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
           keepRatio={children.props.type === 'Image'}
+          draggable={true}
+          onDrag={handleOnDragMovement}
+          onDragEnd={handleOnDragMovementEnd}
           key={treeId}
         />
       )}

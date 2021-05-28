@@ -37,6 +37,7 @@ type DeckState = {
   selectedEditableElementId: null | string;
   copiedElement: null | { id: string; elements: DeckElementMap };
   theme: SpectacleTheme;
+  isSaved: boolean;
 };
 
 export const slidesAdapter = createEntityAdapter<DeckSlide>();
@@ -66,7 +67,8 @@ const initialState: DeckState = {
   hoveredEditableElementId: null,
   selectedEditableElementId: null,
   copiedElement: null,
-  theme: defaultTheme
+  theme: defaultTheme,
+  isSaved: true
 };
 
 export const deckSlice = createSlice({
@@ -92,6 +94,8 @@ export const deckSlice = createSlice({
       elementsAdapter.addMany(state.elements, action.payload.elements);
 
       toaster.success(`Loaded ${action.payload.title || 'Untitled Deck'}`);
+
+      state.isSaved = true;
     },
 
     saveDeck: (state, action?: PayloadAction<string | null>) => {
@@ -138,12 +142,18 @@ export const deckSlice = createSlice({
         state.id = id;
       }
 
-      toaster.success(`Saved ${state.title || 'Untitled Deck'}`);
-
       localStorage.setItem(
         LocalStorage.SavedDecks,
         JSON.stringify(newStoredDecks)
       );
+
+      toaster.success(`Saved ${state.title || 'Untitled Deck'}`);
+
+      state.isSaved = true;
+    },
+
+    markAsUnsaved: (state) => {
+      state.isSaved = false;
     },
 
     deleteDeck: (state, action: PayloadAction<string | null>) => {
@@ -166,6 +176,7 @@ export const deckSlice = createSlice({
 
     setTitle: (state, action: PayloadAction<string>) => {
       state.title = action.payload;
+      state.isSaved = false;
     },
 
     activeSlideWasChanged: (state, action: PayloadAction<string>) => {
@@ -193,6 +204,7 @@ export const deckSlice = createSlice({
       slidesAdapter.addOne(state.slides, newSlide);
       state.activeSlideId = newSlide.id;
       state.selectedEditableElementId = null;
+      state.isSaved = false;
     },
 
     elementAddedToActiveSlide: (
@@ -243,6 +255,7 @@ export const deckSlice = createSlice({
 
       elementsAdapter.addOne(state.elements, newElement);
       state.selectedEditableElementId = newElementId;
+      state.isSaved = false;
     },
 
     editableElementHovered: (state, action) => {
@@ -269,6 +282,8 @@ export const deckSlice = createSlice({
       if (incomingChildren != null) {
         selectedElement.children = incomingChildren;
       }
+
+      state.isSaved = false;
     },
     deleteSlide: (state, action) => {
       // The slide ID to delete can be passed via action.payload
@@ -301,14 +316,17 @@ export const deckSlice = createSlice({
 
     updateThemeColors: (state, action) => {
       state.theme.colors = { ...state.theme.colors, ...action.payload };
+      state.isSaved = false;
     },
 
     updateThemeFontSizes: (state, action) => {
       state.theme.fontSizes = { ...state.theme.fontSizes, ...action.payload };
+      state.isSaved = false;
     },
 
     updateThemeSize: (state, action) => {
       state.theme.size = { ...state.theme.size, ...action.payload };
+      state.isSaved = false;
     },
 
     deleteElement: (state) => {
@@ -348,6 +366,7 @@ export const deckSlice = createSlice({
         });
       }
       elementsAdapter.removeOne(state.elements, selectedElement.id);
+      state.isSaved = false;
     },
 
     copyElement: (state) => {
@@ -412,6 +431,7 @@ export const deckSlice = createSlice({
 
       if (copiedElement) {
         state.copiedElement = copiedElement;
+        state.isSaved = false;
       }
     },
 
@@ -437,6 +457,7 @@ export const deckSlice = createSlice({
       });
 
       slidesAdapter.setAll(state.slides, newSlides);
+      state.isSaved = false;
     },
 
     reorderActiveSlideElements: (
@@ -457,6 +478,7 @@ export const deckSlice = createSlice({
         id: action.payload.parentId as string,
         changes: { children: action.payload.elementIds }
       });
+      state.isSaved = false;
     },
 
     applyLayoutToSlide: (
@@ -481,6 +503,7 @@ export const deckSlice = createSlice({
       activeSlide.children = action.payload.elementIds;
       elementsAdapter.addMany(state.elements, action.payload.elementMap);
       state.selectedEditableElementId = null;
+      state.isSaved = false;
     }
   }
 });

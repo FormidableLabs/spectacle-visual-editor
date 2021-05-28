@@ -64,7 +64,7 @@ export const MenuBar = () => {
   const hasFuture = useSelector(hasFutureSelector);
   const hasPaste = useSelector(hasPasteElementSelector);
   const selectedElement = useSelector(selectedElementSelector);
-  const { id, title } = useSelector(deckSelector);
+  const { isSaved, id, title } = useSelector(deckSelector);
   const slides = useSelector(slidesSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
@@ -122,12 +122,15 @@ export const MenuBar = () => {
           />
         </Tooltip>
         <Tooltip content="Save ⌘S">
-          <StyledIconButton
-            fill={defaultTheme.colors.icon.selected}
-            icon={FloppyDiskIcon}
-            appearance="minimal"
-            onClick={() => dispatch(deckSlice.actions.saveDeck(id))}
-          />
+          <div>
+            <StyledIconButton
+              fill={defaultTheme.colors.icon.selected}
+              icon={FloppyDiskIcon}
+              appearance="minimal"
+              disabled={isSaved}
+              onClick={() => dispatch(deckSlice.actions.saveDeck(id))}
+            />
+          </div>
         </Tooltip>
       </MenuSection>
       <SectionDivider />

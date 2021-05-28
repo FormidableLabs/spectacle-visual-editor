@@ -76,6 +76,14 @@ export const MenuBar = () => {
 
   useMousetrap(
     {
+      [KEYBOARD_SHORTCUTS.OPEN]: (e) => {
+        e?.preventDefault();
+        dispatch(editorSlice.actions.toggleSavedDecksMenu());
+      },
+      [KEYBOARD_SHORTCUTS.SAVE]: (e) => {
+        e?.preventDefault();
+        dispatch(deckSlice.actions.saveDeck(id));
+      },
       [KEYBOARD_SHORTCUTS.CUT]: () => {
         copyElement('Element cut!');
         dispatch(deckSlice.actions.deleteElement());

@@ -1,5 +1,11 @@
 import { FormField, Switch, TextInputField } from 'evergreen-ui';
-import React, { ChangeEvent, FocusEvent, useCallback, useState } from 'react';
+import React, {
+  ChangeEvent,
+  FocusEvent,
+  useCallback,
+  useEffect,
+  useState
+} from 'react';
 import { useToggle } from 'react-use';
 import styled from 'styled-components';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
@@ -20,6 +26,15 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
     positionX: displayState.positionX,
     positionY: displayState.positionY
   });
+
+  /* Update forms with values from dragged selection frame */
+  useEffect(() => {
+    setInputState({
+      freeMovement: displayState.isFreeMovement,
+      positionX: selectedElement?.props?.componentProps?.positionX,
+      positionY: selectedElement?.props?.componentProps?.positionY
+    });
+  }, [selectedElement, displayState.isFreeMovement]);
 
   const [freeMovement, toggleFreeMovement] = useToggle(
     displayState.isFreeMovement
@@ -144,7 +159,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
         {!freeMovement ? (
           <></>
         ) : (
-          <>
+          <SplitContainer>
             <TextInputField
               label="X-Coordinate"
               value={inputState.positionX}
@@ -199,7 +214,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                 });
               }}
             />
-          </>
+          </SplitContainer>
         )}
       </Container>
     </>
@@ -223,5 +238,16 @@ const SwitchContainer = styled(FormField)`
   align-items: center;
   > label {
     margin-right: 10px;
+  }
+`;
+
+const SplitContainer = styled.div`
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-column-gap: 10px;
+  width: calc(100% - 10px);
+
+  > div {
+    margin-bottom: 6px;
   }
 `;

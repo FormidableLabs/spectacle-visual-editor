@@ -79,16 +79,15 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
 
   const handleOnDragMovementEnd = useCallback(
     (event: OnDragEnd) => {
-      console.log(event);
       if (event.lastEvent) {
         dispatch(
           deckSlice.actions.editableElementChanged({
-            left: `${event.lastEvent.left}px`,
-            top: `${event.lastEvent.top}px`,
+            left: `${Math.round(event.lastEvent.left)}px`,
+            top: `${Math.round(event.lastEvent.top)}px`,
             componentProps: {
               isFreeMovement: true,
-              positionX: `${event.lastEvent.left}px`,
-              positionY: `${event.lastEvent.top}px`
+              positionX: `${Math.round(event.lastEvent.left)}px`,
+              positionY: `${Math.round(event.lastEvent.top)}px`
             }
           })
         );
@@ -174,7 +173,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
           keepRatio={children.props.type === 'Image'}
-          draggable={true}
+          draggable={children.props.componentProps?.isFreeMovement}
           onDrag={handleOnDragMovement}
           onDragEnd={handleOnDragMovementEnd}
           key={treeId}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ColorPickerInput } from '../inputs/color';
 import { ElementControlsProps } from './element-controls-props';
+import { FreeMovementControls } from './free-movement-controls';
 
 export const BoxFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
@@ -15,6 +16,10 @@ export const BoxFormatControls: React.FC<ElementControlsProps> = ({
 
   return (
     <>
+      <FreeMovementControls
+        selectedElement={selectedElement}
+        editableElementChanged={editableElementChanged}
+      />
       <ColorPickerInput
         disabled={!selectedElement?.props?.backgroundColor}
         onChangeInput={setBackgroundColor}

@@ -8,6 +8,7 @@ import { ElementControlsProps } from './element-controls-props';
 import { MarkdownControls } from './markdown-controls';
 import { TextControls } from './text-controls';
 import { Accordion } from '../user-interface/accordion';
+import { FreeMovementControls } from './free-movement-controls';
 
 export const MdFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
@@ -31,6 +32,10 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
 
   return (
     <React.Fragment>
+      <FreeMovementControls
+        selectedElement={selectedElement}
+        editableElementChanged={editableElementChanged}
+      />
       <Accordion label="Markdown Content">
         <MdInput
           label="Content"

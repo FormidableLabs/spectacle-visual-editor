@@ -1,27 +1,16 @@
 import { FormField, Switch, TextInputField } from 'evergreen-ui';
-import React, {
-  ChangeEvent,
-  FocusEvent,
-  useCallback,
-  useEffect,
-  useState
-} from 'react';
+import React, { ChangeEvent, FocusEvent, useCallback, useState } from 'react';
 import { useToggle } from 'react-use';
 import styled from 'styled-components';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
-import { ColorPickerInput } from '../inputs/color';
 import { ElementControlsProps } from './element-controls-props';
 
 export const FreeMovementControls: React.FC<ElementControlsProps> = ({
   selectedElement,
   editableElementChanged
 }) => {
-
   const [displayState, setDisplayState] = useState({
-    isFreeMovement: Boolean(
-      selectedElement?.props?.componentProps?.['positionX'] ||
-        selectedElement?.props?.componentProps?.['positionY']
-    ),
+    isFreeMovement: selectedElement?.props?.componentProps?.isFreeMovement,
     positionX: selectedElement?.props?.componentProps?.positionX || 0,
     positionY: selectedElement?.props?.componentProps?.positionY || 0
   });
@@ -37,7 +26,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
   );
 
   const handleComponentElementChanged = useCallback(
-    (propName: string, val: string | number) => {
+    (propName: string, val: string | number | boolean) => {
       if (selectedElement) {
         editableElementChanged({
           componentProps: {
@@ -105,15 +94,12 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
 
   const onToggle = () => {
     if (!freeMovement) {
-      editableElementChanged({
-        componentProps: {}
-      });
       handleOnEvent({
-        value: 'relative',
+        value: 'absolute',
         shouldSetInputState: false,
         valueToChangeName: 'position',
         valueToChangeCSSName: 'position',
-        valueAsCSSValue: 'relative',
+        valueAsCSSValue: 'absolute',
         validator: () => {
           return true;
         }
@@ -139,6 +125,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
         }
       });
     }
+    handleComponentElementChanged('isFreeMovement', !freeMovement);
   };
 
   return (
@@ -163,9 +150,8 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
               value={inputState.positionX}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
                 const { value } = e.target;
-                const parsedValue = parseInt(value);
                 handleOnEvent({
-                  value: parsedValue,
+                  value: value,
                   shouldSetInputState: true,
                   valueToChangeName: 'positionX',
                   valueToChangeCSSName: 'left',
@@ -186,28 +172,33 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                 });
               }}
             />
-            {/* <TextInputField
+            <TextInputField
               label="Y-Coordinate"
               value={inputState.positionY}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
                 const { value } = e.target;
-                if (Number.isInteger(value)) {
-                  setInputState({ ...inputState, positionY: value });
-                  onChangeComponentProps('positionY', value);
-                } else {
-                  setInputState({ ...inputState });
-                }
+                handleOnEvent({
+                  value: value,
+                  shouldSetInputState: true,
+                  valueToChangeName: 'positionY',
+                  valueToChangeCSSName: 'top',
+                  valueAsCSSValue: value,
+                  validator: isValidCSSSize
+                });
               }}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 const { value } = e.target;
-                if (Number.isInteger(value)) {
-                  setInputState({ ...inputState, positionY: value });
-                  onChangeComponentProps('positionY', value);
-                } else {
-                  setInputState({ ...inputState, positionY: value });
-                }
+                setInputState({ ...inputState, positionY: value });
+                handleOnEvent({
+                  value,
+                  shouldSetInputState: false,
+                  valueToChangeName: 'positionY',
+                  valueToChangeCSSName: 'top',
+                  valueAsCSSValue: value,
+                  validator: isValidCSSSize
+                });
               }}
-            /> */}
+            />
           </>
         )}
       </Container>

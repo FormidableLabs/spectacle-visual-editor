@@ -16,6 +16,7 @@ import { isDeckElement } from '../../../util/is-deck-element';
 import { DragWrapper, ElementLocation } from '../../helpers/drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import { moveArrayItem } from '../../../util/move-array-item';
+import { moveArrayItemToAnotherArray } from '../../../util/move-array-item-to-another-array';
 import { defaultTheme } from 'evergreen-ui';
 
 export const LayerInspector: FC = () => {
@@ -40,13 +41,7 @@ export const LayerInspector: FC = () => {
   const moveElement = useCallback(
     (currentLocation: ElementLocation, nextLocation: ElementLocation) => {
       setLocalElements((localElements) => {
-        // Only allow movement within the same parent context for now
-        if (currentLocation.parentIndex !== nextLocation.parentIndex) {
-          return localElements;
-        }
-
-        // If parentIndex is defined, then the element is nested
-        // If it is not defined, the element is a top-level element
+        // Nested element
         if (typeof currentLocation.parentIndex === 'number') {
           if (
             !Array.isArray(localElements[currentLocation.parentIndex].children)
@@ -55,21 +50,59 @@ export const LayerInspector: FC = () => {
           }
 
           const clonedLocalElements = cloneDeep(localElements);
-          const clonedElementChildren = clonedLocalElements[
-            currentLocation.parentIndex
-          ].children as ConstructedDeckElement[];
-          const reorderedElementChildren = moveArrayItem(
-            clonedElementChildren,
-            currentLocation.index,
-            nextLocation.index
-          );
 
-          clonedLocalElements[
-            currentLocation.parentIndex
-          ].children = reorderedElementChildren;
+          if (currentLocation.parentIndex === nextLocation.parentIndex) {
+            // Same parent element
+            const clonedElementChildren = clonedLocalElements[
+              currentLocation.parentIndex
+            ].children as ConstructedDeckElement[];
+
+            const reorderedElementChildren = moveArrayItem(
+              clonedElementChildren,
+              currentLocation.index,
+              nextLocation.index
+            );
+
+            clonedLocalElements[
+              currentLocation.parentIndex
+            ].children = reorderedElementChildren;
+          } else if (typeof nextLocation.parentIndex === 'number') {
+            // Different parent element
+            const clonedCurrentParentElementChildren = clonedLocalElements[
+              currentLocation.parentIndex
+            ].children as ConstructedDeckElement[];
+
+            const clonedNextParentElementChildren = clonedLocalElements[
+              nextLocation.parentIndex
+            ].children as ConstructedDeckElement[];
+
+            // Update the moving element’s parent ID to the new parent ID
+            // clonedCurrentParentElementChildren[currentLocation.index].parent =
+            //   clonedLocalElements[nextLocation.parentIndex].id;
+
+            const [
+              reorderedCurrentParentElementChildren,
+              reorderedNextParentElementChildren
+            ] = moveArrayItemToAnotherArray(
+              clonedCurrentParentElementChildren,
+              clonedNextParentElementChildren,
+              currentLocation.index,
+              nextLocation.index
+            );
+
+            clonedLocalElements[
+              currentLocation.parentIndex
+            ].children = reorderedCurrentParentElementChildren;
+
+            clonedLocalElements[
+              nextLocation.parentIndex
+            ].children = reorderedNextParentElementChildren;
+          }
+
           return clonedLocalElements;
         }
 
+        // Top level element
         return moveArrayItem(
           localElements,
           currentLocation.index,

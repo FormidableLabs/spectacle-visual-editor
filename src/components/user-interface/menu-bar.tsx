@@ -49,8 +49,6 @@ import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 import { editorSlice } from '../../slices/editor-slice';
 import { useRootSelector } from '../../store';
 
-import { handler } from './../../../netlify/functions/one-page/one-page';
-
 const MenuBarContainer = styled.div`
   width: 100%;
   background: ${defaultTheme.scales.neutral.N3};
@@ -62,6 +60,25 @@ const MenuBarContainer = styled.div`
 const LogoContainer = styled.div`
   margin: 0 2px 0 16px;
 `;
+
+function useSaveFile() {
+  return React.useCallback((text: string, fileName: string) => {
+    const a = document.createElement('a');
+    a.setAttribute('download', fileName);
+
+    // @ts-ignore
+    a.setAttribute(
+      'href',
+      `data:text/html;charset=utf-8,${encodeURIComponent(text)}`
+    );
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+  }, []);
+}
 
 export const MenuBar = () => {
   const { scale } = useSelector(settingsSelector);
@@ -101,6 +118,8 @@ export const MenuBar = () => {
     },
     []
   );
+
+  const saveFile = useSaveFile();
 
   const shouldNestableElementsBeDisabled = (insertItem: SPECTACLE_ELEMENTS) => {
     if (selectedElement) {
@@ -163,17 +182,22 @@ export const MenuBar = () => {
               appearance="minimal"
               disabled={!slides.length}
               onClick={async () => {
-                const body = JSON.stringify(slideJson);
-                // @ts-ignore
-                const res = await handler({ body });
+                try {
+                  const stringifiedSlideJson = JSON.stringify(slideJson);
 
-                const a = document.createElement('a');
-                a.setAttribute('download', 'deck.html');
+                  const response = await fetch('.netlify/functions/one-page', {
+                    method: 'post',
+                    body: stringifiedSlideJson
+                  });
 
-                // @ts-ignore
-                a.setAttribute('href', encodeURIComponent(res.body));
-                document.body.appendChild(a);
-                a.click();
+                  const html = await response.text();
+
+                  saveFile(html, 'deck.html');
+                } catch {
+                  toaster.danger(
+                    'Something went wrong while trying to export your deck.'
+                  );
+                }
               }}
             />
           </div>

@@ -1,6 +1,49 @@
 import { Handler } from '@netlify/functions';
 
-const createTemplate = (templateJson: string) => `<!DOCTYPE html>
+type ContentType = {
+  props?: Record<string, any>;
+  children?: ContentType[] | string | undefined;
+  component: string;
+};
+
+const renderChildren = (
+  content: ContentType['children']
+): string | undefined => {
+  if (Array.isArray(content)) {
+    return `${content.reduce((sum, content) => {
+      let props = '';
+
+      if (content.props) {
+        const propsFromJson = content.props;
+
+        props = Object.keys(content.props).reduce((sum, propKey) => {
+          if (typeof propsFromJson[propKey] === 'object') {
+            return (
+              sum + `${propKey}=\${${JSON.stringify(propsFromJson[propKey])}} `
+            );
+          } else if (typeof propsFromJson[propKey] === 'string') {
+            return sum + `${propKey}="${propsFromJson[propKey]}" `;
+          }
+
+          return '';
+        }, ``);
+      }
+
+      return (
+        sum +
+        `<$\{${content.component}\} ${props} >${renderChildren(
+          content.children
+        )}</$\{${content.component}\}>`
+      );
+    }, ``)}`;
+  } else if (typeof content === 'string') {
+    return content;
+  } else {
+    return undefined;
+  }
+};
+
+const createTemplate = (content: ContentType[]) => `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -39,7 +82,8 @@ const createTemplate = (templateJson: string) => `<!DOCTYPE html>
         CodePane,
         MarkdownSlide,
         MarkdownSlideSet,
-        Notes
+        Notes,
+        Markdown
       } = Spectacle;
 
       import htm from 'https://unpkg.com/htm@^3?module';
@@ -56,28 +100,42 @@ const createTemplate = (templateJson: string) => `<!DOCTYPE html>
       // SPECTACLE_CLI_THEME_END
 
       // SPECTACLE_CLI_TEMPLATE_START
-      
+      const template = () => html\`
+      <\${FlexBox} justifyContent="space-between" position="absolute" bottom=\${0} width=\${1}>
+        <\${Box} padding="0 1em">
+          <\${FullScreen} />
+        </\${Box}>
+        <$\{Box} padding="1em">
+          <$\{Progress} />
+        </$\{Box}>
+      </$\{FlexBox}>
+    \`;
 
-      const Presentation = () => html\`<div>noice</div>\`
+      const Presentation = () => html\`<\${Deck} theme=\${theme} template=\${template}>${renderChildren(
+        content
+      )}</\${Deck}>\`
      
-      ReactDOM.render(html\`<\${Presentation}/>\`, document.getElementById('root'));
+      ReactDOM.render(html\`<\${Presentation} />\`, document.getElementById('root'));
     </script>
   </body>
 </html>`;
 
 const handler: Handler = async (event) => {
-  if (!event.body) {
+  if (!event.body || (event.body && typeof event.body !== 'string')) {
     return {
       statusCode: 400,
-      body: 'Body is required for this process.'
+      body: 'This method requires a json payload.'
     };
   }
 
-  const json = JSON.parse(event.body);
+  const json = JSON.parse(event.body) as ContentType[];
 
   return {
     statusCode: 200,
-    body: createTemplate(json)
+    body: createTemplate(json),
+    headers: {
+      'content-type': 'text/html'
+    }
   };
 };
 

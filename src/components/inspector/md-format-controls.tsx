@@ -31,11 +31,8 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
   );
 
   return (
-    <React.Fragment>
-      <FreeMovementControls
-        selectedElement={selectedElement}
-        editableElementChanged={editableElementChanged}
-      />
+    <>
+      <FreeMovementControls {...{ selectedElement, editableElementChanged }} />
       <Accordion label="Markdown Content">
         <MdInput
           label="Content"
@@ -59,6 +56,6 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
           </Accordion>
         </>
       )}
-    </React.Fragment>
+    </>
   );
 };

@@ -15,30 +15,26 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
   selectedElement,
   editableElementChanged
 }) => {
-  const [displayState, setDisplayState] = useState({
-    isFreeMovement: selectedElement?.props?.componentProps?.isFreeMovement || false,
+  const [inputState, setInputState] = useState({
+    freeMovement: selectedElement?.props?.componentProps?.isFreeMovement,
+    displayPositionX: selectedElement?.props?.componentProps?.positionX || 0,
+    displayPositionY: selectedElement?.props?.componentProps?.positionY || 0,
     positionX: selectedElement?.props?.componentProps?.positionX || 0,
     positionY: selectedElement?.props?.componentProps?.positionY || 0
-  });
-
-  const [inputState, setInputState] = useState({
-    freeMovement: displayState.isFreeMovement,
-    positionX: displayState.positionX,
-    positionY: displayState.positionY
   });
 
   /* Update forms with values from dragged selection frame */
   useEffect(() => {
     setInputState({
-      freeMovement: displayState.isFreeMovement,
+      freeMovement: selectedElement?.props?.componentProps?.isFreeMovement,
+      displayPositionX: selectedElement?.props?.componentProps?.positionX,
+      displayPositionY: selectedElement?.props?.componentProps?.positionY,
       positionX: selectedElement?.props?.componentProps?.positionX,
       positionY: selectedElement?.props?.componentProps?.positionY
     });
-  }, [selectedElement, displayState.isFreeMovement]);
+  }, [selectedElement]);
 
-  const [freeMovement, toggleFreeMovement] = useToggle(
-    displayState.isFreeMovement
-  );
+  const [freeMovement, toggleFreeMovement] = useToggle(inputState.freeMovement);
 
   const handleComponentElementChanged = useCallback(
     (propName: string, val: string | number | boolean) => {
@@ -69,6 +65,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
     (options: {
       value: string | number;
       shouldSetInputState: boolean;
+      displayValueToChangeName: string;
       valueToChangeName: string;
       valueToChangeCSSName: string;
       valueAsCSSValue: string;
@@ -78,17 +75,15 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
         setInputState({
           ...inputState,
           [options.valueToChangeName]:
-            displayState[options.valueToChangeName as keyof typeof displayState]
+            inputState[
+              options.displayValueToChangeName as keyof typeof inputState
+            ]
         });
-      }
-      if (options.validator(options.value)) {
+      } else if (options.validator(options.value)) {
         if (options.shouldSetInputState) {
-          setDisplayState({
-            ...displayState,
-            [options.valueToChangeName]: options.value
-          });
           setInputState({
             ...inputState,
+            [options.displayValueToChangeName]: options.value,
             [options.valueToChangeName]: options.value
           });
         }
@@ -99,25 +94,23 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
         );
       }
     },
-    [
-      handleComponentElementChanged,
-      handleDefaultElementChanged,
-      inputState,
-      displayState
-    ]
+    [handleComponentElementChanged, handleDefaultElementChanged, inputState]
   );
 
   const onToggle = () => {
-    setInputState({
-      ...inputState,
-      positionX: displayState.positionX,
-      positionY: displayState.positionY
-    })
+    if (!inputState.freeMovement) {
+      setInputState({
+        ...inputState,
+        positionX: 0,
+        positionY: 0
+      });
+    }
     if (!freeMovement) {
       handleOnEvent({
         value: 'absolute',
         shouldSetInputState: false,
         valueToChangeName: 'position',
+        displayValueToChangeName: 'position',
         valueToChangeCSSName: 'position',
         valueAsCSSValue: 'absolute',
         validator: () => {
@@ -138,6 +131,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
         value: 'static',
         shouldSetInputState: false,
         valueToChangeName: 'position',
+        displayValueToChangeName: 'position',
         valueToChangeCSSName: 'position',
         valueAsCSSValue: 'static',
         validator: () => {
@@ -174,6 +168,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                   value: value,
                   shouldSetInputState: true,
                   valueToChangeName: 'positionX',
+                  displayValueToChangeName: 'displayPositionX',
                   valueToChangeCSSName: 'left',
                   valueAsCSSValue: value,
                   validator: isValidCSSSize
@@ -186,6 +181,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                   value,
                   shouldSetInputState: false,
                   valueToChangeName: 'positionX',
+                  displayValueToChangeName: 'displayPositionX',
                   valueToChangeCSSName: 'left',
                   valueAsCSSValue: value,
                   validator: isValidCSSSize
@@ -201,6 +197,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                   value: value,
                   shouldSetInputState: true,
                   valueToChangeName: 'positionY',
+                  displayValueToChangeName: 'displayPositionY',
                   valueToChangeCSSName: 'top',
                   valueAsCSSValue: value,
                   validator: isValidCSSSize
@@ -213,6 +210,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                   value,
                   shouldSetInputState: false,
                   valueToChangeName: 'positionY',
+                  displayValueToChangeName: 'displayPositionY',
                   valueToChangeCSSName: 'top',
                   valueAsCSSValue: value,
                   validator: isValidCSSSize

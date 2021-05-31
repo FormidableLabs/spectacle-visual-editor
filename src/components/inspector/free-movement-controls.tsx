@@ -16,7 +16,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
   editableElementChanged
 }) => {
   const [displayState, setDisplayState] = useState({
-    isFreeMovement: selectedElement?.props?.componentProps?.isFreeMovement,
+    isFreeMovement: selectedElement?.props?.componentProps?.isFreeMovement || false,
     positionX: selectedElement?.props?.componentProps?.positionX || 0,
     positionY: selectedElement?.props?.componentProps?.positionY || 0
   });
@@ -108,6 +108,11 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
   );
 
   const onToggle = () => {
+    setInputState({
+      ...inputState,
+      positionX: displayState.positionX,
+      positionY: displayState.positionY
+    })
     if (!freeMovement) {
       handleOnEvent({
         value: 'absolute',
@@ -161,7 +166,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
         ) : (
           <SplitContainer>
             <TextInputField
-              label="X-Coordinate"
+              label="X"
               value={inputState.positionX}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
                 const { value } = e.target;
@@ -188,7 +193,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
               }}
             />
             <TextInputField
-              label="Y-Coordinate"
+              label="Y"
               value={inputState.positionY}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
                 const { value } = e.target;

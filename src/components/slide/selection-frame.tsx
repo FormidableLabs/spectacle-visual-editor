@@ -116,6 +116,19 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   }, [children?.props?.width, children?.props?.height]);
 
   /**
+   *  If the child's positions change from manually entering coordinate, update the target frame
+   */
+  useEffect(() => {
+    if (moveableRef?.current?.props?.target) {
+      moveableRef.current.moveable.updateTarget();
+    }
+  }, [
+    children?.props?.componentProps?.isFreeMovement,
+    children?.props?.componentProps?.positionX,
+    children?.props?.componentProps?.positionY
+  ]);
+
+  /**
    * If img src changes, we need to reset to unloaded state
    */
   useEffect(() => {

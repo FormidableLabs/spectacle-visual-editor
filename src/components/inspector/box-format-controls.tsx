@@ -16,10 +16,7 @@ export const BoxFormatControls: React.FC<ElementControlsProps> = ({
 
   return (
     <>
-      <FreeMovementControls
-        selectedElement={selectedElement}
-        editableElementChanged={editableElementChanged}
-      />
+      <FreeMovementControls {...{ selectedElement, editableElementChanged }} />
       <ColorPickerInput
         disabled={!selectedElement?.props?.backgroundColor}
         onChangeInput={setBackgroundColor}

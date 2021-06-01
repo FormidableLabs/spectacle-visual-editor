@@ -38,6 +38,11 @@ export { Accordion } from './user-interface/accordion';
 export { ColorPickerInput } from './inputs/color';
 
 /**
- * Resizable panes
+ * Resizable Panes
  */
 export { ResizablePanes } from './resizable-panes';
+
+/**
+ * Saved Decks
+ */
+export { SavedDecks } from './saved-decks';

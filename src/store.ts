@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { undoableDeckSliceReducer } from './slices/deck-slice';
 import { settingsSlice } from './slices/settings-slice';
+import { editorSlice } from './slices/editor-slice';
 import { TypedUseSelectorHook, useSelector } from 'react-redux';
 
 export const store = configureStore({
   reducer: {
     deck: undoableDeckSliceReducer,
-    settings: settingsSlice.reducer
+    settings: settingsSlice.reducer,
+    editor: editorSlice.reducer
   }
 });
 

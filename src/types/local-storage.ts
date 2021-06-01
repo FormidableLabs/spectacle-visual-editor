@@ -1,4 +1,5 @@
 export enum LocalStorage {
   LayerPaneHeight = 'LayerPaneHeight',
-  InspectorPaneWidth = 'InspectorPaneWidth'
+  InspectorPaneWidth = 'InspectorPaneWidth',
+  SavedDecks = 'SavedDecks'
 }

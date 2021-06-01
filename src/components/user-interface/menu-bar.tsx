@@ -299,7 +299,6 @@ export const MenuBar = () => {
                 toggleDialog();
               } else {
                 dispatch(deckSlice.actions.deleteElement());
-                close();
               }
             }}
           />
@@ -320,7 +319,7 @@ export const MenuBar = () => {
         </Tooltip>
         <Popover
           position={Position.BOTTOM_LEFT}
-          content={() => (
+          content={({ close }) => (
             <Menu>
               <Menu.OptionsGroup
                 title="Preview Size"

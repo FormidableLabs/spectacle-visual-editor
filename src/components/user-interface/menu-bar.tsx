@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import {
   defaultTheme,
@@ -21,7 +21,8 @@ import {
   FloppyDiskIcon,
   ZoomInIcon,
   FullscreenIcon,
-  FolderCloseIcon
+  FolderCloseIcon,
+  TextInput
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
@@ -111,11 +112,17 @@ export const MenuBar = () => {
         <SpectacleLogo size={32} />
       </LogoContainer>
       <MenuSection>
-        <DeckTitle
-          placeholder="Untitled Deck"
-          value={title}
-          onChange={(e) => dispatch(deckSlice.actions.setTitle(e.target.value))}
-        />
+        <DeckTitle>
+          <TextInput
+            placeholder="Untitled Deck"
+            value={title}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              dispatch(deckSlice.actions.setTitle(e.target.value))
+            }
+            width={200}
+            height={28}
+          />
+        </DeckTitle>
       </MenuSection>
       <SectionDivider />
       <MenuSection>
@@ -409,17 +416,15 @@ const TooltipConditionalWrapper: React.FC<TooltipConditonalWrapperProps> = ({
   children
 }) => (condition ? wrapper(children) : children);
 
-const DeckTitle = styled.input`
-  width: 200px;
-  height: 28px;
-  line-height: 28px;
-  padding: 0 8px;
-  border: none;
-  background: none;
-  box-sizing: border-box;
-  font-family: inherit;
-  font-weight: 600;
-  font-size: 14px;
+const DeckTitle = styled.div`
+  input {
+    background: none;
+    font-weight: 600;
+
+    &:not(:hover):not(:focus) {
+      box-shadow: none;
+    }
+  }
 `;
 
 const MenuSection = styled.div`

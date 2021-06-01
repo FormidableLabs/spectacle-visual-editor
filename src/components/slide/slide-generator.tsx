@@ -5,7 +5,7 @@ import {
   Heading,
   SpectacleLogo,
   Box,
-  Image,
+  Image as SpectacleImage,
   Grid,
   ListItem,
   OrderedList,
@@ -15,6 +15,75 @@ import {
 } from 'spectacle';
 import { Slide as InternalSlide } from './slide';
 import { SelectionFrame } from './selection-frame';
+import Cropper from 'cropperjs';
+import { Dialog } from 'evergreen-ui';
+
+// @ts-ignore
+const Image = React.forwardRef<{}, { src: string; isSelected: boolean }>(
+  (props, forwardedRef) => {
+    const [
+      dialogImageRef,
+      setDialogImageRef
+    ] = React.useState<HTMLImageElement | null>();
+    const [isCropModalOpen, setCropModalOpen] = React.useState<boolean>(false);
+    const [croppedSource, setCroppedSource] = React.useState<
+      string | undefined
+    >(undefined);
+    const cropperInstance = React.useRef<Cropper | undefined>();
+
+    React.useEffect(() => {
+      if (dialogImageRef && isCropModalOpen) {
+        cropperInstance.current = new Cropper(dialogImageRef, {
+          aspectRatio: 16 / 9
+        });
+      }
+    }, [dialogImageRef, isCropModalOpen]);
+
+    const imageSource = React.useMemo(() => {
+      return croppedSource || props.src;
+    }, [props.src, croppedSource]);
+
+    return (
+      <>
+        <Dialog
+          isShown={isCropModalOpen}
+          title="Edit your image"
+          onCloseComplete={() => setCropModalOpen(false)}
+          confirmLabel="Save your changes"
+          onConfirm={() => {
+            const e = cropperInstance.current?.getCroppedCanvas();
+
+            if (!e) {
+              return;
+            }
+
+            setCroppedSource(e.toDataURL());
+          }}
+        >
+          <div>
+            <img src={props.src} ref={(r) => setDialogImageRef(r)} />
+          </div>
+        </Dialog>
+        <SpectacleImage
+          {...props}
+          //  @ts-ignore
+          ref={forwardedRef}
+          src={imageSource}
+        />
+        {props.isSelected && (
+          <div
+            style={{ position: 'absolute', top: 453, left: 28, zIndex: 10 }}
+            onClick={() => {
+              setCropModalOpen(true);
+            }}
+          >
+            Edit image
+          </div>
+        )}
+      </>
+    );
+  }
+);
 
 export const SPECTACLE_INTERNAL_OBJECT_MAP = {
   Slide: InternalSlide,
@@ -95,6 +164,9 @@ export const generateSlideTreeFromMap = (
       newElementProps,
       newElementChildren
     ) as React.ReactElement;
+
+    // console.log(newElement);
+    // console.log(editable);
 
     if (!editable || component === 'Slide') {
       return newElement;

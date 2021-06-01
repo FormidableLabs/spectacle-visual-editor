@@ -131,6 +131,7 @@ const SplitContainer = styled.div`
   grid-template-columns: 50% 50%;
   grid-column-gap: 10px;
   width: calc(100% - 10px);
+  margin-bottom: 18px;
 
   > div {
     margin-bottom: 6px;

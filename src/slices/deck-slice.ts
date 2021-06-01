@@ -26,6 +26,7 @@ import { getChildren } from '../util/get-children';
 import { LocalStorage } from '../types/local-storage';
 import { Deck } from '../types/deck';
 import { toaster } from 'evergreen-ui';
+import { parseJSON } from '../util/parse-json';
 
 type DeckState = {
   id: null | string;
@@ -99,12 +100,12 @@ export const deckSlice = createSlice({
     },
 
     saveDeck: (state, action?: PayloadAction<string | null>) => {
-      const storedDecks = localStorage.getItem(LocalStorage.SavedDecks);
-      let newStoredDecks: Array<Deck> = [];
-
-      if (storedDecks) {
-        newStoredDecks = JSON.parse(storedDecks);
-      }
+      const savedDecksStorageItem = localStorage.getItem(
+        LocalStorage.SavedDecks
+      );
+      const newStoredDecks: Deck[] = savedDecksStorageItem
+        ? parseJSON(savedDecksStorageItem, [])
+        : [];
 
       const updatedAt = new Date();
       const slides = slidesAdapter.getSelectors().selectAll(state.slides);
@@ -158,9 +159,13 @@ export const deckSlice = createSlice({
 
     deleteDeck: (state, action: PayloadAction<string | null>) => {
       const deckId = action.payload;
-      const storedDecks: Deck[] = JSON.parse(
-        localStorage.getItem(LocalStorage.SavedDecks) || '[]'
+      const savedDecksStorageItem = localStorage.getItem(
+        LocalStorage.SavedDecks
       );
+      const storedDecks: Deck[] = savedDecksStorageItem
+        ? parseJSON(savedDecksStorageItem, [])
+        : [];
+
       const newStoredDecks = storedDecks.filter(
         (storedDeck) => storedDeck.id !== deckId
       );

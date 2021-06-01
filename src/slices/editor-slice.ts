@@ -2,14 +2,17 @@ import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { Deck } from '../types/deck';
 import { LocalStorage } from '../types/local-storage';
+import { parseJSON } from '../util/parse-json';
 
 type EditorState = {
   savedDecks: Deck[];
   savedDecksIsOpen: boolean;
 };
 
-const getSavedDecksFromStorage = () =>
-  JSON.parse(localStorage.getItem(LocalStorage.SavedDecks) || '[]');
+const getSavedDecksFromStorage = () => {
+  const savedDecksStorageItem = localStorage.getItem(LocalStorage.SavedDecks);
+  return savedDecksStorageItem ? parseJSON(savedDecksStorageItem) : [];
+};
 
 const initialState: EditorState = {
   savedDecks: getSavedDecksFromStorage(),

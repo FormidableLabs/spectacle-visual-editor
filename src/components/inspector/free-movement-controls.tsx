@@ -1,4 +1,4 @@
-import { FormField, Switch, TextInputField } from 'evergreen-ui';
+import { FormField, SegmentedControl, TextInputField } from 'evergreen-ui';
 import React, {
   ChangeEvent,
   FocusEvent,
@@ -6,7 +6,6 @@ import React, {
   useEffect,
   useState
 } from 'react';
-import { useToggle } from 'react-use';
 import styled from 'styled-components';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
 import { ElementControlsProps } from './element-controls-props';
@@ -34,7 +33,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
     });
   }, [selectedElement]);
 
-  const [freeMovement, toggleFreeMovement] = useToggle(inputState.freeMovement);
+  const [freeMovement, setFreeMovement] = useState(inputState.freeMovement);
 
   const handleComponentElementChanged = useCallback(
     (propName: string, val: string | number | boolean) => {
@@ -98,6 +97,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
   );
 
   const onToggle = () => {
+    /* Initialize with 0s */
     if (!inputState.freeMovement) {
       setInputState({
         ...inputState,
@@ -144,23 +144,23 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
 
   return (
     <>
-      <Container label="Free Movement">
-        <SwitchContainer label="Free-moving position element">
-          <Switch
-            checked={freeMovement}
-            onChange={() => {
-              toggleFreeMovement();
-              onToggle();
-            }}
-          />
-        </SwitchContainer>
+      <Container label="Object Placement">
+        <SegmentedControl
+          options={[
+            { label: 'In-line', value: false },
+            { label: 'Absolute', value: true }
+          ]}
+          value={freeMovement}
+          onChange={() => {
+            setFreeMovement(!freeMovement);
+            onToggle();
+          }}
+        />
 
-        {!freeMovement ? (
-          <></>
-        ) : (
+        {freeMovement ? (
           <SplitContainer>
             <TextInputField
-              label="X"
+              label="X:"
               value={inputState.positionX}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
                 const { value } = e.target;
@@ -187,9 +187,10 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                   validator: isValidCSSSize
                 });
               }}
+              disabled={!freeMovement}
             />
             <TextInputField
-              label="Y"
+              label="Y:"
               value={inputState.positionY}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
                 const { value } = e.target;
@@ -216,8 +217,11 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                   validator: isValidCSSSize
                 });
               }}
+              disabled={!freeMovement}
             />
           </SplitContainer>
+        ) : (
+          <></>
         )}
       </Container>
     </>
@@ -235,15 +239,6 @@ const Container = styled(FormField)`
   }
 `;
 
-const SwitchContainer = styled(FormField)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  > label {
-    margin-right: 10px;
-  }
-`;
-
 const SplitContainer = styled.div`
   display: grid;
   grid-template-columns: 50% 50%;
@@ -252,5 +247,11 @@ const SplitContainer = styled.div`
 
   > div {
     margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+
+    label {
+      margin-right: 10px;
+    }
   }
 `;

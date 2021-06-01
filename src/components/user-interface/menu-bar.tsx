@@ -112,17 +112,19 @@ export const MenuBar = () => {
         <SpectacleLogo size={32} />
       </LogoContainer>
       <MenuSection>
-        <DeckTitle>
-          <TextInput
-            placeholder="Untitled Deck"
-            value={title}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              dispatch(deckSlice.actions.setTitle(e.target.value))
-            }
-            width={200}
-            height={28}
-          />
-        </DeckTitle>
+        <Tooltip content="Rename">
+          <DeckTitle>
+            <TextInput
+              placeholder="Untitled Deck"
+              value={title}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                dispatch(deckSlice.actions.setTitle(e.target.value))
+              }
+              width={200}
+              height={28}
+            />
+          </DeckTitle>
+        </Tooltip>
       </MenuSection>
       <SectionDivider />
       <MenuSection>

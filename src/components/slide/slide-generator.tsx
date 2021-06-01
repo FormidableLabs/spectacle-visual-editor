@@ -165,9 +165,6 @@ export const generateSlideTreeFromMap = (
       newElementChildren
     ) as React.ReactElement;
 
-    // console.log(newElement);
-    // console.log(editable);
-
     if (!editable || component === 'Slide') {
       return newElement;
     }

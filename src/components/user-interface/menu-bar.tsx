@@ -64,9 +64,9 @@ const LogoContainer = styled.div`
 function useSaveFile() {
   return React.useCallback((text: string, fileName: string) => {
     const a = document.createElement('a');
+
     a.setAttribute('download', fileName);
 
-    // @ts-ignore
     a.setAttribute(
       'href',
       `data:text/html;charset=utf-8,${encodeURIComponent(text)}`
@@ -189,6 +189,10 @@ export const MenuBar = () => {
                     method: 'post',
                     body: stringifiedSlideJson
                   });
+
+                  if (response.status !== 200) {
+                    throw response.statusText || 'Something went wrong.';
+                  }
 
                   const html = await response.text();
 

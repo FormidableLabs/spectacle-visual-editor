@@ -121,6 +121,8 @@ const createTemplate = (content: ContentType[]) => `<!DOCTYPE html>
 </html>`;
 
 const handler: Handler = async (event) => {
+  let deck: string;
+
   if (!event.body || (event.body && typeof event.body !== 'string')) {
     return {
       statusCode: 400,
@@ -128,11 +130,20 @@ const handler: Handler = async (event) => {
     };
   }
 
-  const json = JSON.parse(event.body) as ContentType[];
+  try {
+    const slides = JSON.parse(event.body) as ContentType[];
+
+    deck = createTemplate(slides);
+  } catch {
+    return {
+      statusCode: 400,
+      body: 'Invalid JSON payload.'
+    };
+  }
 
   return {
     statusCode: 200,
-    body: createTemplate(json),
+    body: deck,
     headers: {
       'content-type': 'text/html'
     }

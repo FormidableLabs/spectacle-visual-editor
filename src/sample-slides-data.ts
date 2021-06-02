@@ -39,7 +39,9 @@ export const sampleElementsData: DeckElement[] = [
     props: {
       height: '100%',
       flexDirection: 'column',
-      backgroundColor: '#2a3668'
+      backgroundColor: '#2a3668',
+      borderColor: '#ffffff',
+      componentProps: {}
     },
     children: [childId2, childId3],
     parent: sampleSlidesData[0].id
@@ -49,7 +51,7 @@ export const sampleElementsData: DeckElement[] = [
     id: childId2,
     props: {
       componentProps: {
-        margin: 10
+        margin: '10px'
       }
     },
     children: '## Spectacle',

@@ -6,7 +6,13 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DragWrapper } from '../../helpers/drag-wrapper';
 import styled, { css } from 'styled-components';
-import { TrashIcon, IconButton, PlusIcon, defaultTheme } from 'evergreen-ui';
+import {
+  TrashIcon,
+  IconButton,
+  PlusIcon,
+  Tooltip,
+  defaultTheme
+} from 'evergreen-ui';
 import { useRootSelector } from '../../../store';
 import { moveArrayItem } from '../../../util/move-array-item';
 
@@ -111,32 +117,34 @@ export const TimelineSlideViewer: React.FC<Props> = ({
                 </DragWrapper>
 
                 {slides.length > 1 && (
-                  <DeleteButton>
-                    <IconButton
-                      icon={TrashIcon}
-                      appearance="minimal"
-                      onClick={() =>
-                        dispatch(deckSlice.actions.deleteSlide(slide.key))
-                      }
-                      title="Delete Slide"
-                    />
-                  </DeleteButton>
+                  <Tooltip content="Delete Slide">
+                    <DeleteButton>
+                      <IconButton
+                        icon={TrashIcon}
+                        appearance="minimal"
+                        onClick={() =>
+                          dispatch(deckSlice.actions.deleteSlide(slide.key))
+                        }
+                      />
+                    </DeleteButton>
+                  </Tooltip>
                 )}
               </Slide>
             ))}
           </DndProvider>
         </Slides>
 
-        <AddButton>
-          <IconButton
-            width={80}
-            height="100%"
-            icon={PlusIcon}
-            appearance="minimal"
-            onClick={() => dispatch(deckSlice.actions.newSlideAdded())}
-            title="Add Slide"
-          />
-        </AddButton>
+        <Tooltip content="Add Slide">
+          <AddButton>
+            <IconButton
+              width={80}
+              height="100%"
+              icon={PlusIcon}
+              appearance="minimal"
+              onClick={() => dispatch(deckSlice.actions.newSlideAdded())}
+            />
+          </AddButton>
+        </Tooltip>
       </Container>
     </SlideViewerWrapper>
   );

@@ -22,7 +22,7 @@ import {
   ZoomInIcon,
   FullscreenIcon,
   FolderCloseIcon,
-  TextInput
+  TextInput,
   UploadIcon
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';

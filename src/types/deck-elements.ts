@@ -14,6 +14,13 @@ export type SPECTACLE_ELEMENTS =
   | 'CodePane';
 export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];
 export const CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Grid'];
+export const FREE_MOVING_ELEMENTS: SPECTACLE_ELEMENTS[] = [
+  'Markdown',
+  'FlexBox',
+  'Image',
+  'Grid',
+  'CodePane'
+];
 
 export type DeckElementMap = { [id: string]: DeckElement };
 

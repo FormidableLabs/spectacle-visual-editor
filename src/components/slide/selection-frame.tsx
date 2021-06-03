@@ -7,7 +7,7 @@ import React, {
   MouseEvent
 } from 'react';
 import styled from 'styled-components';
-import Moveable, { OnResizeEnd } from 'react-moveable';
+import Moveable, { OnDrag, OnDragEnd, OnResizeEnd } from 'react-moveable';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   deckSlice,
@@ -72,6 +72,32 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     [dispatch]
   );
 
+  const handleOnDragMovement = (event: OnDrag) => {
+    event.target.style.top = `${event.top}px`;
+    event.target.style.left = `${event.left}px`;
+  };
+
+  const handleOnDragMovementEnd = useCallback(
+    (event: OnDragEnd) => {
+      if (event.lastEvent) {
+        dispatch(
+          deckSlice.actions.editableElementChanged({
+            left: `${Math.round(event.lastEvent.left)}px`,
+            top: `${Math.round(event.lastEvent.top)}px`,
+            componentProps: {
+              isFreeMovement: true,
+              positionX: `${Math.round(event.lastEvent.left)}px`,
+              positionY: `${Math.round(event.lastEvent.top)}px`
+            }
+          })
+        );
+        event.target.style.top = '';
+        event.target.style.left = '';
+      }
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     if (editableElementId === children.props.id) {
       setTarget(ref.current || null);
@@ -88,6 +114,19 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
       moveableRef.current.updateRect();
     }
   }, [children?.props?.width, children?.props?.height]);
+
+  /**
+   *  If the child's positions change from manually entering coordinate, update the target frame
+   */
+  useEffect(() => {
+    if (moveableRef?.current?.props?.target) {
+      moveableRef.current.moveable.updateTarget();
+    }
+  }, [
+    children?.props?.componentProps?.isFreeMovement,
+    children?.props?.componentProps?.positionX,
+    children?.props?.componentProps?.positionY
+  ]);
 
   /**
    * If img src changes, we need to reset to unloaded state
@@ -147,6 +186,9 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
           keepRatio={children.props.type === 'Image'}
+          draggable={children.props.componentProps?.isFreeMovement}
+          onDrag={handleOnDragMovement}
+          onDragEnd={handleOnDragMovementEnd}
           key={treeId}
         />
       )}

@@ -67,7 +67,10 @@ export const sampleElementsData: DeckElement[] = [
     component: 'Markdown',
     id: childId5,
     children: '- one\n- two\n- three',
-    parent: sampleSlidesData[1].id
+    parent: sampleSlidesData[1].id,
+    props: {
+      componentProps: {}
+    }
   },
   {
     component: 'Markdown',

@@ -141,14 +141,12 @@ export const MenuBar = () => {
           />
         </Tooltip>
         <Tooltip content="New Deck ⌘S">
-          <div>
-            <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
-              icon={DocumentIcon}
-              appearance="minimal"
-              onClick={() => dispatch(createNewDeck())}
-            />
-          </div>
+          <StyledIconButton
+            fill={defaultTheme.colors.icon.selected}
+            icon={DocumentIcon}
+            appearance="minimal"
+            onClick={() => dispatch(createNewDeck())}
+          />
         </Tooltip>
         <Tooltip content="Save Deck ⌘S">
           <div>

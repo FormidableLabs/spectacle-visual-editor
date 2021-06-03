@@ -1,11 +1,32 @@
 import React from 'react';
 
 import Cropper from 'cropperjs';
-import { Dialog, toaster } from 'evergreen-ui';
+import { Dialog, CogIcon, IconButton, UndoIcon, toaster } from 'evergreen-ui';
 import { useDispatch } from 'react-redux';
 import { Image as SpectacleImage } from 'spectacle';
+import styled from 'styled-components';
 
 import { deckSlice } from '../../slices/deck-slice';
+
+const ButtonContainer = styled.div`
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10;
+`;
+
+const Overlay = styled.div<{
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}>`
+  position: absolute;
+  left: ${(props) => props.left + 'px;'};
+  top: ${(props) => props.top + 'px;'};
+  width: ${(props) => props.width + 'px;'};
+  height: ${(props) => props.height + 'px;'};
+`;
 
 const Image = React.forwardRef<
   {},
@@ -104,6 +125,7 @@ const Image = React.forwardRef<
         title="Edit your image"
         onCloseComplete={() => setCropModalOpen(false)}
         confirmLabel="Save your changes"
+        width={`75%`}
         onConfirm={() => {
           const e = cropperInstance.current?.getCroppedCanvas();
 
@@ -132,32 +154,15 @@ const Image = React.forwardRef<
         onLoad={interceptOnLoad}
       />
       {props.isSelected && hasImageLoaded && !!imageDimensions && (
-        <div
-          style={{
-            position: 'absolute',
-            left: imageDimensions.left,
-            top: imageDimensions.top,
-            width: imageDimensions.width,
-            height: imageDimensions.height
-          }}
+        <Overlay
+          left={imageDimensions.left}
+          top={imageDimensions.top}
+          width={imageDimensions.width}
+          height={imageDimensions.height}
         >
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 20,
-              right: 20,
-              zIndex: 10
-            }}
-          >
-            <button
-              onClick={() => {
-                setCropModalOpen(true);
-              }}
-            >
-              Edit image
-            </button>
+          <ButtonContainer>
             {props.croppedSrc && (
-              <button
+              <IconButton
                 onClick={() => {
                   dispatch(
                     deckSlice.actions.editableElementChanged({
@@ -165,12 +170,22 @@ const Image = React.forwardRef<
                     })
                   );
                 }}
-              >
-                Restore original
-              </button>
+                icon={UndoIcon}
+                height={48}
+                marginLeft="auto"
+                marginBottom="8px"
+              />
             )}
-          </div>
-        </div>
+            <IconButton
+              onClick={() => {
+                setCropModalOpen(true);
+              }}
+              icon={CogIcon}
+              height={48}
+              marginLeft="auto"
+            />
+          </ButtonContainer>
+        </Overlay>
       )}
     </>
   );

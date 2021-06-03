@@ -23,6 +23,8 @@ const renderChildren = (
             );
           } else if (typeof propsFromJson[propKey] === 'string') {
             return sum + `${propKey}="${propsFromJson[propKey]}" `;
+          } else if (typeof propsFromJson[propKey] === 'number') {
+            return sum + `${propKey}="${propsFromJson[propKey]}px" `;
           }
 
           return '';

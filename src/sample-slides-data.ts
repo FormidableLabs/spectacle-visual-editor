@@ -38,6 +38,7 @@ export const sampleElementsData: DeckElement[] = [
     id: childId1,
     props: {
       height: '100%',
+      width: '100%',
       flexDirection: 'column',
       backgroundColor: '#2a3668',
       borderColor: '#ffffff',

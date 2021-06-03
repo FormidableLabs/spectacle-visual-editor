@@ -19,7 +19,9 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
     displayPositionX: selectedElement?.props?.componentProps?.positionX || 0,
     displayPositionY: selectedElement?.props?.componentProps?.positionY || 0,
     positionX: selectedElement?.props?.componentProps?.positionX || 0,
-    positionY: selectedElement?.props?.componentProps?.positionY || 0
+    positionY: selectedElement?.props?.componentProps?.positionY || 0,
+    width: selectedElement?.props?.width || 0,
+    height: selectedElement?.props?.height || 0
   });
 
   /* Update forms with values from dragged selection frame */
@@ -29,7 +31,9 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
       displayPositionX: selectedElement?.props?.componentProps?.positionX,
       displayPositionY: selectedElement?.props?.componentProps?.positionY,
       positionX: selectedElement?.props?.componentProps?.positionX,
-      positionY: selectedElement?.props?.componentProps?.positionY
+      positionY: selectedElement?.props?.componentProps?.positionY,
+      width: selectedElement?.props?.width,
+      height: selectedElement?.props?.height
     });
   }, [selectedElement]);
 
@@ -187,7 +191,6 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                   validator: isValidCSSSize
                 });
               }}
-              disabled={!freeMovement}
             />
             <TextInputField
               label="Y:"
@@ -217,7 +220,65 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                   validator: isValidCSSSize
                 });
               }}
-              disabled={!freeMovement}
+            />
+
+            <TextInputField
+              label="Width:"
+              value={inputState.width}
+              onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                const { value } = e.target;
+                handleOnEvent({
+                  value: value,
+                  shouldSetInputState: true,
+                  valueToChangeName: 'width',
+                  displayValueToChangeName: 'width',
+                  valueToChangeCSSName: 'width',
+                  valueAsCSSValue: value,
+                  validator: isValidCSSSize
+                });
+              }}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                const { value } = e.target;
+                setInputState({ ...inputState, width: value });
+                handleOnEvent({
+                  value,
+                  shouldSetInputState: false,
+                  valueToChangeName: 'width',
+                  displayValueToChangeName: 'width',
+                  valueToChangeCSSName: 'width',
+                  valueAsCSSValue: value,
+                  validator: isValidCSSSize
+                });
+              }}
+            />
+            <TextInputField
+              label="Height:"
+              value={inputState.height}
+              onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                const { value } = e.target;
+                handleOnEvent({
+                  value: value,
+                  shouldSetInputState: true,
+                  valueToChangeName: 'height',
+                  displayValueToChangeName: 'height',
+                  valueToChangeCSSName: 'height',
+                  valueAsCSSValue: value,
+                  validator: isValidCSSSize
+                });
+              }}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                const { value } = e.target;
+                setInputState({ ...inputState, height: value });
+                handleOnEvent({
+                  value,
+                  shouldSetInputState: false,
+                  valueToChangeName: 'height',
+                  displayValueToChangeName: 'height',
+                  valueToChangeCSSName: 'height',
+                  valueAsCSSValue: value,
+                  validator: isValidCSSSize
+                });
+              }}
             />
           </SplitContainer>
         ) : (

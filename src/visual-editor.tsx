@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   SlideViewer,
   AppBodyStyle,
@@ -8,7 +8,8 @@ import {
   MenuBar,
   EditorCanvas,
   Inspector,
-  ResizablePanes
+  ResizablePanes,
+  SavedDecks
 } from './components';
 import { sampleElementsData, sampleSlidesData } from './sample-slides-data';
 import { deckSlice } from './slices/deck-slice';
@@ -19,7 +20,10 @@ import {
   useLocallyStoredState
 } from './hooks';
 import { RouteComponentProps } from '@reach/router';
+import { settingsSelector } from './slices/settings-slice';
 import { LocalStorage } from './types/local-storage';
+import { defaultTheme } from 'spectacle';
+import { v4 } from 'uuid';
 
 export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const dispatch = useDispatch();
@@ -27,19 +31,26 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const { handleCanvasMouseDown, handleSlideSelected } = useEditorActions();
 
   const canvasRef = useRef<HTMLDivElement>(null);
-  const scale = useSlideScale(canvasRef);
+  const slideScale = useSlideScale(canvasRef);
+  const { scale } = useSelector(settingsSelector);
 
   const [initialSize, onResize] = useLocallyStoredState(
     LocalStorage.InspectorPaneWidth,
     300
   );
 
+  // Load dummy data
   useEffect(() => {
     if (Array.isArray(slideNodes) && slideNodes.length > 0) {
       return;
     }
     dispatch(
-      deckSlice.actions.deckLoaded({
+      deckSlice.actions.loadDeck({
+        id: v4(),
+        title: 'Dummy Deck',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        theme: defaultTheme,
         slides: sampleSlidesData,
         elements: sampleElementsData
       })
@@ -50,14 +61,19 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
     <EditorBody>
       <AppBodyStyle />
       <MenuBar />
+      <SavedDecks />
       <ResizablePanes
         orientation="horizontal"
         initialSize={initialSize}
         minSize={300}
         onResize={onResize}
       >
-        <EditorCanvas ref={canvasRef} onMouseDown={handleCanvasMouseDown}>
-          <SlideViewer scale={scale}>{activeSlideNode}</SlideViewer>
+        <EditorCanvas
+          scale={scale}
+          ref={canvasRef}
+          onMouseDown={handleCanvasMouseDown}
+        >
+          <SlideViewer scale={slideScale}>{activeSlideNode}</SlideViewer>
         </EditorCanvas>
         <Inspector />
       </ResizablePanes>

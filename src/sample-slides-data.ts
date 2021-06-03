@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { DeckElementMap, DeckSlide } from './types/deck-elements';
+import { DeckElement, DeckSlide } from './types/deck-elements';
 
 const childId1 = v4();
 const childId2 = v4();
@@ -32,37 +32,38 @@ export const sampleSlidesData: DeckSlide[] = [
   }
 ];
 
-export const sampleElementsData: DeckElementMap = {
-  [childId1]: {
+export const sampleElementsData: DeckElement[] = [
+  {
     component: 'FlexBox',
     id: childId1,
     props: {
       height: '100%',
       flexDirection: 'column',
       backgroundColor: '#2a3668',
+      borderColor: '#ffffff',
       componentProps: {}
     },
     children: [childId2, childId3],
     parent: sampleSlidesData[0].id
   },
-  [childId2]: {
+  {
     component: 'Markdown',
     id: childId2,
     props: {
       componentProps: {
-        margin: 10
+        margin: '10px'
       }
     },
     children: '## Spectacle',
     parent: childId1
   },
-  [childId4]: {
+  {
     component: 'Markdown',
     id: childId4,
     children: '# Second Slide',
     parent: sampleSlidesData[1].id
   },
-  [childId5]: {
+  {
     component: 'Markdown',
     id: childId5,
     children: '- one\n- two\n- three',
@@ -71,16 +72,16 @@ export const sampleElementsData: DeckElementMap = {
       componentProps: {}
     }
   },
-  [childId6]: {
+  {
     component: 'Markdown',
     id: childId6,
     children: '# Third Slide',
     parent: sampleSlidesData[2].id
   },
-  [childId7]: {
+  {
     component: 'Markdown',
     id: childId7,
     children: '# Fourth Slide',
     parent: sampleSlidesData[3].id
   }
-};
+];

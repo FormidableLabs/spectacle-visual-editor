@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import {
   defaultTheme,
@@ -20,13 +20,16 @@ import {
   TrashIcon,
   FloppyDiskIcon,
   ZoomInIcon,
-  FullscreenIcon
+  FullscreenIcon,
+  FolderCloseIcon,
+  TextInput
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActionCreators as UndoActionCreators } from 'redux-undo';
 import {
   deckSlice,
+  deckSelector,
   hasPastSelector,
   hasFutureSelector,
   selectedElementSelector,
@@ -42,6 +45,7 @@ import {
 } from '../../types/deck-elements';
 import { useMousetrap } from 'spectacle';
 import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
+import { editorSlice } from '../../slices/editor-slice';
 
 const MenuBarContainer = styled.div`
   width: 100%;
@@ -61,6 +65,7 @@ export const MenuBar = () => {
   const hasFuture = useSelector(hasFutureSelector);
   const hasPaste = useSelector(hasPasteElementSelector);
   const selectedElement = useSelector(selectedElementSelector);
+  const { isSaved, id, title } = useSelector(deckSelector);
   const slides = useSelector(slidesSelector);
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
@@ -72,6 +77,14 @@ export const MenuBar = () => {
 
   useMousetrap(
     {
+      [KEYBOARD_SHORTCUTS.OPEN]: (e) => {
+        e?.preventDefault();
+        dispatch(editorSlice.actions.toggleSavedDecksMenu());
+      },
+      [KEYBOARD_SHORTCUTS.SAVE]: (e) => {
+        e?.preventDefault();
+        dispatch(deckSlice.actions.saveDeck(id));
+      },
       [KEYBOARD_SHORTCUTS.CUT]: () => {
         copyElement('Element cut!');
         dispatch(deckSlice.actions.deleteElement());
@@ -99,13 +112,42 @@ export const MenuBar = () => {
         <SpectacleLogo size={32} />
       </LogoContainer>
       <MenuSection>
-        <Tooltip content="Save ⌘S">
+        <Tooltip content="Rename">
+          <DeckTitle>
+            <TextInput
+              placeholder="Untitled Deck"
+              value={title}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                dispatch(deckSlice.actions.setTitle(e.target.value))
+              }
+              width={200}
+              height={28}
+            />
+          </DeckTitle>
+        </Tooltip>
+      </MenuSection>
+      <SectionDivider />
+      <MenuSection>
+        <Tooltip content="Open ⌘O">
           <StyledIconButton
-            fill="#1070ca"
-            icon={FloppyDiskIcon}
+            fill={defaultTheme.colors.icon.selected}
+            icon={FolderCloseIcon}
             appearance="minimal"
-            onClick={() => {}}
+            onClick={() => {
+              dispatch(editorSlice.actions.toggleSavedDecksMenu());
+            }}
           />
+        </Tooltip>
+        <Tooltip content="Save ⌘S">
+          <div>
+            <StyledIconButton
+              fill={defaultTheme.colors.icon.selected}
+              icon={FloppyDiskIcon}
+              appearance="minimal"
+              disabled={isSaved}
+              onClick={() => dispatch(deckSlice.actions.saveDeck(id))}
+            />
+          </div>
         </Tooltip>
       </MenuSection>
       <SectionDivider />
@@ -158,7 +200,7 @@ export const MenuBar = () => {
         >
           <Tooltip content="Insert">
             <StyledIconButton
-              fill="#1070ca"
+              fill={defaultTheme.colors.icon.selected}
               icon={PlusIcon}
               appearance="minimal"
             />
@@ -192,7 +234,7 @@ export const MenuBar = () => {
         >
           <Tooltip content="Slides">
             <StyledIconButton
-              fill="#1070ca"
+              fill={defaultTheme.colors.icon.selected}
               icon={GridViewIcon}
               appearance="minimal"
             />
@@ -204,7 +246,7 @@ export const MenuBar = () => {
         <Tooltip content="Undo ⌘Z">
           <div>
             <StyledIconButton
-              fill="#1070ca"
+              fill={defaultTheme.colors.icon.selected}
               icon={UndoIcon}
               appearance="minimal"
               disabled={!hasPast}
@@ -217,7 +259,7 @@ export const MenuBar = () => {
         <Tooltip content="Redo ⇧⌘Z">
           <div>
             <StyledIconButton
-              fill="#1070ca"
+              fill={defaultTheme.colors.icon.selected}
               icon={RedoIcon}
               appearance="minimal"
               disabled={!hasFuture}
@@ -230,7 +272,7 @@ export const MenuBar = () => {
         <Tooltip content="Cut ⌘X">
           <div>
             <StyledIconButton
-              fill="#1070ca"
+              fill={defaultTheme.colors.icon.selected}
               icon={CutIcon}
               appearance="minimal"
               disabled={!selectedElement}
@@ -244,7 +286,7 @@ export const MenuBar = () => {
         <Tooltip content="Copy ⌘C">
           <div>
             <StyledIconButton
-              fill="#1070ca"
+              fill={defaultTheme.colors.icon.selected}
               icon={DuplicateIcon}
               appearance="minimal"
               disabled={!selectedElement}
@@ -257,7 +299,7 @@ export const MenuBar = () => {
         <Tooltip content="Paste ⌘P">
           <div>
             <StyledIconButton
-              fill="#1070ca"
+              fill={defaultTheme.colors.icon.selected}
               icon={ClipboardIcon}
               appearance="minimal"
               disabled={!hasPaste}
@@ -287,7 +329,7 @@ export const MenuBar = () => {
 
         <Tooltip content="Delete ⌘D">
           <StyledIconButton
-            fill="#D14343"
+            fill={defaultTheme.colors.icon.danger}
             icon={TrashIcon}
             appearance="minimal"
             intent="danger"
@@ -299,7 +341,6 @@ export const MenuBar = () => {
                 toggleDialog();
               } else {
                 dispatch(deckSlice.actions.deleteElement());
-                close();
               }
             }}
           />
@@ -310,7 +351,7 @@ export const MenuBar = () => {
       <MenuSection>
         <Tooltip content="Present Deck">
           <StyledIconButton
-            fill="#1070ca"
+            fill={defaultTheme.colors.icon.selected}
             icon={FullscreenIcon}
             appearance="minimal"
             onClick={() => {
@@ -320,7 +361,7 @@ export const MenuBar = () => {
         </Tooltip>
         <Popover
           position={Position.BOTTOM_LEFT}
-          content={() => (
+          content={({ close }) => (
             <Menu>
               <Menu.OptionsGroup
                 title="Preview Size"
@@ -339,7 +380,7 @@ export const MenuBar = () => {
         >
           <Tooltip content="Preview Size">
             <StyledIconButton
-              fill="#1070ca"
+              fill={defaultTheme.colors.icon.selected}
               icon={ZoomInIcon}
               appearance="minimal"
             />
@@ -376,6 +417,17 @@ const TooltipConditionalWrapper: React.FC<TooltipConditonalWrapperProps> = ({
   wrapper,
   children
 }) => (condition ? wrapper(children) : children);
+
+const DeckTitle = styled.div`
+  input {
+    background: none;
+    font-weight: 600;
+
+    &:not(:hover):not(:focus) {
+      box-shadow: none;
+    }
+  }
+`;
 
 const MenuSection = styled.div`
   display: flex;

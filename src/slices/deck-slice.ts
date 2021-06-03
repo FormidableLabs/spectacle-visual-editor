@@ -23,7 +23,14 @@ import { copyDeckElement } from '../util/copy-deck-element';
 import { ROOT_ELEMENT } from '../templates/basic-layouts';
 import undoable from 'redux-undo';
 import { getChildren } from '../util/get-children';
+import { LocalStorage } from '../types/local-storage';
+import { Deck } from '../types/deck';
+import { toaster } from 'evergreen-ui';
+import { parseJSON } from '../util/parse-json';
+
 type DeckState = {
+  id: null | string;
+  title: string;
   slides: EntityState<DeckSlide>;
   elements: EntityState<DeckElement>;
   activeSlideId: null | string;
@@ -31,6 +38,7 @@ type DeckState = {
   selectedEditableElementId: null | string;
   copiedElement: null | { id: string; elements: DeckElementMap };
   theme: SpectacleTheme;
+  isSaved: boolean;
 };
 
 export const slidesAdapter = createEntityAdapter<DeckSlide>();
@@ -52,26 +60,128 @@ const getSelectedElementImmer = (state: DeckState) => {
 };
 
 const initialState: DeckState = {
+  id: null,
+  title: '',
   slides: slidesAdapter.getInitialState(),
   elements: elementsAdapter.getInitialState(),
   activeSlideId: null,
   hoveredEditableElementId: null,
   selectedEditableElementId: null,
   copiedElement: null,
-  theme: defaultTheme
+  theme: defaultTheme,
+  isSaved: true
 };
 
 export const deckSlice = createSlice({
   name: 'deck',
   initialState,
   reducers: {
-    deckLoaded: (
-      state,
-      action: PayloadAction<{ slides: DeckSlide[]; elements: DeckElementMap }>
-    ) => {
+    loadDeck: (state, action: PayloadAction<Deck>) => {
+      state.id = action.payload.id;
+      state.title = action.payload.title;
+      state.theme = action.payload.theme || initialState.theme;
+
+      // Reset deck context specific properties
+      state.activeSlideId =
+        action.payload.slides[0]?.id || initialState.activeSlideId;
+      state.hoveredEditableElementId = initialState.hoveredEditableElementId;
+      state.selectedEditableElementId = initialState.selectedEditableElementId;
+      state.copiedElement = initialState.copiedElement;
+
+      slidesAdapter.removeAll(state.slides);
+      elementsAdapter.removeAll(state.elements);
+
       slidesAdapter.addMany(state.slides, action.payload.slides);
       elementsAdapter.addMany(state.elements, action.payload.elements);
-      state.activeSlideId = action.payload.slides[0]?.id || null;
+
+      toaster.success(`Loaded ${action.payload.title || 'Untitled Deck'}`);
+
+      state.isSaved = true;
+    },
+
+    saveDeck: (state, action?: PayloadAction<string | null>) => {
+      const savedDecksStorageItem = localStorage.getItem(
+        LocalStorage.SavedDecks
+      );
+      const newStoredDecks: Deck[] = savedDecksStorageItem
+        ? parseJSON(savedDecksStorageItem, [])
+        : [];
+
+      const updatedAt = new Date();
+      const slides = slidesAdapter.getSelectors().selectAll(state.slides);
+      const elements = elementsAdapter.getSelectors().selectAll(state.elements);
+
+      const newDeckData = {
+        updatedAt,
+        title: state.title,
+        theme: state.theme,
+        slides,
+        elements
+      };
+
+      const deckId = action?.payload;
+      const deckIndex = newStoredDecks.findIndex(
+        (storedDeck) => storedDeck.id === deckId
+      );
+
+      if (newStoredDecks[deckIndex]) {
+        // Save existing deck
+        newStoredDecks[deckIndex] = {
+          ...newStoredDecks[deckIndex],
+          ...newDeckData
+        };
+      } else {
+        // Save as new deck
+        const id = v4();
+
+        newStoredDecks.push({
+          ...newDeckData,
+          id,
+          createdAt: updatedAt
+        });
+
+        state.id = id;
+      }
+
+      localStorage.setItem(
+        LocalStorage.SavedDecks,
+        JSON.stringify(newStoredDecks)
+      );
+
+      toaster.success(`Saved ${state.title || 'Untitled Deck'}`);
+
+      state.isSaved = true;
+    },
+
+    markAsUnsaved: (state) => {
+      state.isSaved = false;
+    },
+
+    deleteDeck: (state, action: PayloadAction<string | null>) => {
+      const deckId = action.payload;
+      const savedDecksStorageItem = localStorage.getItem(
+        LocalStorage.SavedDecks
+      );
+      const storedDecks: Deck[] = savedDecksStorageItem
+        ? parseJSON(savedDecksStorageItem, [])
+        : [];
+
+      const newStoredDecks = storedDecks.filter(
+        (storedDeck) => storedDeck.id !== deckId
+      );
+
+      const deck = storedDecks.find((storedDeck) => storedDeck.id === deckId);
+      toaster.success(`Deleted ${deck?.title || 'Untitled Deck'}`);
+
+      localStorage.setItem(
+        LocalStorage.SavedDecks,
+        JSON.stringify(newStoredDecks)
+      );
+    },
+
+    setTitle: (state, action: PayloadAction<string>) => {
+      state.title = action.payload;
+      state.isSaved = false;
     },
 
     activeSlideWasChanged: (state, action: PayloadAction<string>) => {
@@ -99,6 +209,7 @@ export const deckSlice = createSlice({
       slidesAdapter.addOne(state.slides, newSlide);
       state.activeSlideId = newSlide.id;
       state.selectedEditableElementId = null;
+      state.isSaved = false;
     },
 
     elementAddedToActiveSlide: (
@@ -149,6 +260,7 @@ export const deckSlice = createSlice({
 
       elementsAdapter.addOne(state.elements, newElement);
       state.selectedEditableElementId = newElementId;
+      state.isSaved = false;
     },
 
     editableElementHovered: (state, action) => {
@@ -175,6 +287,8 @@ export const deckSlice = createSlice({
       if (incomingChildren != null) {
         selectedElement.children = incomingChildren;
       }
+
+      state.isSaved = false;
     },
     deleteSlide: (state, action) => {
       // The slide ID to delete can be passed via action.payload
@@ -207,14 +321,17 @@ export const deckSlice = createSlice({
 
     updateThemeColors: (state, action) => {
       state.theme.colors = { ...state.theme.colors, ...action.payload };
+      state.isSaved = false;
     },
 
     updateThemeFontSizes: (state, action) => {
       state.theme.fontSizes = { ...state.theme.fontSizes, ...action.payload };
+      state.isSaved = false;
     },
 
     updateThemeSize: (state, action) => {
       state.theme.size = { ...state.theme.size, ...action.payload };
+      state.isSaved = false;
     },
 
     deleteElement: (state) => {
@@ -254,6 +371,7 @@ export const deckSlice = createSlice({
         });
       }
       elementsAdapter.removeOne(state.elements, selectedElement.id);
+      state.isSaved = false;
     },
 
     copyElement: (state) => {
@@ -318,6 +436,7 @@ export const deckSlice = createSlice({
 
       if (copiedElement) {
         state.copiedElement = copiedElement;
+        state.isSaved = false;
       }
     },
 
@@ -343,6 +462,7 @@ export const deckSlice = createSlice({
       });
 
       slidesAdapter.setAll(state.slides, newSlides);
+      state.isSaved = false;
     },
 
     reorderActiveSlideElements: (
@@ -363,6 +483,7 @@ export const deckSlice = createSlice({
         id: action.payload.parentId as string,
         changes: { children: action.payload.elementIds }
       });
+      state.isSaved = false;
     },
 
     applyLayoutToSlide: (
@@ -387,6 +508,7 @@ export const deckSlice = createSlice({
       activeSlide.children = action.payload.elementIds;
       elementsAdapter.addMany(state.elements, action.payload.elementMap);
       state.selectedEditableElementId = null;
+      state.isSaved = false;
     }
   }
 });
@@ -423,6 +545,8 @@ export const undoableDeckSliceReducer = undoable(deckSlice.reducer, {
 const slidesEntitySelector = (state: RootState) => state.deck.present.slides;
 const elementsEntitySelector = (state: RootState) =>
   state.deck.present.elements;
+
+export const deckSelector = (state: RootState) => state.deck.present;
 
 export const activeSlideIdSelector = (state: RootState) =>
   state.deck.present.activeSlideId;

@@ -19,14 +19,15 @@ export const EditorContent = styled.div`
   flex-direction: row;
 `;
 
-export const EditorCanvas = styled.div`
+export const EditorCanvas = styled.div<{ scale: string }>`
   display: flex;
   flex: 1;
-  align-items: center;
+  align-items: ${(props) => (props.scale === 'fit' ? 'center' : 'flex-start')};
   justify-content: center;
   overflow: auto;
 
   ${SlideScaleWrapper} {
     box-shadow: 1px 2px 5px ${defaultTheme.scales.neutral.N8A};
+    overflow: scroll;
   }
 `;

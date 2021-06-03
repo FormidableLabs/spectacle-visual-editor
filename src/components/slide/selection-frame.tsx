@@ -54,6 +54,15 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const [elLoaded, setElLoaded] = React.useState(!isImgElement);
 
   const handleOnResize = useCallback((event) => {
+    //if resizing N, NW, NE, W, or SW
+    if (
+      event.direction.some((e: number) => {
+        return e < 0;
+      })
+    ) {
+      event.target.style.left = `${event.drag.left}px`;
+      event.target.style.top = `${event.drag.top}px`;
+    }
     event.target.style.width = `${event.width}px`;
     event.target.style.height = `${event.height}px`;
   }, []);
@@ -62,10 +71,19 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     (event: OnResizeEnd) => {
       dispatch(
         deckSlice.actions.editableElementChanged({
+          left: `${Math.round(event.lastEvent.drag.left)}px`,
+          top: `${Math.round(event.lastEvent.drag.top)}px`,
           width: event.target.style.width,
-          height: event.target.style.height
+          height: event.target.style.height,
+          componentProps: {
+            isFreeMovement: true,
+            positionX: `${Math.round(event.lastEvent.drag.left)}px`,
+            positionY: `${Math.round(event.lastEvent.drag.top)}px`
+          }
         })
       );
+      event.target.style.left = '';
+      event.target.style.top = '';
       event.target.style.width = '';
       event.target.style.height = '';
     },

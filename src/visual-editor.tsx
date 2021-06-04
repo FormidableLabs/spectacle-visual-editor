@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   SlideViewer,
@@ -24,28 +24,47 @@ import { settingsSelector } from './slices/settings-slice';
 import { LocalStorage } from './types/local-storage';
 import { defaultTheme } from 'spectacle';
 import { v4 } from 'uuid';
+import { editorSelector } from './slices/editor-slice';
+import { Deck } from './types/deck';
 
 export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const dispatch = useDispatch();
   const { activeSlideNode, slideNodes } = useSlideNodes();
   const { handleCanvasMouseDown, handleSlideSelected } = useEditorActions();
+  const [loadedInitialDeck, setLoadedInitialDeck] = useState(false);
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const slideScale = useSlideScale(canvasRef);
   const { scale } = useSelector(settingsSelector);
+  const { savedDecks } = useSelector(editorSelector);
 
   const [initialSize, onResize] = useLocallyStoredState(
     LocalStorage.InspectorPaneWidth,
     300
   );
 
-  // Load dummy data
+  // Preload a deck
   useEffect(() => {
-    if (Array.isArray(slideNodes) && slideNodes.length > 0) {
+    if (
+      loadedInitialDeck ||
+      (Array.isArray(slideNodes) && slideNodes.length > 0)
+    ) {
       return;
     }
-    dispatch(
-      deckSlice.actions.loadDeck({
+
+    let deckToLoad = {};
+
+    if (savedDecks.length) {
+      // Last saved deck
+      const decksSortedByLastSaved = [...savedDecks].sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      );
+
+      deckToLoad = decksSortedByLastSaved[0];
+    } else {
+      // Dummy deck
+      deckToLoad = {
         id: v4(),
         title: 'Dummy Deck',
         createdAt: new Date(),
@@ -53,9 +72,12 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
         theme: defaultTheme,
         slides: sampleSlidesData,
         elements: sampleElementsData
-      })
-    );
-  }, [dispatch, slideNodes]);
+      };
+    }
+
+    dispatch(deckSlice.actions.loadDeck(deckToLoad as Deck));
+    setLoadedInitialDeck(true);
+  }, [dispatch, savedDecks, loadedInitialDeck, slideNodes]);
 
   return (
     <EditorBody>

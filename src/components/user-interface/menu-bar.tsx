@@ -23,6 +23,7 @@ import {
   FullscreenIcon,
   FolderCloseIcon,
   TextInput,
+  DocumentIcon,
   UploadIcon
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
@@ -35,7 +36,8 @@ import {
   hasFutureSelector,
   selectedElementSelector,
   slidesSelector,
-  hasPasteElementSelector
+  hasPasteElementSelector,
+  createNewDeck
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
@@ -151,7 +153,7 @@ export const MenuBar = () => {
       </MenuSection>
       <SectionDivider />
       <MenuSection>
-        <Tooltip content="Open ⌘O">
+        <Tooltip content="Open Deck ⌘O">
           <StyledIconButton
             fill={defaultTheme.colors.icon.selected}
             icon={FolderCloseIcon}
@@ -161,7 +163,15 @@ export const MenuBar = () => {
             }}
           />
         </Tooltip>
-        <Tooltip content="Save ⌘S">
+        <Tooltip content="New Deck ⌘S">
+          <StyledIconButton
+            fill={defaultTheme.colors.icon.selected}
+            icon={DocumentIcon}
+            appearance="minimal"
+            onClick={() => dispatch(createNewDeck())}
+          />
+        </Tooltip>
+        <Tooltip content="Save Deck ⌘S">
           <div>
             <StyledIconButton
               fill={defaultTheme.colors.icon.selected}

@@ -2,6 +2,7 @@ import {
   createEntityAdapter,
   createSelector,
   createSlice,
+  Dispatch,
   EntityState,
   PayloadAction
 } from '@reduxjs/toolkit';
@@ -72,24 +73,28 @@ const initialState: DeckState = {
   isSaved: true
 };
 
+export const createNewDeck = () => (dispatch: Dispatch) => {
+  dispatch(deckSlice.actions.resetDeck());
+  // Ensure is at least one slide
+  dispatch(deckSlice.actions.newSlideAdded());
+};
+
+export const loadSavedDeck = (deck: Deck) => (dispatch: Dispatch) => {
+  dispatch(deckSlice.actions.resetDeck());
+  dispatch(deckSlice.actions.loadDeck(deck));
+};
+
 export const deckSlice = createSlice({
   name: 'deck',
   initialState,
   reducers: {
+    resetDeck: () => initialState,
+
     loadDeck: (state, action: PayloadAction<Deck>) => {
       state.id = action.payload.id;
       state.title = action.payload.title;
-      state.theme = action.payload.theme || initialState.theme;
-
-      // Reset deck context specific properties
-      state.activeSlideId =
-        action.payload.slides[0]?.id || initialState.activeSlideId;
-      state.hoveredEditableElementId = initialState.hoveredEditableElementId;
-      state.selectedEditableElementId = initialState.selectedEditableElementId;
-      state.copiedElement = initialState.copiedElement;
-
-      slidesAdapter.removeAll(state.slides);
-      elementsAdapter.removeAll(state.elements);
+      state.theme = action.payload.theme;
+      state.activeSlideId = action.payload.slides[0].id;
 
       slidesAdapter.addMany(state.slides, action.payload.slides);
       elementsAdapter.addMany(state.elements, action.payload.elements);

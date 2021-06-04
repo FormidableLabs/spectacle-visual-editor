@@ -4,6 +4,7 @@ import { GRID_COMPONENT_PROPS } from '../../constants/grid-format-options';
 import { convertNumberToGridPercent } from '../../util/convert-number-to-grid';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
 import { ElementControlsProps } from './element-controls-props';
+import { FreeMovementControls } from './free-movement-controls';
 
 export const GridFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
@@ -97,6 +98,7 @@ export const GridFormatControls: React.FC<ElementControlsProps> = ({
 
   return (
     <>
+      <FreeMovementControls {...{ selectedElement, editableElementChanged }} />
       <TextInputField
         label="Number of Columns"
         value={inputState.columnNumber}

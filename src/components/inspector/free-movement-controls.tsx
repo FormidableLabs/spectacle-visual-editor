@@ -1,0 +1,257 @@
+import { FormField, SegmentedControl, TextInputField } from 'evergreen-ui';
+import React, {
+  ChangeEvent,
+  FocusEvent,
+  useCallback,
+  useEffect,
+  useState
+} from 'react';
+import styled from 'styled-components';
+import { isValidCSSSize } from '../../util/is-valid-css-size';
+import { ElementControlsProps } from './element-controls-props';
+
+export const FreeMovementControls: React.FC<ElementControlsProps> = ({
+  selectedElement,
+  editableElementChanged
+}) => {
+  const [inputState, setInputState] = useState({
+    freeMovement: selectedElement?.props?.componentProps?.isFreeMovement,
+    displayPositionX: selectedElement?.props?.componentProps?.positionX || 0,
+    displayPositionY: selectedElement?.props?.componentProps?.positionY || 0,
+    positionX: selectedElement?.props?.componentProps?.positionX || 0,
+    positionY: selectedElement?.props?.componentProps?.positionY || 0
+  });
+
+  /* Update forms with values from dragged selection frame */
+  useEffect(() => {
+    setInputState({
+      freeMovement: selectedElement?.props?.componentProps?.isFreeMovement,
+      displayPositionX: selectedElement?.props?.componentProps?.positionX,
+      displayPositionY: selectedElement?.props?.componentProps?.positionY,
+      positionX: selectedElement?.props?.componentProps?.positionX,
+      positionY: selectedElement?.props?.componentProps?.positionY
+    });
+  }, [selectedElement]);
+
+  const [freeMovement, setFreeMovement] = useState(inputState.freeMovement);
+
+  const handleComponentElementChanged = useCallback(
+    (propName: string, val: string | number | boolean) => {
+      if (selectedElement) {
+        editableElementChanged({
+          componentProps: {
+            ...selectedElement.props?.componentProps,
+            [propName]: val
+          }
+        });
+      }
+    },
+    [editableElementChanged, selectedElement]
+  );
+
+  const handleDefaultElementChanged = useCallback(
+    (propName: string, val: string | number) => {
+      if (selectedElement) {
+        editableElementChanged({
+          [propName]: val
+        });
+      }
+    },
+    [editableElementChanged, selectedElement]
+  );
+
+  const handleOnEvent = useCallback(
+    (options: {
+      value: string | number;
+      shouldSetInputState: boolean;
+      displayValueToChangeName: string;
+      valueToChangeName: string;
+      valueToChangeCSSName: string;
+      valueAsCSSValue: string;
+      validator: Function;
+    }) => {
+      if (options.shouldSetInputState) {
+        setInputState({
+          ...inputState,
+          [options.valueToChangeName]:
+            inputState[
+              options.displayValueToChangeName as keyof typeof inputState
+            ]
+        });
+      } else if (options.validator(options.value)) {
+        if (options.shouldSetInputState) {
+          setInputState({
+            ...inputState,
+            [options.displayValueToChangeName]: options.value,
+            [options.valueToChangeName]: options.value
+          });
+        }
+        handleComponentElementChanged(options.valueToChangeName, options.value);
+        handleDefaultElementChanged(
+          options.valueToChangeCSSName,
+          options.valueAsCSSValue
+        );
+      }
+    },
+    [handleComponentElementChanged, handleDefaultElementChanged, inputState]
+  );
+
+  const onToggle = () => {
+    /* Initialize with 0s */
+    if (!inputState.freeMovement) {
+      setInputState({
+        ...inputState,
+        positionX: 0,
+        positionY: 0
+      });
+    }
+    if (!freeMovement) {
+      handleOnEvent({
+        value: 'absolute',
+        shouldSetInputState: false,
+        valueToChangeName: 'position',
+        displayValueToChangeName: 'position',
+        valueToChangeCSSName: 'position',
+        valueAsCSSValue: 'absolute',
+        validator: () => {
+          return true;
+        }
+      });
+    } else {
+      // clear freeMovement. Set horizontal & vertical positions to last input values
+      editableElementChanged({
+        componentProps: {
+          ...selectedElement?.props?.componentProps,
+          positionX: inputState.positionX,
+          positionY: inputState.positionY
+        }
+      });
+
+      handleOnEvent({
+        value: 'static',
+        shouldSetInputState: false,
+        valueToChangeName: 'position',
+        displayValueToChangeName: 'position',
+        valueToChangeCSSName: 'position',
+        valueAsCSSValue: 'static',
+        validator: () => {
+          return true;
+        }
+      });
+    }
+    handleComponentElementChanged('isFreeMovement', !freeMovement);
+  };
+
+  return (
+    <>
+      <Container label="Object Placement">
+        <SegmentedControl
+          options={[
+            { label: 'In-line', value: false },
+            { label: 'Absolute', value: true }
+          ]}
+          value={freeMovement}
+          onChange={() => {
+            setFreeMovement(!freeMovement);
+            onToggle();
+          }}
+        />
+
+        {freeMovement ? (
+          <SplitContainer>
+            <TextInputField
+              label="X:"
+              value={inputState.positionX}
+              onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                const { value } = e.target;
+                handleOnEvent({
+                  value: value,
+                  shouldSetInputState: true,
+                  valueToChangeName: 'positionX',
+                  displayValueToChangeName: 'displayPositionX',
+                  valueToChangeCSSName: 'left',
+                  valueAsCSSValue: value,
+                  validator: isValidCSSSize
+                });
+              }}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                const { value } = e.target;
+                setInputState({ ...inputState, positionX: value });
+                handleOnEvent({
+                  value,
+                  shouldSetInputState: false,
+                  valueToChangeName: 'positionX',
+                  displayValueToChangeName: 'displayPositionX',
+                  valueToChangeCSSName: 'left',
+                  valueAsCSSValue: value,
+                  validator: isValidCSSSize
+                });
+              }}
+              disabled={!freeMovement}
+            />
+            <TextInputField
+              label="Y:"
+              value={inputState.positionY}
+              onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                const { value } = e.target;
+                handleOnEvent({
+                  value: value,
+                  shouldSetInputState: true,
+                  valueToChangeName: 'positionY',
+                  displayValueToChangeName: 'displayPositionY',
+                  valueToChangeCSSName: 'top',
+                  valueAsCSSValue: value,
+                  validator: isValidCSSSize
+                });
+              }}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                const { value } = e.target;
+                setInputState({ ...inputState, positionY: value });
+                handleOnEvent({
+                  value,
+                  shouldSetInputState: false,
+                  valueToChangeName: 'positionY',
+                  displayValueToChangeName: 'displayPositionY',
+                  valueToChangeCSSName: 'top',
+                  valueAsCSSValue: value,
+                  validator: isValidCSSSize
+                });
+              }}
+              disabled={!freeMovement}
+            />
+          </SplitContainer>
+        ) : (
+          <></>
+        )}
+      </Container>
+    </>
+  );
+};
+
+const Container = styled(FormField)`
+  display: grid;
+  margin-top: 10px;
+  > div {
+    margin-bottom: 12px;
+    label {
+      font-weight: 400;
+    }
+  }
+`;
+
+const SplitContainer = styled.div`
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-column-gap: 10px;
+  width: calc(100% - 10px);
+
+  > div {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+
+    label {
+      margin-right: 10px;
+    }
+  }
+`;

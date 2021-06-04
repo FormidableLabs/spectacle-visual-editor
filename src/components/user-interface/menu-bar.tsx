@@ -23,7 +23,8 @@ import {
   FullscreenIcon,
   FolderCloseIcon,
   TextInput,
-  DocumentIcon
+  DocumentIcon,
+  UploadIcon
 } from 'evergreen-ui';
 import { SpectacleLogo } from './logo';
 import { useDispatch, useSelector } from 'react-redux';
@@ -48,6 +49,7 @@ import {
 import { useMousetrap } from 'spectacle';
 import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 import { editorSlice } from '../../slices/editor-slice';
+import { useRootSelector } from '../../store';
 
 const MenuBarContainer = styled.div`
   width: 100%;
@@ -61,6 +63,25 @@ const LogoContainer = styled.div`
   margin: 0 2px 0 16px;
 `;
 
+function useSaveFile() {
+  return React.useCallback((text: string, fileName: string) => {
+    const a = document.createElement('a');
+
+    a.setAttribute('download', fileName);
+
+    a.setAttribute(
+      'href',
+      `data:text/html;charset=utf-8,${encodeURIComponent(text)}`
+    );
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+  }, []);
+}
+
 export const MenuBar = () => {
   const { scale } = useSelector(settingsSelector);
   const hasPast = useSelector(hasPastSelector);
@@ -72,11 +93,11 @@ export const MenuBar = () => {
   const dispatch = useDispatch();
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
+  const slideJson = useRootSelector(slidesSelector);
   const copyElement = (message: string) => {
     dispatch(deckSlice.actions.copyElement());
     toaster.success(message);
   };
-
   useMousetrap(
     {
       [KEYBOARD_SHORTCUTS.OPEN]: (e) => {
@@ -99,6 +120,8 @@ export const MenuBar = () => {
     },
     []
   );
+
+  const saveFile = useSaveFile();
 
   const shouldNestableElementsBeDisabled = (insertItem: SPECTACLE_ELEMENTS) => {
     if (selectedElement) {
@@ -156,6 +179,40 @@ export const MenuBar = () => {
               appearance="minimal"
               disabled={isSaved}
               onClick={() => dispatch(deckSlice.actions.saveDeck(id))}
+            />
+          </div>
+        </Tooltip>
+      </MenuSection>
+      <MenuSection>
+        <Tooltip content="Generate an html file from your deck">
+          <div>
+            <StyledIconButton
+              fill="#1070ca"
+              icon={UploadIcon}
+              appearance="minimal"
+              disabled={!slides.length}
+              onClick={async () => {
+                try {
+                  const stringifiedSlideJson = JSON.stringify(slideJson);
+
+                  const response = await fetch('.netlify/functions/one-page', {
+                    method: 'post',
+                    body: stringifiedSlideJson
+                  });
+
+                  if (response.status !== 200) {
+                    throw response.statusText || 'Something went wrong.';
+                  }
+
+                  const html = await response.text();
+
+                  saveFile(html, 'deck.html');
+                } catch {
+                  toaster.danger(
+                    'Something went wrong while trying to export your deck.'
+                  );
+                }
+              }}
             />
           </div>
         </Tooltip>

@@ -34,6 +34,7 @@ export enum MD_COMPONENT_PROPS {
   MARGIN_VERTICAL = 'marginY'
 }
 
+// Selected fonts from https://typewise.xyz/
 export enum FONT_FAMILY_OPTIONS {
   ROBOTO = 'Roboto',
   ROBOTO_SLAB = 'Roboto Slab',

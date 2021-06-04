@@ -84,8 +84,6 @@ export const MarkdownControls: FC<Props> = ({
     fontSize
   });
 
-  console.log(themeValues.fonts);
-
   const onChangeComponentProps = (
     propName: string,
     val: string | number | boolean

@@ -182,9 +182,7 @@ export const MenuBar = () => {
             />
           </div>
         </Tooltip>
-      </MenuSection>
-      <MenuSection>
-        <Tooltip content="Generate an html file from your deck">
+        <Tooltip content="Export as HTML file">
           <div>
             <StyledIconButton
               fill="#1070ca"

@@ -3,6 +3,7 @@ import { ElementControlsProps } from './element-controls-props';
 import { TextInputField } from 'evergreen-ui';
 import { isValidUrl } from '../../util/is-valid-url';
 import { FreeMovementControls } from './free-movement-controls';
+import { ResizeControls } from './resize-controls';
 
 export const ImageControls: React.FC<ElementControlsProps> = ({
   selectedElement,
@@ -21,10 +22,8 @@ export const ImageControls: React.FC<ElementControlsProps> = ({
 
   return (
     <div>
-      <FreeMovementControls
-        selectedElement={selectedElement}
-        editableElementChanged={editableElementChanged}
-      />
+      <FreeMovementControls {...{ selectedElement, editableElementChanged }} />
+      <ResizeControls {...{ selectedElement, editableElementChanged }} />
       <TextInputField
         label="Image URL"
         placeholder="https://..."

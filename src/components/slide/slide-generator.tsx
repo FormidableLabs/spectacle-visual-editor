@@ -5,7 +5,6 @@ import {
   Heading,
   SpectacleLogo,
   Box,
-  Image,
   Grid,
   ListItem,
   OrderedList,
@@ -15,6 +14,7 @@ import {
 } from 'spectacle';
 import { Slide as InternalSlide } from './slide';
 import { SelectionFrame } from './selection-frame';
+import Image from './croppable-image';
 
 export const SPECTACLE_INTERNAL_OBJECT_MAP = {
   Slide: InternalSlide,

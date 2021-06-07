@@ -188,6 +188,24 @@ export const deckSlice = createSlice({
       state.title = action.payload;
       state.isSaved = false;
     },
+    editActiveSlide: (
+      state,
+      action: PayloadAction<{ props: Record<string, any> }>
+    ) => {
+      const activeSlide = getActiveSlideImmer(state);
+
+      if (!activeSlide) {
+        return;
+      }
+
+      if (state.activeSlideId)
+        activeSlide.props = {
+          ...activeSlide.props,
+          ...action.payload.props
+        };
+
+      state.isSaved = false;
+    },
 
     activeSlideWasChanged: (state, action: PayloadAction<string>) => {
       if (!validate(action.payload)) {

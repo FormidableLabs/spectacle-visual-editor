@@ -124,8 +124,8 @@ const Image = React.forwardRef<
         isShown={isCropModalOpen}
         title="Edit your image"
         onCloseComplete={() => setCropModalOpen(false)}
-        confirmLabel="Save your changes"
-        width={`75%`}
+        confirmLabel="Save changes"
+        width="75%"
         onConfirm={() => {
           const e = cropperInstance.current?.getCroppedCanvas();
 

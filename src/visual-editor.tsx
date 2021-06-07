@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import WebFont from 'webfontloader';
 import {
   SlideViewer,
   AppBodyStyle,
@@ -12,7 +13,7 @@ import {
   SavedDecks
 } from './components';
 import { sampleElementsData, sampleSlidesData } from './sample-slides-data';
-import { deckSlice } from './slices/deck-slice';
+import { deckSlice, elementsEntitySelector } from './slices/deck-slice';
 import {
   useEditorActions,
   useSlideNodes,
@@ -32,11 +33,15 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const { activeSlideNode, slideNodes } = useSlideNodes();
   const { handleCanvasMouseDown, handleSlideSelected } = useEditorActions();
   const [loadedInitialDeck, setLoadedInitialDeck] = useState(false);
+  const [loadedFontFamilies, setLoadedFontFamilies] = useState<Array<string>>(
+    []
+  );
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const slideScale = useSlideScale(canvasRef);
   const { scale } = useSelector(settingsSelector);
   const { savedDecks } = useSelector(editorSelector);
+  const elements = useSelector(elementsEntitySelector);
 
   const [initialSize, onResize] = useLocallyStoredState(
     LocalStorage.InspectorPaneWidth,
@@ -78,6 +83,31 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
     dispatch(deckSlice.actions.loadDeck(deckToLoad as Deck));
     setLoadedInitialDeck(true);
   }, [dispatch, savedDecks, loadedInitialDeck, slideNodes]);
+
+  // Load in all of the font families in use
+  useEffect(() => {
+    const elementEntities = Object.values(elements.entities);
+
+    if (elementEntities.length) {
+      const fontFamilies = elementEntities
+        .map((element) => element?.props?.componentProps?.fontFamily)
+        .filter((fontFamily) => !!fontFamily);
+
+      const unloadedFontFamilies = fontFamilies.filter(
+        (fontFamily) => !loadedFontFamilies.includes(fontFamily)
+      );
+
+      if (unloadedFontFamilies.length) {
+        WebFont.load({
+          google: {
+            families: unloadedFontFamilies
+          }
+        });
+
+        setLoadedFontFamilies([...loadedFontFamilies, ...unloadedFontFamilies]);
+      }
+    }
+  }, [loadedFontFamilies, elements]);
 
   return (
     <EditorBody>

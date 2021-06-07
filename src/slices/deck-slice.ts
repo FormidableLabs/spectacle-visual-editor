@@ -548,7 +548,7 @@ export const undoableDeckSliceReducer = undoable(deckSlice.reducer, {
 });
 
 const slidesEntitySelector = (state: RootState) => state.deck.present.slides;
-const elementsEntitySelector = (state: RootState) =>
+export const elementsEntitySelector = (state: RootState) =>
   state.deck.present.elements;
 
 export const deckSelector = (state: RootState) => state.deck.present;

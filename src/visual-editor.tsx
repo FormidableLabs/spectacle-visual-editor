@@ -33,6 +33,9 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const { activeSlideNode, slideNodes } = useSlideNodes();
   const { handleCanvasMouseDown, handleSlideSelected } = useEditorActions();
   const [loadedInitialDeck, setLoadedInitialDeck] = useState(false);
+  const [loadedFontFamilies, setLoadedFontFamilies] = useState<Array<string>>(
+    []
+  );
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const slideScale = useSlideScale(canvasRef);
@@ -86,19 +89,25 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
     const elementEntities = Object.values(elements.entities);
 
     if (elementEntities.length) {
-      const fontFamiliesInUse = elementEntities
+      const fontFamilies = elementEntities
         .map((element) => element?.props?.componentProps?.fontFamily)
         .filter((fontFamily) => !!fontFamily);
 
-      if (fontFamiliesInUse.length) {
+      const unloadedFontFamilies = fontFamilies.filter(
+        (fontFamily) => !loadedFontFamilies.includes(fontFamily)
+      );
+
+      if (unloadedFontFamilies.length) {
         WebFont.load({
           google: {
-            families: fontFamiliesInUse
+            families: unloadedFontFamilies
           }
         });
+
+        setLoadedFontFamilies([...loadedFontFamilies, ...unloadedFontFamilies]);
       }
     }
-  }, [elements]);
+  }, [loadedFontFamilies, elements]);
 
   return (
     <EditorBody>

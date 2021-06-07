@@ -14,6 +14,7 @@ import {
   CodePane
 } from 'spectacle';
 import { Slide as InternalSlide } from './slide';
+import Progress from './progress';
 import { SelectionFrame } from './selection-frame';
 
 export const SPECTACLE_INTERNAL_OBJECT_MAP = {
@@ -28,7 +29,8 @@ export const SPECTACLE_INTERNAL_OBJECT_MAP = {
   OrderedList,
   UnorderedList,
   Markdown,
-  CodePane
+  CodePane,
+  Progress
 };
 
 export const SPECTACLE_PREVIEW_OBJECT_MAP = {

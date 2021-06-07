@@ -8,13 +8,15 @@ import {
   isImageElement,
   isMdElement,
   isCodePaneElement,
-  isGridElement
+  isGridElement,
+  isProgressElement
 } from './validators';
 import { MdFormatControls } from './md-format-controls';
 import { ImageControls } from './image-controls';
 import { FlexParentControls } from './flex-parent-controls';
 import { CodePaneFormatControls } from './codepane-format-controls';
 import { GridFormatControls } from './grid-format-controls';
+import { ProgressFormatControls } from './progress-format-controls';
 
 export const FormatInspector = () => {
   const dispatch = useDispatch();
@@ -47,6 +49,8 @@ export const FormatInspector = () => {
           return <ImageControls {...props} />;
         } else if (isCodePaneElement(selectedElement)) {
           return <CodePaneFormatControls {...props} />;
+        } else if (isProgressElement(selectedElement)) {
+          return <ProgressFormatControls {...props} />;
         }
       })()}
     </Pane>

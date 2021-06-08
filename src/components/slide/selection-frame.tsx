@@ -192,7 +192,8 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
       >
         {cloneElement(children, {
           ref,
-          onLoad: () => setElLoaded(true)
+          onLoad: () => setElLoaded(true),
+          isSelected
         })}
       </Wrapper>
       {elLoaded && (

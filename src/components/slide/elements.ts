@@ -60,8 +60,10 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
   PROGRESS: {
     component: 'Progress',
     props: {
-      size: 23,
-      color: '#fffaaa'
+      position: 'absolute',
+      componentProps: {
+        isFreeMovement: true
+      }
     }
   }
 };

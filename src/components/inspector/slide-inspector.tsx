@@ -52,7 +52,7 @@ export const SlideInspector = () => {
           label={`Slide background`}
           onUpdateValue={(value) =>
             dispatch(
-              deckSlice.actions.x({
+              deckSlice.actions.editActiveSlide({
                 props: {
                   backgroundColor: value
                 }

@@ -486,7 +486,7 @@ const TooltipConditionalWrapper: React.FC<TooltipConditonalWrapperProps> = ({
 const DeckTitle = styled.div`
   input {
     background: none;
-    font-weight: 600;
+    font-weight: 700;
 
     &:not(:hover):not(:focus) {
       box-shadow: none;

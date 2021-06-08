@@ -89,9 +89,16 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
     const elementEntities = Object.values(elements.entities);
 
     if (elementEntities.length) {
-      const fontFamilies = elementEntities
-        .map((element) => element?.props?.componentProps?.fontFamily)
-        .filter((fontFamily) => !!fontFamily);
+      const fontFamilies: string[] = [];
+
+      elementEntities.forEach((element) => {
+        const fontFamilyName = element?.props?.componentProps?.fontFamily;
+
+        if (fontFamilyName) {
+          const fontFamily = `${fontFamilyName}:400,700,400italic,700italic`;
+          fontFamilies.push(fontFamily);
+        }
+      });
 
       const unloadedFontFamilies = fontFamilies.filter(
         (fontFamily) => !loadedFontFamilies.includes(fontFamily)

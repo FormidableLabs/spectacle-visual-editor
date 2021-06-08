@@ -9,6 +9,7 @@ import { MarkdownControls } from './markdown-controls';
 import { TextControls } from './text-controls';
 import { Accordion } from '../user-interface/accordion';
 import { FreeMovementControls } from './free-movement-controls';
+import { ResizeControls } from './resize-controls';
 
 export const MdFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
@@ -33,6 +34,7 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
   return (
     <>
       <FreeMovementControls {...{ selectedElement, editableElementChanged }} />
+      <ResizeControls {...{ selectedElement, editableElementChanged }} />
       <Accordion label="Markdown Content">
         <MdInput
           label="Content"

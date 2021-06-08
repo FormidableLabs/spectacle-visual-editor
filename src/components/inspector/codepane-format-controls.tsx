@@ -4,6 +4,7 @@ import { ElementControlsProps } from './element-controls-props';
 import { SelectInput } from '../inputs/select';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { FreeMovementControls } from './free-movement-controls';
+import { ResizeControls } from './resize-controls';
 
 const availableLanguages = (SyntaxHighlighter as any).supportedLanguages.map(
   (language: string) => ({
@@ -34,6 +35,7 @@ export const CodePaneFormatControls: React.FC<ElementControlsProps> = ({
   return (
     <React.Fragment>
       <FreeMovementControls {...{ selectedElement, editableElementChanged }} />
+      <ResizeControls {...{ selectedElement, editableElementChanged }} />
       <MdInput
         label="Content"
         value={content}

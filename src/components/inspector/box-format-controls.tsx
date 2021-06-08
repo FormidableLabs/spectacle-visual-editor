@@ -4,6 +4,7 @@ import { Accordion } from '../user-interface/accordion';
 import { BorderFormatControls } from './border-format-controls';
 import { ElementControlsProps } from './element-controls-props';
 import { FreeMovementControls } from './free-movement-controls';
+import { ResizeControls } from './resize-controls';
 
 export const BoxFormatControls: React.FC<ElementControlsProps> = ({
   selectedElement,
@@ -19,6 +20,7 @@ export const BoxFormatControls: React.FC<ElementControlsProps> = ({
   return (
     <>
       <FreeMovementControls {...{ selectedElement, editableElementChanged }} />
+      <ResizeControls {...{ selectedElement, editableElementChanged }} />
       <Accordion label="Styling">
         <ColorPickerInput
           disabled={!selectedElement?.props?.backgroundColor}

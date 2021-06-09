@@ -27,6 +27,11 @@ import { defaultTheme } from 'spectacle';
 import { v4 } from 'uuid';
 import { editorSelector } from './slices/editor-slice';
 import { Deck } from './types/deck';
+import { formatGoogleFont } from './util/format-google-font';
+import {
+  FONT_FAMILY_OPTIONS,
+  FONT_FAMILY_WEIGHTS
+} from './constants/md-style-options';
 
 export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const dispatch = useDispatch();
@@ -92,10 +97,16 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
       const fontFamilies: string[] = [];
 
       elementEntities.forEach((element) => {
-        const fontFamilyName = element?.props?.componentProps?.fontFamily;
+        const fontFamilyName: FONT_FAMILY_OPTIONS =
+          element?.props?.componentProps?.fontFamily;
 
         if (fontFamilyName) {
-          const fontFamily = `${fontFamilyName}:400,700,400italic,700italic`;
+          const fontFamily = formatGoogleFont(
+            fontFamilyName,
+            FONT_FAMILY_WEIGHTS[fontFamilyName].weights,
+            FONT_FAMILY_WEIGHTS[fontFamilyName].italicWeights
+          );
+
           fontFamilies.push(fontFamily);
         }
       });

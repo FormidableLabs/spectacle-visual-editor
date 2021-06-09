@@ -96,16 +96,14 @@ export const FONT_WEIGHTS = {
   '900': 'Black'
 };
 
-type Weight = keyof typeof FONT_WEIGHTS;
+export type FontWeight = keyof typeof FONT_WEIGHTS;
 
-type FontFamilyWeights = {
+export const FONT_FAMILY_WEIGHTS: {
   [key in FONT_FAMILY_OPTIONS]: {
-    weights: Weight[];
-    italicWeights: Weight[];
+    weights: FontWeight[];
+    italicWeights: FontWeight[];
   };
-};
-
-export const FONT_FAMILY_WEIGHTS: FontFamilyWeights = {
+} = {
   [FONT_FAMILY_OPTIONS.ROBOTO]: {
     weights: ['100', '300', '400', '500', '700', '800', '900'],
     italicWeights: ['100', '300', '400', '500', '700', '800', '900']

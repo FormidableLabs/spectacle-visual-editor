@@ -104,9 +104,9 @@ export const MarkdownControls: FC<Props> = ({
 
   // Reset the fontWeight if it does not exist on fontFamily
   useEffect(() => {
-    const fontDoesNotHaveWeight = !FONT_FAMILY_WEIGHTS[
+    const fontDoesNotHaveWeight = !FONT_FAMILY_WEIGHTS?.[
       fontFamily
-    ].weights.includes(fontWeight);
+    ]?.weights?.includes(fontWeight);
 
     if (fontDoesNotHaveWeight) {
       onChangeComponentProps(
@@ -114,7 +114,8 @@ export const MarkdownControls: FC<Props> = ({
         FONT_WEIGHT_OPTIONS.FOUR_HUNDRED
       );
     }
-  }, [fontFamily, fontWeight, onChangeComponentProps]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fontFamily, fontWeight]);
 
   return (
     <Container>
@@ -190,7 +191,7 @@ export const MarkdownControls: FC<Props> = ({
           label="Font Weight"
           value={fontWeight}
           options={
-            FONT_FAMILY_WEIGHTS[fontFamily].weights.map((weight) => ({
+            FONT_FAMILY_WEIGHTS?.[fontFamily]?.weights?.map((weight) => ({
               value: weight,
               title: `${FONT_WEIGHTS[weight]} ${weight}`
             })) || [

@@ -10,7 +10,12 @@ import { Accordion } from '../user-interface/accordion';
 import { MdInput } from '../inputs/md';
 import { ColorPickerInput } from '../inputs/color';
 import { useRootSelector } from '../../store';
-import { Button } from 'evergreen-ui';
+import { Button, UndoIcon } from 'evergreen-ui';
+import styled from 'styled-components';
+
+const ButtonContainer = styled.div`
+  margin-bottom: 8px;
+`;
 
 export const SlideInspector = () => {
   const dispatch = useDispatch();
@@ -45,7 +50,24 @@ export const SlideInspector = () => {
         />
       </Accordion>
       <Accordion label="Background color">
-        {!!customBackgroundColor && <Button>Use theme background</Button>}
+        {!!customBackgroundColor && (
+          <ButtonContainer>
+            <Button
+              onClick={() => {
+                dispatch(
+                  deckSlice.actions.editActiveSlide({
+                    props: {
+                      backgroundColor: undefined
+                    }
+                  })
+                );
+              }}
+              iconBefore={UndoIcon}
+            >
+              Revert to theme background
+            </Button>
+          </ButtonContainer>
+        )}
         <ColorPickerInput
           onChangeInput={setInputState}
           key={`bg-color-value`}

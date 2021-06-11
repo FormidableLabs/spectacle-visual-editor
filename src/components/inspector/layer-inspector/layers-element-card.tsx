@@ -12,7 +12,8 @@ import {
   NewGridItemIcon,
   AlignLeftIcon,
   PercentageIcon,
-  FullscreenIcon
+  FullscreenIcon,
+  AnnotationIcon
 } from 'evergreen-ui';
 import { isImageElement, isMdElement } from '../validators';
 import { ConstructedDeckElement } from '../../../types/deck-elements';
@@ -24,7 +25,8 @@ const ELEMENT_ICONS = {
   Grid: NewGridItemIcon,
   CodePane: CodeIcon,
   Progress: PercentageIcon,
-  FullScreen: FullscreenIcon
+  FullScreen: FullscreenIcon,
+  Notes: AnnotationIcon
 };
 
 interface Props {

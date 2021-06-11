@@ -100,12 +100,12 @@ export const TimelineSlideViewer: React.FC<Props> = ({
   }, [activeSlideId, localSlides]);
 
   return (
-    <SlideViewerWrapper>
-      <Container>
-        <Slides ref={slidesRef}>
-          <DndProvider backend={HTML5Backend}>
-            {localSlides.map((slide, idx) => (
-              <Slide key={slide.key} data-slideid={slide.key}>
+    <Container>
+      <Slides ref={slidesRef}>
+        <DndProvider backend={HTML5Backend}>
+          {localSlides.map((slide, idx) => (
+            <SlideViewerWrapper key={slide.key} slideIndex={idx}>
+              <Slide data-slideid={slide.key}>
                 <DragWrapper
                   index={idx}
                   type="Slide"
@@ -130,23 +130,23 @@ export const TimelineSlideViewer: React.FC<Props> = ({
                   </Tooltip>
                 )}
               </Slide>
-            ))}
-          </DndProvider>
-        </Slides>
+            </SlideViewerWrapper>
+          ))}
+        </DndProvider>
+      </Slides>
 
-        <Tooltip content="Add Slide">
-          <AddButton>
-            <IconButton
-              width={80}
-              height="100%"
-              icon={PlusIcon}
-              appearance="minimal"
-              onClick={() => dispatch(deckSlice.actions.newSlideAdded())}
-            />
-          </AddButton>
-        </Tooltip>
-      </Container>
-    </SlideViewerWrapper>
+      <Tooltip content="Add Slide">
+        <AddButton>
+          <IconButton
+            width={80}
+            height="100%"
+            icon={PlusIcon}
+            appearance="minimal"
+            onClick={() => dispatch(deckSlice.actions.newSlideAdded())}
+          />
+        </AddButton>
+      </Tooltip>
+    </Container>
   );
 };
 

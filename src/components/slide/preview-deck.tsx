@@ -7,6 +7,7 @@ import { slidesSelector, themeSelector } from '../../slices/deck-slice';
 import { useRootSelector } from '../../store';
 import { ConstructedDeckSlide } from '../../types/deck-elements';
 import { toaster } from 'evergreen-ui';
+import { PATHS } from '../../constants/paths';
 
 export const PreviewDeck: React.FC<RouteComponentProps> = () => {
   const [slideNodes, setSlideNodes] = useState<React.ReactNode>();
@@ -33,7 +34,7 @@ export const PreviewDeck: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
       if (event.code.toLowerCase() === 'escape') {
-        await navigate('/');
+        await navigate(PATHS.VISUAL_EDITOR);
       }
     };
     window.addEventListener('keydown', handleKeyDown);

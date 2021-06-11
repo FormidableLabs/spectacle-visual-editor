@@ -56,5 +56,14 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     component: 'CodePane',
     props: { language: 'javascript' },
     children: 'let name = "Carlos";'
+  },
+  PROGRESS: {
+    component: 'Progress',
+    props: {
+      position: 'absolute',
+      componentProps: {
+        isFreeMovement: true
+      }
+    }
   }
 };

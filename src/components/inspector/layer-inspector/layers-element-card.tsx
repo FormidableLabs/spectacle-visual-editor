@@ -10,7 +10,8 @@ import {
   IconButton,
   MediaIcon,
   NewGridItemIcon,
-  AlignLeftIcon
+  AlignLeftIcon,
+  PercentageIcon
 } from 'evergreen-ui';
 import { isImageElement, isMdElement } from '../validators';
 import { ConstructedDeckElement } from '../../../types/deck-elements';
@@ -20,7 +21,8 @@ const ELEMENT_ICONS = {
   Markdown: AlignLeftIcon,
   Image: MediaIcon,
   Grid: NewGridItemIcon,
-  CodePane: CodeIcon
+  CodePane: CodeIcon,
+  Progress: PercentageIcon
 };
 
 interface Props {

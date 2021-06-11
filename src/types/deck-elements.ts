@@ -13,7 +13,9 @@ export type SPECTACLE_ELEMENTS =
   | 'Grid'
   | 'CodePane'
   | 'Progress'
-  | 'FullScreen';
+  | 'FullScreen'
+  | 'Notes';
+
 export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];
 export const CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Grid'];
 export const FREE_MOVING_ELEMENTS: SPECTACLE_ELEMENTS[] = [

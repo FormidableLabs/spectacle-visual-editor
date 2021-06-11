@@ -29,3 +29,6 @@ export const isTextElement = (element: ConstructedDeckElement | null) =>
 
 export const isCodePaneElement = (element: ConstructedDeckElement | null) =>
   Boolean(element && ['CodePane'].includes(element?.component));
+
+export const isProgressElement = (element: ConstructedDeckElement | null) =>
+  Boolean(element?.component?.includes('Progress'));

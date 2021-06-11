@@ -12,7 +12,9 @@ export type SPECTACLE_ELEMENTS =
   | 'Image'
   | 'Grid'
   | 'CodePane'
-  | 'Notes';
+  | 'Notes',
+  | 'Progress';
+
 export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];
 export const CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Grid'];
 export const FREE_MOVING_ELEMENTS: SPECTACLE_ELEMENTS[] = [
@@ -20,7 +22,8 @@ export const FREE_MOVING_ELEMENTS: SPECTACLE_ELEMENTS[] = [
   'FlexBox',
   'Image',
   'Grid',
-  'CodePane'
+  'CodePane',
+  'Progress'
 ];
 
 export type DeckElementMap = { [id: string]: DeckElement };

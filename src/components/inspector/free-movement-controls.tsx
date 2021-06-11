@@ -221,65 +221,6 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
                 });
               }}
             />
-
-            <TextInputField
-              label="Width:"
-              value={inputState.width}
-              onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                const { value } = e.target;
-                handleOnEvent({
-                  value: value,
-                  shouldSetInputState: true,
-                  valueToChangeName: 'width',
-                  displayValueToChangeName: 'width',
-                  valueToChangeCSSName: 'width',
-                  valueAsCSSValue: value,
-                  validator: isValidCSSSize
-                });
-              }}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const { value } = e.target;
-                setInputState({ ...inputState, width: value });
-                handleOnEvent({
-                  value,
-                  shouldSetInputState: false,
-                  valueToChangeName: 'width',
-                  displayValueToChangeName: 'width',
-                  valueToChangeCSSName: 'width',
-                  valueAsCSSValue: value,
-                  validator: isValidCSSSize
-                });
-              }}
-            />
-            <TextInputField
-              label="Height:"
-              value={inputState.height}
-              onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                const { value } = e.target;
-                handleOnEvent({
-                  value: value,
-                  shouldSetInputState: true,
-                  valueToChangeName: 'height',
-                  displayValueToChangeName: 'height',
-                  valueToChangeCSSName: 'height',
-                  valueAsCSSValue: value,
-                  validator: isValidCSSSize
-                });
-              }}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const { value } = e.target;
-                setInputState({ ...inputState, height: value });
-                handleOnEvent({
-                  value,
-                  shouldSetInputState: false,
-                  valueToChangeName: 'height',
-                  displayValueToChangeName: 'height',
-                  valueToChangeCSSName: 'height',
-                  valueAsCSSValue: value,
-                  validator: isValidCSSSize
-                });
-              }}
-            />
           </SplitContainer>
         ) : (
           <></>
@@ -292,7 +233,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
 const Container = styled(FormField)`
   display: grid;
   margin-top: 10px;
-  > div {
+  > div:first-of-type {
     margin-bottom: 12px;
     label {
       font-weight: 400;

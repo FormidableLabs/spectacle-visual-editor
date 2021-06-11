@@ -463,7 +463,8 @@ const InsertItems: { title: string; element: typeof ELEMENTS[number] }[] = [
   { title: 'Image', element: ELEMENTS.IMAGE },
   { title: 'Box', element: ELEMENTS.BOX },
   { title: 'Grid', element: ELEMENTS.GRID },
-  { title: 'CodePane', element: ELEMENTS.CODEPANE }
+  { title: 'CodePane', element: ELEMENTS.CODEPANE },
+  { title: 'Progress', element: ELEMENTS.PROGRESS }
 ];
 
 const nonNestableElements: SPECTACLE_ELEMENTS[] = [
@@ -486,7 +487,7 @@ const TooltipConditionalWrapper: React.FC<TooltipConditonalWrapperProps> = ({
 const DeckTitle = styled.div`
   input {
     background: none;
-    font-weight: 600;
+    font-weight: 700;
 
     &:not(:hover):not(:focus) {
       box-shadow: none;

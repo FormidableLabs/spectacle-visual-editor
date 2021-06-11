@@ -2,6 +2,7 @@ import React, {
   ChangeEvent,
   FC,
   FocusEvent,
+  useCallback,
   useEffect,
   useRef,
   useState
@@ -20,9 +21,11 @@ import { ConstructedDeckElement } from '../../types/deck-elements';
 import { SelectInput } from '../inputs/select';
 import {
   MD_COMPONENT_PROPS,
-  LIST_FONT_WEIGHT_OPTIONS,
   LIST_TEXT_ALIGN_OPTIONS,
-  FONT_FAMILY_OPTIONS
+  FONT_WEIGHT_OPTIONS,
+  FONT_FAMILY_OPTIONS,
+  FONT_FAMILY_WEIGHTS,
+  FONT_WEIGHTS
 } from '../../constants/md-style-options';
 import { ColorPickerInput } from '../inputs/color';
 import { useRootSelector } from '../../store';
@@ -69,13 +72,14 @@ export const MarkdownControls: FC<Props> = ({
   const themeValues = useRootSelector(themeSelector);
   const color: string =
     selectedElement?.props?.componentProps?.color || themeValues.colors.primary;
-  const fontFamily = selectedElement?.props?.componentProps?.fontFamily;
+  const fontFamily: FONT_FAMILY_OPTIONS =
+    selectedElement?.props?.componentProps?.fontFamily;
   const fontSize =
     selectedElement?.props?.componentProps?.fontSize ||
     themeValues.fontSizes.text;
   const fontWeight =
     selectedElement?.props?.componentProps?.fontWeight ||
-    LIST_FONT_WEIGHT_OPTIONS.FOUR_HUNDRED;
+    FONT_WEIGHT_OPTIONS.FOUR_HUNDRED;
   const textAlign =
     selectedElement?.props?.componentProps?.textAlign ||
     LIST_TEXT_ALIGN_OPTIONS.LEFT;
@@ -84,19 +88,34 @@ export const MarkdownControls: FC<Props> = ({
     fontSize
   });
 
-  const onChangeComponentProps = (
-    propName: string,
-    val: string | number | boolean
-  ) => {
-    if (selectedElement) {
-      editableElementChanged({
-        componentProps: {
-          ...selectedElement.props?.componentProps,
-          [propName]: val
-        }
-      });
+  const onChangeComponentProps = useCallback(
+    (propName: string, val: string | number | boolean) => {
+      if (selectedElement) {
+        editableElementChanged({
+          componentProps: {
+            ...selectedElement.props?.componentProps,
+            [propName]: val
+          }
+        });
+      }
+    },
+    [editableElementChanged, selectedElement]
+  );
+
+  // Reset the fontWeight if it does not exist on fontFamily
+  useEffect(() => {
+    const fontDoesNotHaveWeight = !FONT_FAMILY_WEIGHTS?.[
+      fontFamily
+    ]?.weights?.includes(fontWeight);
+
+    if (fontDoesNotHaveWeight) {
+      onChangeComponentProps(
+        MD_COMPONENT_PROPS.FONT_WEIGHT,
+        FONT_WEIGHT_OPTIONS.FOUR_HUNDRED
+      );
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fontFamily, fontWeight]);
 
   return (
     <Container>
@@ -171,10 +190,17 @@ export const MarkdownControls: FC<Props> = ({
         <SelectInput
           label="Font Weight"
           value={fontWeight}
-          options={Object.values(LIST_FONT_WEIGHT_OPTIONS).map((op) => ({
-            value: op,
-            title: op
-          }))}
+          options={
+            FONT_FAMILY_WEIGHTS?.[fontFamily]?.weights?.map((weight) => ({
+              value: weight,
+              title: `${FONT_WEIGHTS[weight]} ${weight}`
+            })) || [
+              {
+                value: FONT_WEIGHT_OPTIONS.FOUR_HUNDRED,
+                title: FONT_WEIGHT_OPTIONS.FOUR_HUNDRED
+              }
+            ]
+          }
           onValueChange={(value) =>
             onChangeComponentProps(MD_COMPONENT_PROPS.FONT_WEIGHT, value)
           }

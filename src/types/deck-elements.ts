@@ -12,7 +12,7 @@ export type SPECTACLE_ELEMENTS =
   | 'Image'
   | 'Grid'
   | 'CodePane'
-  | 'Notes',
+  | 'Notes'
   | 'Progress';
 
 export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];

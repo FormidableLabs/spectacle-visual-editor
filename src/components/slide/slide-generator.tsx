@@ -14,6 +14,7 @@ import {
 } from 'spectacle';
 import { Slide as InternalSlide } from './slide';
 import Progress from './progress';
+import FullScreen from './full-screen';
 import { SelectionFrame } from './selection-frame';
 import Image from './croppable-image';
 
@@ -30,7 +31,8 @@ export const SPECTACLE_INTERNAL_OBJECT_MAP = {
   UnorderedList,
   Markdown,
   CodePane,
-  Progress
+  Progress,
+  FullScreen
 };
 
 export const SPECTACLE_PREVIEW_OBJECT_MAP = {

@@ -65,5 +65,14 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
         isFreeMovement: true
       }
     }
+  },
+  FULL_SCREEN: {
+    component: 'FullScreen',
+    props: {
+      position: 'absolute',
+      componentProps: {
+        isFreeMovement: true
+      }
+    }
   }
 };

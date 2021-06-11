@@ -9,7 +9,8 @@ import {
   isMdElement,
   isCodePaneElement,
   isGridElement,
-  isProgressElement
+  isProgressElement,
+  isFullScreenElement
 } from './validators';
 import { MdFormatControls } from './md-format-controls';
 import { ImageControls } from './image-controls';
@@ -17,6 +18,7 @@ import { FlexParentControls } from './flex-parent-controls';
 import { CodePaneFormatControls } from './codepane-format-controls';
 import { GridFormatControls } from './grid-format-controls';
 import { ProgressFormatControls } from './progress-format-controls';
+import { FullScreenFormatControls } from './full-screen-format-controls';
 
 export const FormatInspector = () => {
   const dispatch = useDispatch();
@@ -51,6 +53,8 @@ export const FormatInspector = () => {
           return <CodePaneFormatControls {...props} />;
         } else if (isProgressElement(selectedElement)) {
           return <ProgressFormatControls {...props} />;
+        } else if (isFullScreenElement(selectedElement)) {
+          return <FullScreenFormatControls {...props} />;
         }
       })()}
     </Pane>

@@ -13,6 +13,7 @@ import { LayerInspector } from './layer-inspector/layer-inspector';
 import { ResizablePanes } from '../resizable-panes';
 import { useLocallyStoredState } from '../../hooks';
 import { LocalStorage } from '../../types/local-storage';
+import { SlideInspector } from './slide-inspector';
 
 export const Inspector = () => {
   const [initialSize, onResize] = useLocallyStoredState<string | number>(
@@ -20,6 +21,7 @@ export const Inspector = () => {
     '50%'
   );
   const [activeTab, setActiveTab] = useState(InspectorTab.Document);
+
   useSwitchToFormatInspectorOnElementSelected({ setActiveTab });
   useSwitchToLayoutInspectorOnSlideAdded({ setActiveTab });
 
@@ -50,6 +52,7 @@ export const Inspector = () => {
         {(() => {
           return {
             [InspectorTab.Document]: <DocumentInspector />,
+            [InspectorTab.Slide]: <SlideInspector />,
             [InspectorTab.Format]: <FormatInspector />,
             [InspectorTab.Layout]: <LayoutInspector />
           }[activeTab];

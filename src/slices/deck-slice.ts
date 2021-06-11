@@ -188,6 +188,24 @@ export const deckSlice = createSlice({
       state.title = action.payload;
       state.isSaved = false;
     },
+    editActiveSlide: (
+      state,
+      action: PayloadAction<{ props: Record<string, any> }>
+    ) => {
+      const activeSlide = getActiveSlideImmer(state);
+
+      if (!activeSlide) {
+        return;
+      }
+
+      if (state.activeSlideId)
+        activeSlide.props = {
+          ...activeSlide.props,
+          ...action.payload.props
+        };
+
+      state.isSaved = false;
+    },
 
     activeSlideWasChanged: (state, action: PayloadAction<string>) => {
       if (!validate(action.payload)) {
@@ -217,6 +235,40 @@ export const deckSlice = createSlice({
       state.isSaved = false;
     },
 
+    addOrEditNotesToActiveSlide: (
+      state,
+      action: PayloadAction<{ value: string }>
+    ) => {
+      const activeSlide = getActiveSlideImmer(state);
+
+      if (!activeSlide) {
+        return;
+      }
+
+      const notesId = activeSlide.children.find((childId) => {
+        return state.elements.entities[childId]?.component === 'Notes';
+      });
+
+      const note = notesId ? state.elements.entities[notesId] : undefined;
+
+      if (!note) {
+        const newElementId = v4();
+        const newElement: DeckElement = {
+          id: newElementId,
+          parent: activeSlide.id,
+          component: 'Notes',
+          children: action.payload.value
+        };
+
+        activeSlide.children.push(newElement.id);
+
+        elementsAdapter.addOne(state.elements, newElement);
+      } else if (note.children) {
+        note.children = action.payload.value;
+      }
+
+      state.isSaved = false;
+    },
     elementAddedToActiveSlide: (
       state,
       action: PayloadAction<Omit<DeckElement, 'id' | 'parent'>>

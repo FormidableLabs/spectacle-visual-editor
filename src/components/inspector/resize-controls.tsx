@@ -174,7 +174,8 @@ const SplitContainer = styled.div`
     align-items: center;
 
     label {
-      margin-right: 10px;
+      margin-bottom: 0;
+      min-width: 54px;
     }
   }
 `;

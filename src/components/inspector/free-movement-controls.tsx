@@ -1,4 +1,12 @@
-import { FormField, SegmentedControl, TextInputField } from 'evergreen-ui';
+import {
+  FormField,
+  IconButton,
+  Label,
+  Pane,
+  SegmentedControl,
+  TextInputField,
+  Tooltip
+} from 'evergreen-ui';
 import React, {
   ChangeEvent,
   FocusEvent,
@@ -7,6 +15,12 @@ import React, {
   useState
 } from 'react';
 import styled from 'styled-components';
+import {
+  ALIGNMENT_TYPES,
+  ALIGNMENT_OPTIONS
+} from '../../constants/alignment-options';
+import { themeSelector } from '../../slices/deck-slice';
+import { useRootSelector } from '../../store';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
 import { ElementControlsProps } from './element-controls-props';
 
@@ -14,6 +28,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
   selectedElement,
   editableElementChanged
 }) => {
+  const themeValues = useRootSelector(themeSelector);
   const [inputState, setInputState] = useState({
     freeMovement: selectedElement?.props?.componentProps?.isFreeMovement,
     displayPositionX: selectedElement?.props?.componentProps?.positionX || 0,
@@ -146,22 +161,116 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
     handleComponentElementChanged('isFreeMovement', !freeMovement);
   };
 
-  return (
-    <>
-      <Container label="Object Placement">
-        <SegmentedControl
-          options={[
-            { label: 'In-line', value: false },
-            { label: 'Absolute', value: true }
-          ]}
-          value={freeMovement}
-          onChange={() => {
-            setFreeMovement(!freeMovement);
-            onToggle();
-          }}
-        />
+  const alignHorizontally = useCallback(
+    (value: string) => {
+      handleOnEvent({
+        value,
+        valueAsCSSValue: value,
+        shouldSetInputState: false,
+        valueToChangeName: 'positionX',
+        displayValueToChangeName: 'displayPositionX',
+        valueToChangeCSSName: 'left',
+        validator: isValidCSSSize
+      });
+    },
+    [handleOnEvent]
+  );
 
-        {freeMovement ? (
+  const alignVertically = useCallback(
+    (value: string) => {
+      handleOnEvent({
+        value,
+        valueAsCSSValue: value,
+        shouldSetInputState: false,
+        valueToChangeName: 'positionY',
+        displayValueToChangeName: 'displayPositionY',
+        valueToChangeCSSName: 'top',
+        validator: isValidCSSSize
+      });
+    },
+    [handleOnEvent]
+  );
+
+  const handleAlignment = useCallback(
+    (type: ALIGNMENT_TYPES) => {
+      const selectedElementNode = document.getElementById(
+        selectedElement?.id || ''
+      );
+
+      if (!selectedElementNode) return;
+
+      const selectedElementWidth = selectedElementNode.offsetWidth;
+      const selectedElementHeight = selectedElementNode.offsetHeight;
+      const { width: slideWidth, height: slideHeight } = themeValues.size;
+
+      switch (type) {
+        case ALIGNMENT_TYPES.LEFT: {
+          alignHorizontally('0px');
+          break;
+        }
+        case ALIGNMENT_TYPES.HORIZONTAL_CENTER: {
+          alignHorizontally(`${slideWidth / 2 - selectedElementWidth / 2}px`);
+          break;
+        }
+        case ALIGNMENT_TYPES.RIGHT: {
+          alignHorizontally(`${slideWidth - selectedElementWidth}px`);
+          break;
+        }
+        case ALIGNMENT_TYPES.TOP: {
+          alignVertically('0px');
+          break;
+        }
+        case ALIGNMENT_TYPES.VERTICAL_CENTER: {
+          alignVertically(`${slideHeight / 2 - selectedElementHeight / 2}px`);
+          break;
+        }
+        case ALIGNMENT_TYPES.BOTTOM: {
+          alignVertically(`${slideHeight - selectedElementHeight}px`);
+          break;
+        }
+      }
+    },
+    [alignHorizontally, alignVertically, selectedElement, themeValues.size]
+  );
+
+  return (
+    <Container label="Object Placement">
+      <SegmentedControl
+        options={[
+          { label: 'In-line', value: false },
+          { label: 'Absolute', value: true }
+        ]}
+        value={freeMovement}
+        onChange={() => {
+          setFreeMovement(!freeMovement);
+          onToggle();
+        }}
+      />
+
+      {freeMovement && (
+        <>
+          <Pane display="flex" alignItems="center" marginBottom={8}>
+            <Label minWidth={54}>Align:</Label>
+            <Pane display="flex">
+              {Object.keys(ALIGNMENT_OPTIONS).map((alignmentType, i) => {
+                const option =
+                  ALIGNMENT_OPTIONS[alignmentType as ALIGNMENT_TYPES];
+                return (
+                  <Tooltip content={option.tooltip} key={alignmentType}>
+                    <IconButton
+                      flex={1}
+                      icon={option.icon}
+                      marginLeft={i === 0 ? 0 : 7}
+                      onClick={() =>
+                        handleAlignment(alignmentType as ALIGNMENT_TYPES)
+                      }
+                    />
+                  </Tooltip>
+                );
+              })}
+            </Pane>
+          </Pane>
+
           <SplitContainer>
             <TextInputField
               label="X:"
@@ -222,11 +331,9 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
               }}
             />
           </SplitContainer>
-        ) : (
-          <></>
-        )}
-      </Container>
-    </>
+        </>
+      )}
+    </Container>
   );
 };
 
@@ -253,7 +360,8 @@ const SplitContainer = styled.div`
     align-items: center;
 
     label {
-      margin-right: 10px;
+      margin-bottom: 0;
+      min-width: 54px;
     }
   }
 `;

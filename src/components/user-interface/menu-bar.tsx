@@ -464,7 +464,8 @@ const InsertItems: { title: string; element: typeof ELEMENTS[number] }[] = [
   { title: 'Box', element: ELEMENTS.BOX },
   { title: 'Grid', element: ELEMENTS.GRID },
   { title: 'CodePane', element: ELEMENTS.CODEPANE },
-  { title: 'Progress', element: ELEMENTS.PROGRESS }
+  { title: 'Progress', element: ELEMENTS.PROGRESS },
+  { title: 'FullScreen', element: ELEMENTS.FULL_SCREEN }
 ];
 
 const nonNestableElements: SPECTACLE_ELEMENTS[] = [

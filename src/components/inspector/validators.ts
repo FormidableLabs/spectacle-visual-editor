@@ -32,3 +32,6 @@ export const isCodePaneElement = (element: ConstructedDeckElement | null) =>
 
 export const isProgressElement = (element: ConstructedDeckElement | null) =>
   Boolean(element?.component?.includes('Progress'));
+
+export const isFullScreenElement = (element: ConstructedDeckElement | null) =>
+  Boolean(element?.component?.includes('FullScreen'));

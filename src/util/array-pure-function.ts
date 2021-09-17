@@ -16,3 +16,13 @@ export const moveArrayItem = <T>(
 
   return clonedItems;
 };
+
+export const removeArrayItem = <T>(items: T[], itemIndex: number) => {
+  const clonedItems = [...items];
+
+  if (itemIndex >= items.length) {
+    return clonedItems;
+  }
+
+  return [...items.slice(0, itemIndex), ...items.slice(itemIndex + 1)];
+};

@@ -15,8 +15,12 @@ import styled from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
 import { DragWrapper, ElementLocation } from '../../helpers/drag-wrapper';
 import { ElementCard } from './layers-element-card';
-import { moveArrayItem } from '../../../util/move-array-item';
+import {
+  moveArrayItem,
+  removeArrayItem
+} from '../../../util/array-pure-function';
 import { defaultTheme } from 'evergreen-ui';
+import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
 
 export const LayerInspector: FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
@@ -75,6 +79,38 @@ export const LayerInspector: FC = () => {
           currentLocation.index,
           nextLocation.index
         );
+      });
+    },
+    []
+  );
+
+  const moveElementInside = useCallback(
+    (currentLocation: ElementLocation, nextLocation: ElementLocation) => {
+      if (currentLocation.parentIndex === nextLocation.index) {
+        return;
+      }
+
+      setLocalElements((localElements) => {
+        let nextLocationElements = localElements[nextLocation.index].children;
+        let currentLocationElements: ConstructedDeckElement[];
+
+        const itemInQuestion = Object.assign(
+          {},
+          localElements[currentLocation.index]
+        );
+
+        localElements[nextLocation.index].children = nextLocationElements;
+
+        currentLocationElements = removeArrayItem(
+          localElements,
+          currentLocation.index
+        );
+
+        if (Array.isArray(nextLocationElements)) {
+          nextLocationElements.push(itemInQuestion);
+        }
+
+        return currentLocationElements;
       });
     },
     []
@@ -143,6 +179,9 @@ export const LayerInspector: FC = () => {
             const isHovered = element.id === hoveredElementId;
             const isSelected = element.id === selectedElement?.id;
             const isExpanded = !collapsedLayers.includes(element.id);
+            const isContainerElement = CONTAINER_ELEMENTS.includes(
+              element.component
+            );
             const isChildSelected =
               Array.isArray(element.children) &&
               !!element.children.find(
@@ -155,6 +194,10 @@ export const LayerInspector: FC = () => {
                 index={index}
                 type="Element"
                 onDrag={moveElement}
+                onDragInside={
+                  isContainerElement ? moveElementInside : undefined
+                }
+                onDragOutside={isContainerElement ? () => {} : undefined}
                 onDrop={commitChangedOrder}
                 orientation="vertical"
               >

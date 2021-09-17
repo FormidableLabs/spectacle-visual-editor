@@ -14,7 +14,7 @@ import {
   defaultTheme
 } from 'evergreen-ui';
 import { useRootSelector } from '../../../store';
-import { moveArrayItem } from '../../../util/move-array-item';
+import { moveArrayItem } from '../../../util/array-pure-function';
 
 interface Props {
   scale: number;

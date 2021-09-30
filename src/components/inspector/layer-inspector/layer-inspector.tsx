@@ -16,8 +16,8 @@ import { isDeckElement } from '../../../util/is-deck-element';
 import { LayerDragWrapper, Layer } from '../../helpers/layer-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import {
-  moveArrayItem,
-  removeArrayItem
+  moveArrayItem
+  // removeArrayItem
 } from '../../../util/array-pure-function';
 import { defaultTheme } from 'evergreen-ui';
 import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
@@ -52,13 +52,14 @@ export const LayerInspector: FC = () => {
         // If parentId is defined, then the element is nested
         // If it is not defined, the element is a top-level element
         if (currentLocation.parentId) {
-          const parentIndex = localElements.findIndex(
-            (el) => el.id === (currentLocation.parentId ?? '')
+          const clonedLocalElements = cloneDeep(localElements);
+          const parentIndex = clonedLocalElements.findIndex(
+            (el) => el.id === (currentLocation.parentId as string)
           );
-          const parent = localElements[parentIndex];
+          const parent = clonedLocalElements[parentIndex];
 
           if (!parent || !Array.isArray(parent.children)) {
-            return localElements;
+            return clonedLocalElements;
           }
 
           const parentChildren = parent?.children as ConstructedDeckElement[];
@@ -69,17 +70,16 @@ export const LayerInspector: FC = () => {
             return el.id === nextLocation.id;
           });
 
-          console.log(currentIndex, nextIndex);
-
           const reorderedElementChildren = moveArrayItem(
             parentChildren,
             currentIndex,
             nextIndex
           );
 
-          localElements[parentIndex].children = reorderedElementChildren;
-          return localElements;
+          clonedLocalElements[parentIndex].children = reorderedElementChildren;
+          return clonedLocalElements;
         }
+
         const currentIndex = localElements.findIndex(
           (el) => el.id === currentLocation.id
         );

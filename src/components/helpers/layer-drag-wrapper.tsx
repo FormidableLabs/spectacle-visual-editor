@@ -49,7 +49,7 @@ export const LayerDragWrapper: React.FC<Props> = ({
       const hoverIndex = index;
 
       // Don't replace items with themselves
-      if (dragId === hoverId) return;
+      if (dragId === hoverId || dragIndex === hoverIndex) return;
 
       // Don't allow nested elements to interact with non-insertable elements outside their parent context
       if (parentId !== dragParentId) {
@@ -102,10 +102,7 @@ export const LayerDragWrapper: React.FC<Props> = ({
         if (dragIndex > hoverIndex && pointerPosition > dropThreshold) return;
 
         // Time to actually perform the action
-        onDrag(
-          { id: dragId, parentId: item.parentId },
-          { id: hoverId, parentId }
-        );
+        onDrag({ id: dragId, parentId: dragParentId }, { id, parentId });
         item.index = hoverIndex;
       }
     }

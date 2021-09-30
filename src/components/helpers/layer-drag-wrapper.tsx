@@ -15,6 +15,7 @@ interface Props extends Layer {
     hoverLayer: Layer,
     fromDirection: 'top' | 'bottom'
   ) => void;
+  onDragOutside?: (dragLayer: Layer, fromDirection: 'top' | 'bottom') => void;
   isContainerElement: boolean;
 }
 
@@ -26,6 +27,7 @@ export const LayerDragWrapper: React.FC<Props> = ({
   onDrag,
   onDrop,
   onDragInside,
+  onDragOutside,
   isContainerElement
 }) => {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -49,42 +51,51 @@ export const LayerDragWrapper: React.FC<Props> = ({
       const hoverIndex = index;
 
       // Don't replace items with themselves
-      if (dragId === hoverId || dragIndex === hoverIndex) return;
+      if (
+        dragId === hoverId ||
+        (dragIndex === hoverIndex && dragParentId === parentId)
+      )
+        return;
+
+      const canBeInserted = isContainerElement && !dragParentId;
+      var wasInserted = false;
+      const canBeRemoved =
+        isContainerElement && dragParentId && dragParentId !== id;
+      var wasRemoved = false;
 
       // Don't allow nested elements to interact with non-insertable elements outside their parent context
-      if (parentId !== dragParentId) {
+      if (parentId !== dragParentId && !canBeRemoved) {
         return;
       }
 
       // Get bounding rectangle of hovered item
       const hoveredItemRect = ref.current?.getBoundingClientRect();
 
-      let didInsert = false;
-      //   if (isContainerElement) {
-      //     // Drag inside/outside of parent element
-      //     // Calculate position past which an item must be dragged to be allowed inside
-      //     const dragThreshold = hoveredItemRect.height / 4;
+      if (canBeInserted) {
+        // Drag into element
+        // Calculate position past which an item must be dragged to be allowed inside
+        const dragThreshold = hoveredItemRect.height / 4;
 
-      //     // Get position of pointer on screen
-      //     const pointerOffset = monitor.getClientOffset();
-      //     if (!pointerOffset) return;
+        // Get position of pointer on screen
+        const pointerOffset = monitor.getClientOffset();
+        if (!pointerOffset) return;
 
-      //     let isWithinThreshold =
-      //       pointerOffset.y < hoveredItemRect.bottom - dragThreshold ||
-      //       pointerOffset.y > hoveredItemRect.top + dragThreshold;
+        let isWithinThreshold =
+          pointerOffset.y < hoveredItemRect.bottom - dragThreshold ||
+          pointerOffset.y > hoveredItemRect.top + dragThreshold;
 
-      //     if (isWithinThreshold) {
-      //       !!onDragInside &&
-      //         onDragInside(
-      //           { id: dragId, parentId: item.parentId },
-      //           { id: hoverId, parentId },
-      //           'top'
-      //         );
-      //       didInsert = true;
-      //     }
-      //   }
+        if (isWithinThreshold) {
+          !!onDragInside &&
+            onDragInside(
+              { id: dragId, parentId: item.parentId },
+              { id: hoverId, parentId },
+              dragIndex < hoverIndex ? 'top' : 'bottom'
+            );
+          wasInserted = true;
+        }
+      }
 
-      if (!didInsert) {
+      if (!wasInserted && !wasRemoved) {
         // Calculate middle position of item being hovered
         const dropThreshold =
           (hoveredItemRect.bottom + hoveredItemRect.top) / 2;

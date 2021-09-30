@@ -98,26 +98,68 @@ export const LayerInspector: FC = () => {
       nextLocation: Layer,
       direction: 'top' | 'bottom'
     ) => {
-      // if (currentLocation.parentIndex === nextLocation.index) {
-      //   return;
-      // }
-      // setLocalElements((localElements) => {
-      //   let nextLocationElements = localElements[nextLocation.index].children;
-      //   let currentLocationElements: ConstructedDeckElement[];
-      //   const itemInQuestion = Object.assign(
-      //     {},
-      //     localElements[currentLocation.index]
-      //   );
-      //   localElements[nextLocation.index].children = nextLocationElements;
-      //   currentLocationElements = removeArrayItem(
-      //     localElements,
-      //     currentLocation.index
-      //   );
-      //   if (Array.isArray(nextLocationElements)) {
-      //     nextLocationElements.push(itemInQuestion);
-      //   }
-      //   return currentLocationElements;
-      // });
+      setLocalElements((localElements) => {
+        const clonedLocalElements = cloneDeep(localElements);
+        const parentIndex = clonedLocalElements.findIndex(
+          (el) => el.id === nextLocation.id
+        );
+        const parent = clonedLocalElements[parentIndex];
+        const parentChildren = parent.children;
+        const itemInQuestion = clonedLocalElements.find(
+          (el) => el.id === currentLocation.id
+        );
+
+        if (
+          itemInQuestion === undefined ||
+          parentChildren === undefined ||
+          !Array.isArray(parentChildren)
+        ) {
+          return localElements;
+        }
+
+        if (direction === 'top') {
+          (parentChildren as ConstructedDeckElement[]).unshift(itemInQuestion);
+        } else if (direction === 'bottom') {
+          parentChildren.push(itemInQuestion);
+        }
+
+        const x = clonedLocalElements.filter(
+          (el) => el.id !== currentLocation.id
+        );
+        return x;
+      });
+    },
+    []
+  );
+
+  const moveElementOutside = useCallback(
+    (currentLocation: Layer, direction: 'top' | 'bottom') => {
+      setLocalElements((localElements) => {
+        if (currentLocation.parentId === undefined) return localElements;
+        const clonedLocalElements = cloneDeep(localElements);
+
+        const currentParentIndex = clonedLocalElements.findIndex(
+          (el) => el.id === currentLocation.parentId
+        );
+        const currentParent = clonedLocalElements[currentParentIndex];
+        const itemInQuestion = (currentParent.children as ConstructedDeckElement[]).find(
+          (el) => el.id === currentLocation.id
+        );
+        const updatedParent = (currentParent.children as ConstructedDeckElement[]).filter(
+          (el) => el.id !== currentLocation.id
+        );
+
+        clonedLocalElements[currentParentIndex].children = updatedParent;
+
+        // if (direction === 'top') {
+        // } else if (direction === 'bottom') {
+        // }
+
+        if (itemInQuestion !== undefined)
+          clonedLocalElements.push(itemInQuestion);
+
+        return clonedLocalElements;
+      });
     },
     []
   );
@@ -201,6 +243,8 @@ export const LayerInspector: FC = () => {
                 parentId={undefined}
                 id={element.id}
                 isContainerElement={isContainerElement}
+                onDragInside={moveElementInside}
+                onDragOutside={moveElementOutside}
               >
                 <ElementCard
                   element={element}

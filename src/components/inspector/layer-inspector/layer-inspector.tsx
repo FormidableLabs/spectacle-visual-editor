@@ -13,7 +13,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
-import { DragWrapper, ElementLocation } from '../../helpers/drag-wrapper';
+import { LayerDragWrapper, Layer } from '../../helpers/layer-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import {
   moveArrayItem,
@@ -42,101 +42,105 @@ export const LayerInspector: FC = () => {
 
   // Move a local item as its dragged
   const moveElement = useCallback(
-    (currentLocation: ElementLocation, nextLocation: ElementLocation) => {
+    (currentLocation: Layer, nextLocation: Layer) => {
       setLocalElements((localElements) => {
-        // Only allow movement within the same parent context for now
-        if (currentLocation.parentIndex !== nextLocation.parentIndex) {
+        // Only allow movement within the same parent context in this function
+        if (currentLocation.parentId !== nextLocation.parentId) {
           return localElements;
         }
 
-        // If parentIndex is defined, then the element is nested
+        // If parentId is defined, then the element is nested
         // If it is not defined, the element is a top-level element
-        if (typeof currentLocation.parentIndex === 'number') {
-          if (
-            !Array.isArray(localElements[currentLocation.parentIndex].children)
-          ) {
+        if (currentLocation.parentId) {
+          const parentIndex = localElements.findIndex(
+            (el) => el.id === (currentLocation.parentId ?? '')
+          );
+          const parent = localElements[parentIndex];
+
+          if (!parent || !Array.isArray(parent.children)) {
             return localElements;
           }
 
-          const clonedLocalElements = cloneDeep(localElements);
-          const clonedElementChildren = clonedLocalElements[
-            currentLocation.parentIndex
-          ].children as ConstructedDeckElement[];
+          const parentChildren = parent?.children as ConstructedDeckElement[];
+          const currentIndex = parentChildren.findIndex((el) => {
+            return el.id === currentLocation.id;
+          });
+          const nextIndex = parentChildren.findIndex((el) => {
+            return el.id === nextLocation.id;
+          });
+
+          console.log(currentIndex, nextIndex);
+
           const reorderedElementChildren = moveArrayItem(
-            clonedElementChildren,
-            currentLocation.index,
-            nextLocation.index
+            parentChildren,
+            currentIndex,
+            nextIndex
           );
 
-          clonedLocalElements[
-            currentLocation.parentIndex
-          ].children = reorderedElementChildren;
-          return clonedLocalElements;
+          localElements[parentIndex].children = reorderedElementChildren;
+          return localElements;
         }
-
-        return moveArrayItem(
-          localElements,
-          currentLocation.index,
-          nextLocation.index
+        const currentIndex = localElements.findIndex(
+          (el) => el.id === currentLocation.id
         );
+        const nextIndex = localElements.findIndex(
+          (el) => el.id === nextLocation.id
+        );
+        return moveArrayItem(localElements, currentIndex, nextIndex);
       });
     },
     []
   );
 
   const moveElementInside = useCallback(
-    (currentLocation: ElementLocation, nextLocation: ElementLocation) => {
-      if (currentLocation.parentIndex === nextLocation.index) {
-        return;
-      }
-
-      setLocalElements((localElements) => {
-        let nextLocationElements = localElements[nextLocation.index].children;
-        let currentLocationElements: ConstructedDeckElement[];
-
-        const itemInQuestion = Object.assign(
-          {},
-          localElements[currentLocation.index]
-        );
-
-        localElements[nextLocation.index].children = nextLocationElements;
-
-        currentLocationElements = removeArrayItem(
-          localElements,
-          currentLocation.index
-        );
-
-        if (Array.isArray(nextLocationElements)) {
-          nextLocationElements.push(itemInQuestion);
-        }
-
-        return currentLocationElements;
-      });
+    (
+      currentLocation: Layer,
+      nextLocation: Layer,
+      direction: 'top' | 'bottom'
+    ) => {
+      // if (currentLocation.parentIndex === nextLocation.index) {
+      //   return;
+      // }
+      // setLocalElements((localElements) => {
+      //   let nextLocationElements = localElements[nextLocation.index].children;
+      //   let currentLocationElements: ConstructedDeckElement[];
+      //   const itemInQuestion = Object.assign(
+      //     {},
+      //     localElements[currentLocation.index]
+      //   );
+      //   localElements[nextLocation.index].children = nextLocationElements;
+      //   currentLocationElements = removeArrayItem(
+      //     localElements,
+      //     currentLocation.index
+      //   );
+      //   if (Array.isArray(nextLocationElements)) {
+      //     nextLocationElements.push(itemInQuestion);
+      //   }
+      //   return currentLocationElements;
+      // });
     },
     []
   );
 
   // Update the order with the local order
   const commitChangedOrder = useCallback(
-    (dropLocation: ElementLocation) => {
-      const elementsToUpdate =
-        typeof dropLocation.parentIndex === 'number'
-          ? localElements[dropLocation.parentIndex].children
-          : localElements;
-
-      if (!Array.isArray(elementsToUpdate)) {
-        return;
-      }
-
-      dispatch(
-        deckSlice.actions.reorderActiveSlideElements({
-          elementIds: elementsToUpdate.map((element) => element.id),
-          parentId:
-            typeof dropLocation.parentIndex === 'number'
-              ? localElements[dropLocation.parentIndex].id
-              : undefined
-        })
-      );
+    (dropLocation: Layer) => {
+      // const elementsToUpdate =
+      //   typeof dropLocation.parentIndex === 'number'
+      //     ? localElements[dropLocation.parentIndex].children
+      //     : localElements;
+      // if (!Array.isArray(elementsToUpdate)) {
+      //   return;
+      // }
+      // dispatch(
+      //   deckSlice.actions.reorderActiveSlideElements({
+      //     elementIds: elementsToUpdate.map((element) => element.id),
+      //     parentId:
+      //       typeof dropLocation.parentId === 'number'
+      //         ? localElements[dropLocation.parentIndex].id
+      //         : undefined
+      //   })
+      // );
     },
     [dispatch, localElements]
   );
@@ -189,17 +193,14 @@ export const LayerInspector: FC = () => {
               );
 
             return (
-              <DragWrapper
-                key={element.id}
+              <LayerDragWrapper
                 index={index}
-                type="Element"
+                key={element.id}
                 onDrag={moveElement}
-                onDragInside={
-                  isContainerElement ? moveElementInside : undefined
-                }
-                onDragOutside={isContainerElement ? () => {} : undefined}
                 onDrop={commitChangedOrder}
-                orientation="vertical"
+                parentId={undefined}
+                id={element.id}
+                isContainerElement={isContainerElement}
               >
                 <ElementCard
                   element={element}
@@ -214,15 +215,15 @@ export const LayerInspector: FC = () => {
                 />
                 {isExpanded &&
                   Array.isArray(element.children) &&
-                  element.children.map((childElement, childIndex) => (
-                    <DragWrapper
+                  element.children.map((childElement, childElementIndex) => (
+                    <LayerDragWrapper
                       key={childElement.id}
-                      index={childIndex}
-                      parentIndex={index}
-                      type="Element"
+                      index={childElementIndex}
+                      parentId={element.id}
+                      id={childElement.id}
                       onDrag={moveElement}
                       onDrop={commitChangedOrder}
-                      orientation="vertical"
+                      isContainerElement={false}
                     >
                       <ElementCard
                         element={childElement}
@@ -234,9 +235,9 @@ export const LayerInspector: FC = () => {
                         onMouseEnter={() => hoverElement(childElement.id)}
                         onMouseLeave={unhoverElement}
                       />
-                    </DragWrapper>
+                    </LayerDragWrapper>
                   ))}
-              </DragWrapper>
+              </LayerDragWrapper>
             );
           })}
         </DndProvider>

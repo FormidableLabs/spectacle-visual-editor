@@ -20,14 +20,6 @@ interface Props extends ElementLocation {
     hoverLocation: ElementLocation
   ) => void;
   onDrop: (dropLocation: ElementLocation) => void;
-  onDragInside?: (
-    dragLocation: ElementLocation,
-    hoverLocation: ElementLocation
-  ) => void;
-  onDragOutside?: (
-    dragLocation: ElementLocation,
-    hoverLocation: ElementLocation
-  ) => void;
   orientation: 'horizontal' | 'vertical';
 }
 
@@ -38,14 +30,9 @@ export const DragWrapper: React.FC<Props> = ({
   type,
   onDrag,
   onDrop,
-  onDragInside,
-  onDragOutside,
   orientation
 }) => {
   const ref = React.useRef<HTMLDivElement>(null);
-  const isInserable = !!(
-    onDragInside !== undefined && onDragOutside !== undefined
-  );
 
   const [{ handlerId }, drop] = useDrop({
     accept: type,
@@ -66,74 +53,39 @@ export const DragWrapper: React.FC<Props> = ({
       // Don't replace items with themselves
       if (dragIndex === hoverIndex) return;
 
-      // Don't allow nested elements to interact with non-insertable elements outside their parent context
-      if (parentIndex !== dragParent && !isInserable) {
+      // Don't allow nested elements to interact with elements outside their parent context
+      if (parentIndex !== dragParent) {
         return;
       }
 
       // Get bounding rectangle of hovered item
       const hoveredItemRect = ref.current?.getBoundingClientRect();
 
-      let didInsert = false;
-      if (isInserable) {
-        // Drag inside/outside of parent element
-        // Calculate position past which an item must be dragged to be allowed inside
-        const verticalDragThreshold = hoveredItemRect.height / 4;
-        const horizontalDragThreshold = hoveredItemRect.width / 4;
+      // Calculate middle position of item being hovered
+      const dropThreshold =
+        orientation === 'horizontal'
+          ? (hoveredItemRect.right + hoveredItemRect.left) / 2
+          : (hoveredItemRect.bottom + hoveredItemRect.top) / 2;
+      // Get position of pointer on screen
+      const pointerOffset = monitor.getClientOffset();
+      // Calculate relevant position of pointer
+      const pointerPosition =
+        (orientation === 'horizontal' ? pointerOffset?.x : pointerOffset?.y) ??
+        0;
 
-        // Get position of pointer on screen
-        const pointerOffset = monitor.getClientOffset();
-        if (!pointerOffset) return;
+      // Only move items when the pointer has passed the dropThreshold (50% of item's width/height)
+      // Dragging right/down
+      if (dragIndex < hoverIndex && pointerPosition < dropThreshold) return;
+      // Dragging left/up
+      if (dragIndex > hoverIndex && pointerPosition > dropThreshold) return;
 
-        let isWithinThreshold: boolean;
-        if (orientation === 'horizontal') {
-          isWithinThreshold =
-            pointerOffset.x < hoveredItemRect.right - horizontalDragThreshold ||
-            pointerOffset.y > hoveredItemRect.top + horizontalDragThreshold;
-        } else {
-          isWithinThreshold =
-            pointerOffset.y < hoveredItemRect.bottom - verticalDragThreshold ||
-            pointerOffset.y > hoveredItemRect.top + verticalDragThreshold;
-        }
+      // Time to actually perform the action
+      onDrag(
+        { index: dragIndex, parentIndex: item.parentIndex },
+        { index: hoverIndex, parentIndex }
+      );
 
-        if (isWithinThreshold) {
-          !!onDragInside &&
-            onDragInside(
-              { index: dragIndex, parentIndex: item.parentIndex },
-              { index: hoverIndex, parentIndex }
-            );
-          didInsert = true;
-        }
-      }
-
-      if (!didInsert) {
-        // Calculate middle position of item being hovered
-        const dropThreshold =
-          orientation === 'horizontal'
-            ? (hoveredItemRect.right + hoveredItemRect.left) / 2
-            : (hoveredItemRect.bottom + hoveredItemRect.top) / 2;
-        // Get position of pointer on screen
-        const pointerOffset = monitor.getClientOffset();
-        // Calculate relevant position of pointer
-        const pointerPosition =
-          (orientation === 'horizontal'
-            ? pointerOffset?.x
-            : pointerOffset?.y) ?? 0;
-
-        // Only move items when the pointer has passed the dropThreshold (50% of item's width/height)
-        // Dragging right/down
-        if (dragIndex < hoverIndex && pointerPosition < dropThreshold) return;
-        // Dragging left/up
-        if (dragIndex > hoverIndex && pointerPosition > dropThreshold) return;
-
-        // Time to actually perform the action
-        onDrag(
-          { index: dragIndex, parentIndex: item.parentIndex },
-          { index: hoverIndex, parentIndex }
-        );
-
-        item.index = hoverIndex;
-      }
+      item.index = hoverIndex;
     }
   });
 

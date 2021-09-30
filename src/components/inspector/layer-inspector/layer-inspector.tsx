@@ -133,7 +133,7 @@ export const LayerInspector: FC = () => {
   );
 
   const moveElementOutside = useCallback(
-    (currentLocation: Layer, direction: 'top' | 'bottom') => {
+    (currentLocation: Layer, nextLocation: Layer) => {
       setLocalElements((localElements) => {
         if (currentLocation.parentId === undefined) return localElements;
         const clonedLocalElements = cloneDeep(localElements);
@@ -141,22 +141,20 @@ export const LayerInspector: FC = () => {
         const currentParentIndex = clonedLocalElements.findIndex(
           (el) => el.id === currentLocation.parentId
         );
+        const nextLocationIndex = clonedLocalElements.findIndex(
+          (el) => el.id === nextLocation.id
+        );
         const currentParent = clonedLocalElements[currentParentIndex];
         const itemInQuestion = (currentParent.children as ConstructedDeckElement[]).find(
           (el) => el.id === currentLocation.id
         );
+        if (!itemInQuestion) return localElements;
         const updatedParent = (currentParent.children as ConstructedDeckElement[]).filter(
           (el) => el.id !== currentLocation.id
         );
 
         clonedLocalElements[currentParentIndex].children = updatedParent;
-
-        // if (direction === 'top') {
-        // } else if (direction === 'bottom') {
-        // }
-
-        if (itemInQuestion !== undefined)
-          clonedLocalElements.push(itemInQuestion);
+        clonedLocalElements.splice(nextLocationIndex, 0, itemInQuestion);
 
         return clonedLocalElements;
       });

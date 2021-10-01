@@ -41,7 +41,7 @@ export const LayerDragWrapper: React.FC<Props> = ({
       };
     },
 
-    hover(item: { id: string; parentId: string; index: number }, monitor) {
+    hover(item: { id: string; parentId?: string; index: number }, monitor) {
       if (!ref.current) return;
 
       const dragId = item.id;
@@ -83,6 +83,7 @@ export const LayerDragWrapper: React.FC<Props> = ({
             { id: dragId, parentId: item.parentId },
             { id: hoverId, parentId }
           );
+        item.parentId = undefined;
         wasRemoved = true;
       }
 
@@ -104,6 +105,7 @@ export const LayerDragWrapper: React.FC<Props> = ({
               { id: hoverId, parentId },
               dragIndex < hoverIndex ? 'top' : 'bottom'
             );
+          item.parentId = hoverId;
           wasInserted = true;
         }
       }

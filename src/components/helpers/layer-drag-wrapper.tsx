@@ -9,7 +9,10 @@ export interface Layer {
 interface Props extends Layer {
   index: number;
   onDrag: (dragLayer: Layer, hoverLayer: Layer) => void;
-  onDrop: (dropLayer: Layer) => void;
+  onDrop: (
+    previousParent: string | undefined,
+    nextParent: string | undefined
+  ) => void;
   onDragInside?: (
     dragLayer: Layer,
     hoverLayer: Layer,
@@ -143,7 +146,7 @@ export const LayerDragWrapper: React.FC<Props> = ({
     },
 
     end(dropLocation: Layer) {
-      onDrop(dropLocation);
+      onDrop(parentId, dropLocation.parentId);
     },
 
     collect: (monitor) => ({

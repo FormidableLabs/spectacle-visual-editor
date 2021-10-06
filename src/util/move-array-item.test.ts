@@ -1,4 +1,4 @@
-import { moveArrayItem } from './array-pure-function';
+import { moveArrayItem } from './move-array-item';
 
 describe('moveArrayItem', () => {
   it('should not mutate original array', () => {

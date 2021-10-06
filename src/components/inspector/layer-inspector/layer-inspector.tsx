@@ -15,10 +15,7 @@ import styled from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
 import { LayerDragWrapper, Layer } from '../../helpers/layer-drag-wrapper';
 import { ElementCard } from './layers-element-card';
-import {
-  moveArrayItem
-  // removeArrayItem
-} from '../../../util/array-pure-function';
+import { moveArrayItem } from '../../../util/move-array-item';
 import { defaultTheme } from 'evergreen-ui';
 import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
 
@@ -164,25 +161,59 @@ export const LayerInspector: FC = () => {
 
   // Update the order with the local order
   const commitChangedOrder = useCallback(
-    (dropLocation: Layer) => {
-      // const elementsToUpdate =
-      //   typeof dropLocation.parentIndex === 'number'
-      //     ? localElements[dropLocation.parentIndex].children
-      //     : localElements;
-      // if (!Array.isArray(elementsToUpdate)) {
-      //   return;
-      // }
-      // dispatch(
-      //   deckSlice.actions.reorderActiveSlideElements({
-      //     elementIds: elementsToUpdate.map((element) => element.id),
-      //     parentId:
-      //       typeof dropLocation.parentId === 'number'
-      //         ? localElements[dropLocation.parentIndex].id
-      //         : undefined
-      //   })
-      // );
+    (previousParent: string | undefined, nextParent: string | undefined) => {
+      // commitChangedOrder is called with a stale version of localElements.
+      // Use update function to get the most recent change. Return original value.
+      setLocalElements((localElements) => {
+        const nextLocationIndex = localElements.findIndex(
+          (el) => el.id === nextParent
+        );
+
+        // Update drop location
+        const elementsToUpdate =
+          typeof nextParent === 'string'
+            ? localElements[nextLocationIndex].children
+            : localElements;
+        if (!Array.isArray(elementsToUpdate)) {
+          return localElements;
+        }
+        dispatch(
+          deckSlice.actions.reorderActiveSlideElements({
+            elementIds: elementsToUpdate.map((element) => element.id),
+            parentId:
+              typeof nextParent === 'string'
+                ? localElements[nextLocationIndex].id
+                : undefined
+          })
+        );
+
+        // If element has moved outside of parent, update previous parent
+        if (previousParent !== nextParent) {
+          const previousLocationIndex = localElements.findIndex(
+            (el) => el.id === previousParent
+          );
+
+          const elementsToUpdate =
+            typeof previousParent === 'string'
+              ? localElements[previousLocationIndex].children
+              : localElements;
+          if (!Array.isArray(elementsToUpdate)) {
+            return localElements;
+          }
+          dispatch(
+            deckSlice.actions.reorderActiveSlideElements({
+              elementIds: elementsToUpdate.map((element) => element.id),
+              parentId:
+                typeof previousParent === 'string'
+                  ? localElements[previousLocationIndex].id
+                  : undefined
+            })
+          );
+        }
+        return localElements;
+      });
     },
-    [dispatch, localElements]
+    [dispatch]
   );
 
   const hoverElement = useCallback(

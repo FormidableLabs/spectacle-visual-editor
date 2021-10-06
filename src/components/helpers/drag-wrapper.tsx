@@ -52,15 +52,11 @@ export const DragWrapper: React.FC<Props> = ({
 
       // Don't replace items with themselves
       if (dragIndex === hoverIndex) return;
-
       // Don't allow nested elements to interact with elements outside their parent context
-      if (parentIndex !== dragParent) {
-        return;
-      }
+      if (parentIndex !== dragParent) return;
 
       // Get bounding rectangle of hovered item
       const hoveredItemRect = ref.current?.getBoundingClientRect();
-
       // Calculate middle position of item being hovered
       const dropThreshold =
         orientation === 'horizontal'

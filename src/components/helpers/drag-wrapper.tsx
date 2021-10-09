@@ -52,7 +52,7 @@ export const DragWrapper: React.FC<Props> = ({
 
       // Don't replace items with themselves
       if (dragIndex === hoverIndex) return;
-      // Don't allow nested elements to interact outside their parent context
+      // Don't allow nested elements to interact with elements outside their parent context
       if (parentIndex !== dragParent) return;
 
       // Get bounding rectangle of hovered item

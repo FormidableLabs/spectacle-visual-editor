@@ -13,10 +13,11 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
-import { DragWrapper, ElementLocation } from '../../helpers/drag-wrapper';
+import { LayerDragWrapper, Layer } from '../../helpers/layer-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import { moveArrayItem } from '../../../util/move-array-item';
 import { defaultTheme } from 'evergreen-ui';
+import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
 
 export const LayerInspector: FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
@@ -38,43 +39,121 @@ export const LayerInspector: FC = () => {
 
   // Move a local item as its dragged
   const moveElement = useCallback(
-    (currentLocation: ElementLocation, nextLocation: ElementLocation) => {
+    (currentLocation: Layer, nextLocation: Layer) => {
       setLocalElements((localElements) => {
-        // Only allow movement within the same parent context for now
-        if (currentLocation.parentIndex !== nextLocation.parentIndex) {
+        // Only allow movement within the same parent context in this function
+        if (currentLocation.parentId !== nextLocation.parentId) {
           return localElements;
         }
 
-        // If parentIndex is defined, then the element is nested
+        // If parentId is defined, then the element is nested
         // If it is not defined, the element is a top-level element
-        if (typeof currentLocation.parentIndex === 'number') {
-          if (
-            !Array.isArray(localElements[currentLocation.parentIndex].children)
-          ) {
-            return localElements;
+        if (currentLocation.parentId) {
+          const clonedLocalElements = cloneDeep(localElements);
+          const parentIndex = clonedLocalElements.findIndex(
+            (el) => el.id === (currentLocation.parentId as string)
+          );
+          const parent = clonedLocalElements[parentIndex];
+
+          if (!parent || !Array.isArray(parent.children)) {
+            return clonedLocalElements;
           }
 
-          const clonedLocalElements = cloneDeep(localElements);
-          const clonedElementChildren = clonedLocalElements[
-            currentLocation.parentIndex
-          ].children as ConstructedDeckElement[];
+          const parentChildren = parent?.children as ConstructedDeckElement[];
+          const currentIndex = parentChildren.findIndex((el) => {
+            return el.id === currentLocation.id;
+          });
+          const nextIndex = parentChildren.findIndex((el) => {
+            return el.id === nextLocation.id;
+          });
+
           const reorderedElementChildren = moveArrayItem(
-            clonedElementChildren,
-            currentLocation.index,
-            nextLocation.index
+            parentChildren,
+            currentIndex,
+            nextIndex
           );
 
-          clonedLocalElements[
-            currentLocation.parentIndex
-          ].children = reorderedElementChildren;
+          clonedLocalElements[parentIndex].children = reorderedElementChildren;
           return clonedLocalElements;
         }
 
-        return moveArrayItem(
-          localElements,
-          currentLocation.index,
-          nextLocation.index
+        const currentIndex = localElements.findIndex(
+          (el) => el.id === currentLocation.id
         );
+        const nextIndex = localElements.findIndex(
+          (el) => el.id === nextLocation.id
+        );
+        return moveArrayItem(localElements, currentIndex, nextIndex);
+      });
+    },
+    []
+  );
+
+  const moveElementInside = useCallback(
+    (
+      currentLocation: Layer,
+      nextLocation: Layer,
+      direction: 'top' | 'bottom'
+    ) => {
+      setLocalElements((localElements) => {
+        const clonedLocalElements = cloneDeep(localElements);
+        const parentIndex = clonedLocalElements.findIndex(
+          (el) => el.id === nextLocation.id
+        );
+        const parent = clonedLocalElements[parentIndex];
+        const parentChildren = parent.children;
+        const itemInQuestion = clonedLocalElements.find(
+          (el) => el.id === currentLocation.id
+        );
+
+        if (
+          itemInQuestion === undefined ||
+          parentChildren === undefined ||
+          !Array.isArray(parentChildren)
+        ) {
+          return localElements;
+        }
+
+        if (direction === 'top') {
+          (parentChildren as ConstructedDeckElement[]).unshift(itemInQuestion);
+        } else if (direction === 'bottom') {
+          parentChildren.push(itemInQuestion);
+        }
+
+        const x = clonedLocalElements.filter(
+          (el) => el.id !== currentLocation.id
+        );
+        return x;
+      });
+    },
+    []
+  );
+
+  const moveElementOutside = useCallback(
+    (currentLocation: Layer, nextLocation: Layer) => {
+      setLocalElements((localElements) => {
+        if (currentLocation.parentId === undefined) return localElements;
+        const clonedLocalElements = cloneDeep(localElements);
+
+        const currentParentIndex = clonedLocalElements.findIndex(
+          (el) => el.id === currentLocation.parentId
+        );
+        const nextLocationIndex = clonedLocalElements.findIndex(
+          (el) => el.id === nextLocation.id
+        );
+        const currentParent = clonedLocalElements[currentParentIndex];
+        const itemInQuestion = (currentParent.children as ConstructedDeckElement[]).find(
+          (el) => el.id === currentLocation.id
+        );
+        if (!itemInQuestion) return localElements;
+        const updatedParent = (currentParent.children as ConstructedDeckElement[]).filter(
+          (el) => el.id !== currentLocation.id
+        );
+
+        clonedLocalElements[currentParentIndex].children = updatedParent;
+        clonedLocalElements.splice(nextLocationIndex, 0, itemInQuestion);
+
+        return clonedLocalElements;
       });
     },
     []
@@ -82,27 +161,59 @@ export const LayerInspector: FC = () => {
 
   // Update the order with the local order
   const commitChangedOrder = useCallback(
-    (dropLocation: ElementLocation) => {
-      const elementsToUpdate =
-        typeof dropLocation.parentIndex === 'number'
-          ? localElements[dropLocation.parentIndex].children
-          : localElements;
+    (previousParent: string | undefined, nextParent: string | undefined) => {
+      // commitChangedOrder is called with a stale version of localElements.
+      // Use update function to get the most recent change. Return original value.
+      setLocalElements((localElements) => {
+        const nextLocationIndex = localElements.findIndex(
+          (el) => el.id === nextParent
+        );
 
-      if (!Array.isArray(elementsToUpdate)) {
-        return;
-      }
+        // Update drop location
+        const elementsToUpdate =
+          typeof nextParent === 'string'
+            ? localElements[nextLocationIndex].children
+            : localElements;
+        if (!Array.isArray(elementsToUpdate)) {
+          return localElements;
+        }
+        dispatch(
+          deckSlice.actions.reorderActiveSlideElements({
+            elementIds: elementsToUpdate.map((element) => element.id),
+            parentId:
+              typeof nextParent === 'string'
+                ? localElements[nextLocationIndex].id
+                : undefined
+          })
+        );
 
-      dispatch(
-        deckSlice.actions.reorderActiveSlideElements({
-          elementIds: elementsToUpdate.map((element) => element.id),
-          parentId:
-            typeof dropLocation.parentIndex === 'number'
-              ? localElements[dropLocation.parentIndex].id
-              : undefined
-        })
-      );
+        // If element has moved outside of parent, update previous parent
+        if (previousParent !== nextParent) {
+          const previousLocationIndex = localElements.findIndex(
+            (el) => el.id === previousParent
+          );
+
+          const elementsToUpdate =
+            typeof previousParent === 'string'
+              ? localElements[previousLocationIndex].children
+              : localElements;
+          if (!Array.isArray(elementsToUpdate)) {
+            return localElements;
+          }
+          dispatch(
+            deckSlice.actions.reorderActiveSlideElements({
+              elementIds: elementsToUpdate.map((element) => element.id),
+              parentId:
+                typeof previousParent === 'string'
+                  ? localElements[previousLocationIndex].id
+                  : undefined
+            })
+          );
+        }
+        return localElements;
+      });
     },
-    [dispatch, localElements]
+    [dispatch]
   );
 
   const hoverElement = useCallback(
@@ -143,6 +254,9 @@ export const LayerInspector: FC = () => {
             const isHovered = element.id === hoveredElementId;
             const isSelected = element.id === selectedElement?.id;
             const isExpanded = !collapsedLayers.includes(element.id);
+            const isContainerElement = CONTAINER_ELEMENTS.includes(
+              element.component
+            );
             const isChildSelected =
               Array.isArray(element.children) &&
               !!element.children.find(
@@ -150,13 +264,16 @@ export const LayerInspector: FC = () => {
               );
 
             return (
-              <DragWrapper
-                key={element.id}
+              <LayerDragWrapper
                 index={index}
-                type="Element"
+                key={element.id}
                 onDrag={moveElement}
                 onDrop={commitChangedOrder}
-                orientation="vertical"
+                parentId={undefined}
+                id={element.id}
+                isContainerElement={isContainerElement}
+                onDragInside={moveElementInside}
+                onDragOutside={moveElementOutside}
               >
                 <ElementCard
                   element={element}
@@ -171,15 +288,15 @@ export const LayerInspector: FC = () => {
                 />
                 {isExpanded &&
                   Array.isArray(element.children) &&
-                  element.children.map((childElement, childIndex) => (
-                    <DragWrapper
+                  element.children.map((childElement, childElementIndex) => (
+                    <LayerDragWrapper
                       key={childElement.id}
-                      index={childIndex}
-                      parentIndex={index}
-                      type="Element"
+                      index={childElementIndex}
+                      parentId={element.id}
+                      id={childElement.id}
                       onDrag={moveElement}
                       onDrop={commitChangedOrder}
-                      orientation="vertical"
+                      isContainerElement={false}
                     >
                       <ElementCard
                         element={childElement}
@@ -191,9 +308,9 @@ export const LayerInspector: FC = () => {
                         onMouseEnter={() => hoverElement(childElement.id)}
                         onMouseLeave={unhoverElement}
                       />
-                    </DragWrapper>
+                    </LayerDragWrapper>
                   ))}
-              </DragWrapper>
+              </LayerDragWrapper>
             );
           })}
         </DndProvider>

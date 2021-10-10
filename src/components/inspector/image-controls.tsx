@@ -9,16 +9,17 @@ export const ImageControls: React.FC<ElementControlsProps> = ({
   selectedElement,
   editableElementChanged
 }) => {
-  const [desiredSrc, setDesiredSrc] = React.useState(
-    selectedElement?.props?.src || ''
-  );
+  const desiredSrc = selectedElement?.props?.src || '';
+  const [inputState, setInputState] = React.useState({
+    desiredSrc
+  });
 
-  // If desired src is valid, update the element in the store.
-  React.useEffect(() => {
-    if (isValidUrl(desiredSrc) && desiredSrc !== selectedElement?.props?.src) {
-      editableElementChanged({ src: desiredSrc });
-    }
-  }, [desiredSrc, editableElementChanged, selectedElement?.props?.src]);
+  const handleValueChanged = React.useCallback(
+    (propName: string, value) => {
+      editableElementChanged({ [propName]: value });
+    },
+    [editableElementChanged]
+  );
 
   return (
     <div>
@@ -28,12 +29,22 @@ export const ImageControls: React.FC<ElementControlsProps> = ({
         label="Image URL"
         placeholder="https://..."
         value={desiredSrc}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setDesiredSrc(e.target.value)
-        }
-        onBlur={() => {
-          if (!isValidUrl(desiredSrc)) {
-            setDesiredSrc(selectedElement?.props?.src || '');
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          const { value } = e.target;
+          if (isValidUrl(value)) {
+            setInputState({ ...inputState, desiredSrc: value });
+            handleValueChanged('src', value);
+          } else {
+            setInputState({ ...inputState, desiredSrc: value });
+          }
+        }}
+        onBlur={(e: ChangeEvent<HTMLInputElement>) => {
+          const { value } = e.target;
+          if (isValidUrl(value)) {
+            setInputState({ ...inputState, desiredSrc: value });
+            handleValueChanged('src', value);
+          } else {
+            setInputState({ ...inputState, desiredSrc });
           }
         }}
       />

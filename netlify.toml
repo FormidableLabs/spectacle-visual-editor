@@ -1,2 +1,5 @@
-[functions]
-  external_node_modules = ["chrome-aws-lambda"]
+[functions.create-pdf]
+    included_files = ["netlify/functions/bin/*"]
+
+[[plugins]]
+    package = './plugins/copy-chromium-binaries'

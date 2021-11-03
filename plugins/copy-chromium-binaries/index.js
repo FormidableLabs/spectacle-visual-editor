@@ -1,10 +1,9 @@
 // Netlify Build Plugins must be CJS - ESM/TypeScript not supported
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { promisify } = require('util');
-const copyFile = promisify(require('fs').copyFile);
-const readDir = promisify(require('fs').readdir);
-const mkDir = promisify(require('fs').mkdir);
-const rmDir = promisify(require('fs').rmdir);
+const copyFile = require('fs').promises.copyFile;
+const readDir = require('fs').promises.readdir;
+const mkDir = require('fs').promises.mkdir;
+const rmDir = require('fs').promises.rmdir;
 
 const srcfolder = 'node_modules/chrome-aws-lambda/bin/';
 const dstfolder = 'netlify/functions/bin/';
@@ -15,7 +14,7 @@ module.exports = {
     try {
       const files = await readDir(srcfolder);
       for (const binfile of files) {
-        console.log('Copied chromium binary: ', binfile);
+        console.log('Copying chromium binary: ', binfile);
         await copyFile(srcfolder + binfile, dstfolder + binfile);
       }
       // Succsesfully completed
@@ -25,12 +24,12 @@ module.exports = {
       return utils.build.failBuild(`Failed to copy chromium binaries: ${err}`);
     }
   },
-  onEnd: async () => {
+  onEnd: async ({ utils }) => {
     try {
       await rmDir(dstfolder, { recursive: true });
       console.log(`Removed chromium binaries from function folder`);
     } catch (err) {
-      console.log(
+      return utils.build.failBuild(
         `Failed to remove chromium binaries from function folder: ${err}`
       );
     }

@@ -30,6 +30,12 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
     500,
     [selectedElement]
   );
+  /**
+   * useThrottleFn returns `null` on first render
+   * this ensures we have a boolean "false" before showing formatting controls to avoid breaking header styles - Issue 135
+   */
+  const shouldShowFormatting =
+    doesContentContainList === false && doesContentContainHeader === false;
 
   return (
     <>
@@ -48,7 +54,7 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
           <ListControls {...{ selectedElement, editableElementChanged }} />
         </>
       )}
-      {!doesContentContainHeader && !doesContentContainList && (
+      {shouldShowFormatting && (
         <>
           <Accordion label="Formatting">
             <MarkdownControls

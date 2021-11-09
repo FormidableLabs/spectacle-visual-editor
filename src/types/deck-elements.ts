@@ -28,6 +28,8 @@ export const FREE_MOVING_ELEMENTS: SPECTACLE_ELEMENTS[] = [
   'FullScreen'
 ];
 
+export const SELF_RESIZING_ELEMENTS: SPECTACLE_ELEMENTS[] = ['Markdown'];
+
 export type DeckElementMap = { [id: string]: DeckElement };
 
 export type DeckElement = {

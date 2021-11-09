@@ -37,7 +37,10 @@ export default (env, argv) => {
       ]
     },
     devServer: {
-      historyApiFallback: true
+      historyApiFallback: true,
+      proxy: {
+        '/.netlify/functions/': 'http://localhost:8081'
+      }
     },
     plugins: [
       new webpack.ProvidePlugin({

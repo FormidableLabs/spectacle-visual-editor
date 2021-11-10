@@ -12,7 +12,11 @@ import { deckTypes, deckResolvers } from './model/deck';
 import { userTypes, userResolvers } from './model/user';
 
 // For dev, use local process.env instead of inlined
+// Typescript does not know we are inlining them so will error that they
+// always/never match if we don't ignore them.
+// @ts-ignore
 const ENV_DB_SECRET = DBSECRET === 'none' ? process.env.DBSECRET : DBSECRET;
+// @ts-ignore
 const ENV_CONTEXT = CONTEXT === 'none' ? process.env.CONTEXT : CONTEXT;
 
 if (!ENV_DB_SECRET || ENV_DB_SECRET === 'none') {

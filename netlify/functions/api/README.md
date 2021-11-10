@@ -4,6 +4,7 @@
 
 - Ensure your netlify dev environment is properly linked to a netlify site that has the FaunaDB and Netlify Identity plugins enabled
 - Run `yarn netlify build --context=dev` to create the dev database if necessary, or to create a new key to the existing dev database.  This only has to be done once unless you change the indexes or anything that affects the server-hosted schema (ie. things in `create-faunadb/index.js`)
+- From the build script, add the `DBSECRET` given to your `.env` file.
 - Run `yarn netstart` to launch the locally hosted functions.
 - The GraphQL endpoint in dev is located at http://localhost:8081/.netlify/functions/api/ and should expose a Studio link with introspection enabled.
 

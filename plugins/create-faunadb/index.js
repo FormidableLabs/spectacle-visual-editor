@@ -4,7 +4,7 @@ const faunadb = require('faunadb');
 const { writeFile } = require('fs').promises;
 
 module.exports = {
-  onPreBuild: async ({ utils }) => {
+  onPreBuild: async ({ utils, constants }) => {
     const faunaDBSecret = process.env.FAUNADB_ADMIN_SECRET;
     if (!faunaDBSecret) {
       return utils.build.failBuild(
@@ -52,20 +52,34 @@ module.exports = {
       );
     }
 
-    try {
-      await writeFile(
-        'netlify/env-inline.ts',
-        `/* eslint-disable @typescript-eslint/no-inferrable-types */
-export const DBSECRET = '${serverKey.secret}';
-export const CONTEXT: string = '${process.env.CONTEXT}';
-`
-      );
-    } catch (err) {
-      return utils.build.failBuild(
-        `Failed to write database key for ${dbName} to inline env file`
-      );
-    }
+    if (!constants.IS_LOCAL) {
+      // On Netlify, replace this file with our inlined env variables
+      try {
+        await writeFile(
+          'netlify/env-inline.ts',
+          `/* eslint-disable @typescript-eslint/no-inferrable-types */
+  export const DBSECRET = '${serverKey.secret}';
+  export const CONTEXT: string = '${process.env.CONTEXT}';
+  `
+        );
+      } catch (err) {
+        return utils.build.failBuild(
+          `Failed to write database key for ${dbName} to inline env file`
+        );
+      }
+    } else {
+      // On Dev, leave it alone and ask us to put it in a .env file instead
+      // otherwise it makes it far too easy to accidentally commit our secrets
+      console.log(`
+=========================
 
+Add the following line to your .env file
+
+DBSECRET=${serverKey.secret}
+
+=========================
+      `);
+    }
     // Create the collections if they do not exist
     const collections = ['Decks', 'Users'];
     const serverClient = new faunadb.Client({ secret: serverKey.secret });

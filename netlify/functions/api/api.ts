@@ -11,9 +11,17 @@ import { getTempFrontend } from './lib/temp-frontend';
 import { deckTypes, deckResolvers } from './model/deck';
 import { userTypes, userResolvers } from './model/user';
 
+// For dev, use local process.env instead of inlined
+const ENV_DB_SECRET = DBSECRET === 'none' ? process.env.DBSECRET : DBSECRET;
+const ENV_CONTEXT = CONTEXT === 'none' ? process.env.CONTEXT : CONTEXT;
+
+if (!ENV_DB_SECRET || ENV_DB_SECRET === 'none') {
+  throw 'FaunaDB database secret not set';
+}
+
 // Netlify does not set NODE_ENV, we can use our inlined one
 if (!process.env.NODE_ENV) {
-  process.env.NODE_ENV = CONTEXT;
+  process.env.NODE_ENV = ENV_CONTEXT;
 }
 
 // Initialize empty so we can extend in files per model
@@ -36,13 +44,9 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ context }) => {
-    if (!DBSECRET || DBSECRET === 'none') {
-      throw 'FaunaDB database secret not set. Run build script to generate it.';
-    }
-
     // FaunaDB's docs say to instantiate this in the handler, they do not
     // recommend long-running memoized connections
-    const faunaClient = new faunadb.Client({ secret: DBSECRET });
+    const faunaClient = new faunadb.Client({ secret: ENV_DB_SECRET });
 
     let userIdentity;
     try {
@@ -62,7 +66,7 @@ const server = new ApolloServer({
 
     return { db, userRoles, userIdentity };
   },
-  introspection: CONTEXT !== 'production'
+  introspection: ENV_CONTEXT !== 'production'
 });
 
 const apolloHandler = server.createHandler();

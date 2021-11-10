@@ -62,7 +62,8 @@ export const createDbAdapter = (faunaDbClient: faunadb.Client) => {
       arglist: string[] | number[]
     ): Promise<Api.FaunaInlineObject[] | null> => {
       const q = faunadb.query;
-      // TODO: implement pagination handler
+      // Implement pagination handler if we need more than 100,000 items
+      // in one request
       const result = (await client.query(
         q.Map(
           q.Paginate(
@@ -71,7 +72,8 @@ export const createDbAdapter = (faunaDbClient: faunadb.Client) => {
                 arglist,
                 q.Lambda('result', q.Match(q.Index(indexname), q.Var('result')))
               )
-            )
+            ),
+            { size: 100000 }
           ),
           q.Lambda('X', q.Get(q.Var('X')))
         )
@@ -84,10 +86,11 @@ export const createDbAdapter = (faunaDbClient: faunadb.Client) => {
       arg: string | number
     ): Promise<Api.FaunaInlineObject[] | null> => {
       const q = faunadb.query;
-      // TODO: implement pagination handler
+      // Implement pagination handler if we need more than 100,000 items
+      // in one request
       const result = (await client.query(
         q.Map(
-          q.Paginate(q.Match(q.Index(indexname), arg)),
+          q.Paginate(q.Match(q.Index(indexname), arg), { size: 100000 }),
           q.Lambda('X', q.Get(q.Var('X')))
         )
       )) as Api.FaunaArrayResult;

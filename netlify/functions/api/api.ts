@@ -36,7 +36,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ context }) => {
-    if (!DBSECRET) {
+    if (!DBSECRET || DBSECRET === 'none') {
       throw 'FaunaDB database secret not set. Run build script to generate it.';
     }
 

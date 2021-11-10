@@ -2,4 +2,7 @@
     included_files = ["netlify/functions/bin/*"]
 
 [[plugins]]
+    package = './plugins/create-faunadb'
+
+[[plugins]]
     package = './plugins/copy-chromium-binaries'

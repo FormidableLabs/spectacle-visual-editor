@@ -9,12 +9,17 @@ import React, {
 import styled from 'styled-components';
 import Moveable, { OnDrag, OnDragEnd, OnResizeEnd } from 'react-moveable';
 import { useDispatch, useSelector } from 'react-redux';
+import AceEditor from 'react-ace';
+import { SegmentedControl } from 'evergreen-ui';
 import {
   deckSlice,
   hoveredEditableElementIdSelector,
-  selectedEditableElementIdSelector
+  selectedEditableElementIdSelector,
+  selectedElementSelector
 } from '../../slices/deck-slice';
 import { RESIZABLE_ELEMENTS } from '../../types/deck-elements';
+import { isMdElement } from '../inspector/validators';
+import { useEditElement } from '../../hooks/use-edit-element';
 
 const Wrapper = styled.div<{ isHovered: boolean; isSelected: boolean }>`
   display: contents;
@@ -36,13 +41,24 @@ interface Props {
   treeId: string;
 }
 
+type EditorTypes = 'markdown' | 'visual';
+
+const Editor = styled(AceEditor)`
+  min-width: 500px;
+`;
+
 export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const ref = useRef<HTMLElement>();
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch();
   const editableElementId = useSelector(selectedEditableElementIdSelector);
+  const selectedElement = useSelector(selectedElementSelector);
+  const handleElementChanged = useEditElement();
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const hoveredElementId = useSelector(hoveredEditableElementIdSelector);
+  const [editorPreference, setEditorPreference] = useState<EditorTypes>(
+    'visual'
+  );
 
   /**
    * Moveable can't detect size of image until it is loaded,
@@ -169,6 +185,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
 
   const isHovered = hoveredElementId === children.props.id;
   const isSelected = editableElementId === children.props.id;
+  const isSelectedAndMarkdown = isSelected && isMdElement(selectedElement);
 
   return (
     <>
@@ -190,11 +207,39 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           );
         }}
       >
-        {cloneElement(children, {
-          ref,
-          onLoad: () => setElLoaded(true),
-          isSelected
-        })}
+        {isSelectedAndMarkdown && (
+          <SegmentedControl
+            options={[
+              { label: 'Visual', value: 'visual' },
+              { label: 'Markdown', value: 'markdown' }
+            ]}
+            value={editorPreference}
+            onChange={(value) => {
+              setEditorPreference(value as EditorTypes);
+            }}
+            marginBottom="10px"
+            width="150px"
+            backgroundColor="#d0dce8"
+          />
+        )}
+        {isSelectedAndMarkdown && editorPreference === 'markdown' ? (
+          <Editor
+            mode="markdown"
+            theme="textmate"
+            value={String(selectedElement?.children)}
+            onChange={(val) => handleElementChanged({ children: val })}
+            width="auto"
+            height="150px"
+            showGutter={false}
+            focus
+          />
+        ) : (
+          cloneElement(children, {
+            ref,
+            onLoad: () => setElLoaded(true),
+            isSelected
+          })
+        )}
       </Wrapper>
       {elLoaded && (
         <Moveable

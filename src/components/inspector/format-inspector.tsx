@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Pane } from './inspector-styles';
-import { useDispatch, useSelector } from 'react-redux';
-import { deckSlice, selectedElementSelector } from '../../slices/deck-slice';
+import { useSelector } from 'react-redux';
+import { selectedElementSelector } from '../../slices/deck-slice';
 import { BoxFormatControls } from './box-format-controls';
 import {
   isBoxElement,
@@ -19,14 +19,11 @@ import { CodePaneFormatControls } from './codepane-format-controls';
 import { GridFormatControls } from './grid-format-controls';
 import { ProgressFormatControls } from './progress-format-controls';
 import { FullScreenFormatControls } from './full-screen-format-controls';
+import { useEditElement } from '../../hooks/use-edit-element';
 
 export const FormatInspector = () => {
-  const dispatch = useDispatch();
+  const handleElementChanged = useEditElement();
   const selectedElement = useSelector(selectedElementSelector);
-  const handleElementChanged = useCallback(
-    (sender) => dispatch(deckSlice.actions.editableElementChanged(sender)),
-    [dispatch]
-  );
 
   const props = {
     editableElementChanged: handleElementChanged,

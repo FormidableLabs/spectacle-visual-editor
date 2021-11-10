@@ -3,7 +3,7 @@
 const copyFile = require('fs').promises.copyFile;
 const readDir = require('fs').promises.readdir;
 const mkDir = require('fs').promises.mkdir;
-const rmDir = require('fs').promises.rmdir;
+const rm = require('fs').promises.rm;
 
 const srcfolder = 'node_modules/chrome-aws-lambda/bin/';
 const dstfolder = 'netlify/functions/bin/';
@@ -26,7 +26,7 @@ module.exports = {
   },
   onEnd: async ({ utils }) => {
     try {
-      await rmDir(dstfolder, { recursive: true });
+      await rm(dstfolder, { recursive: true });
       console.log(`Removed chromium binaries from function folder`);
     } catch (err) {
       return utils.build.failBuild(

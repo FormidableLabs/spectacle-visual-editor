@@ -15,7 +15,10 @@ import {
   selectedEditableElementIdSelector,
   selectedElementSelector
 } from '../../slices/deck-slice';
-import { RESIZABLE_ELEMENTS } from '../../types/deck-elements';
+import {
+  RESIZABLE_ELEMENTS,
+  SELF_RESIZING_ELEMENTS
+} from '../../types/deck-elements';
 import { isMdElement } from '../inspector/validators';
 import { InlineEditor } from '../user-interface/inline-editor';
 
@@ -136,6 +139,18 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
       moveableRef.current.updateRect();
     }
   }, [children?.props?.width, children?.props?.height]);
+
+  /**
+   *  If the child's content changes and can cause resizing, let the moveable instance know
+   */
+  useEffect(() => {
+    if (
+      SELF_RESIZING_ELEMENTS.includes(children?.props?.type) &&
+      moveableRef?.current?.props?.target
+    ) {
+      moveableRef.current.updateRect();
+    }
+  }, [children?.props?.children, children?.props?.type]);
 
   /**
    *  If the child's positions change from manually entering coordinate, update the target frame

@@ -12,9 +12,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   deckSlice,
   hoveredEditableElementIdSelector,
-  selectedEditableElementIdSelector
+  selectedEditableElementIdSelector,
+  selectedElementSelector
 } from '../../slices/deck-slice';
 import { RESIZABLE_ELEMENTS } from '../../types/deck-elements';
+import { isMdElement } from '../inspector/validators';
+import { InlineEditor } from '../user-interface/inline-editor';
 
 const Wrapper = styled.div<{ isHovered: boolean; isSelected: boolean }>`
   display: contents;
@@ -41,6 +44,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch();
   const editableElementId = useSelector(selectedEditableElementIdSelector);
+  const selectedElement = useSelector(selectedElementSelector);
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const hoveredElementId = useSelector(hoveredEditableElementIdSelector);
 
@@ -169,6 +173,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
 
   const isHovered = hoveredElementId === children.props.id;
   const isSelected = editableElementId === children.props.id;
+  const isSelectedAndMarkdown = isSelected && isMdElement(selectedElement);
 
   return (
     <>
@@ -190,11 +195,15 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           );
         }}
       >
-        {cloneElement(children, {
-          ref,
-          onLoad: () => setElLoaded(true),
-          isSelected
-        })}
+        {isSelectedAndMarkdown ? (
+          <InlineEditor>{children}</InlineEditor>
+        ) : (
+          cloneElement(children, {
+            ref,
+            onLoad: () => setElLoaded(true),
+            isSelected
+          })
+        )}
       </Wrapper>
       {elLoaded && (
         <Moveable

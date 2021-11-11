@@ -11,9 +11,9 @@ import {
   IconButton,
   CogIcon
 } from 'evergreen-ui';
-import { Deck } from '../../types/deck';
+import { Deck as DeckType } from '../../types/deck';
 
-const Deck: FC<Deck & { loadDeck: () => void; deleteDeck: () => void }> = ({
+const Deck: FC<DeckType & { loadDeck: () => void; deleteDeck: () => void }> = ({
   title,
   createdAt,
   updatedAt,

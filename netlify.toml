@@ -3,3 +3,8 @@
 
 [[plugins]]
     package = './plugins/copy-chromium-binaries'
+
+[dev]
+    command= "yarn dev"
+    targetPort= 3000
+    port = 8080

@@ -22,6 +22,7 @@ import {
 import { themeSelector } from '../../slices/deck-slice';
 import { useRootSelector } from '../../store';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
+import { valueWithCSSUnits } from '../../util/value-with-css-units';
 import { ElementControlsProps } from './element-controls-props';
 
 export const FreeMovementControls: React.FC<ElementControlsProps> = ({
@@ -55,7 +56,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
   const [freeMovement, setFreeMovement] = useState(inputState.freeMovement);
 
   const handleComponentElementChanged = useCallback(
-    (propName: string, val: string | number | boolean) => {
+    (propName: string, val?: string | number | boolean) => {
       if (selectedElement) {
         editableElementChanged({
           componentProps: {
@@ -69,7 +70,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
   );
 
   const handleDefaultElementChanged = useCallback(
-    (propName: string, val: string | number) => {
+    (propName: string, val?: string | number) => {
       if (selectedElement) {
         editableElementChanged({
           [propName]: val
@@ -81,23 +82,15 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
 
   const handleOnEvent = useCallback(
     (options: {
-      value: string | number;
+      value?: string | number;
       shouldSetInputState: boolean;
       displayValueToChangeName: string;
       valueToChangeName: string;
       valueToChangeCSSName: string;
-      valueAsCSSValue: string;
+      valueAsCSSValue?: string;
       validator: Function;
     }) => {
-      if (options.shouldSetInputState) {
-        setInputState({
-          ...inputState,
-          [options.valueToChangeName]:
-            inputState[
-              options.displayValueToChangeName as keyof typeof inputState
-            ]
-        });
-      } else if (options.validator(options.value)) {
+      if (options.validator(options.value)) {
         if (options.shouldSetInputState) {
           setInputState({
             ...inputState,
@@ -110,6 +103,14 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
           options.valueToChangeCSSName,
           options.valueAsCSSValue
         );
+      } else if (options.shouldSetInputState) {
+        setInputState({
+          ...inputState,
+          [options.valueToChangeName]:
+            inputState[
+              options.displayValueToChangeName as keyof typeof inputState
+            ]
+        });
       }
     },
     [handleComponentElementChanged, handleDefaultElementChanged, inputState]
@@ -276,7 +277,8 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
               label="X:"
               value={inputState.positionX}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                const { value } = e.target;
+                const value = valueWithCSSUnits(e.target.value);
+
                 handleOnEvent({
                   value: value,
                   shouldSetInputState: true,
@@ -305,7 +307,8 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
               label="Y:"
               value={inputState.positionY}
               onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                const { value } = e.target;
+                const value = valueWithCSSUnits(e.target.value);
+
                 handleOnEvent({
                   value: value,
                   shouldSetInputState: true,

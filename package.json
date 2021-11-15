@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "webpack serve --mode=development --open --hot",
-    "netstart": "yarn netlify dev -p 8081",
+    "start": "netlify dev",
+    "dev": "webpack serve --mode=development --hot",
     "build": "webpack --mode=production",
     "prettier-check": "yarn prettier --check src/**",
     "prettier-fix": "yarn prettier --write src/**",

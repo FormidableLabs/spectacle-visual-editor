@@ -1,7 +1,7 @@
 import { valueWithCSSUnits } from './value-with-css-units';
 
 describe('value-with-css-units', () => {
-  test('returns `undefined` ', () => {
+  test('returns `undefined` for "0" to prevent overriding defaults', () => {
     expect(valueWithCSSUnits('0')).toBeUndefined();
   });
 

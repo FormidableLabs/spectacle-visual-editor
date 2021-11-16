@@ -1,18 +1,23 @@
 import React, { FC, useState, useMemo, useEffect, useCallback } from 'react';
-import styled from 'styled-components';
-import { cloneDeep } from 'lodash-es';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DndProvider } from 'react-dnd';
-import { useDispatch } from 'react-redux';
-
 import { useRootSelector } from '../../../store';
+import { cloneDeep } from 'lodash-es';
 import { ConstructedDeckElement } from '../../../types/deck-elements';
-import { activeSlideSelector, deckSlice } from '../../../slices/deck-slice';
+import {
+  activeSlideSelector,
+  selectedElementSelector,
+  deckSlice,
+  hoveredEditableElementIdSelector
+} from '../../../slices/deck-slice';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
-import { Layer } from '../../helpers/layer-drag-wrapper';
+import { LayerDragWrapper, Layer } from '../../helpers/layer-drag-wrapper';
+import { ElementCard } from './layers-element-card';
 import { moveArrayItem } from '../../../util/move-array-item';
 import { defaultTheme } from 'evergreen-ui';
-import { InpectorLayer } from './layers-layer';
+import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
 
 export const LayerInspector: FC = () => {
   const activeSlide = useRootSelector(activeSlideSelector);
@@ -21,6 +26,8 @@ export const LayerInspector: FC = () => {
     [activeSlide]
   );
   const [localElements, setLocalElements] = useState(activeSlideElements);
+  const selectedElement = useSelector(selectedElementSelector);
+  const hoveredElementId = useSelector(hoveredEditableElementIdSelector);
   const [collapsedLayers, setCollapsedLayers] = useState<Array<String>>([]);
 
   const dispatch = useDispatch();
@@ -124,41 +131,28 @@ export const LayerInspector: FC = () => {
 
   const moveElementOutside = useCallback(
     (currentLocation: Layer, nextLocation: Layer) => {
+      debugger;
       setLocalElements((localElements) => {
         if (currentLocation.parentId === undefined) return localElements;
-
         const clonedLocalElements = cloneDeep(localElements);
 
-        let flattenedElements = flattenElementsDeep(clonedLocalElements);
-        debugger;
-
-        const currentParentIndex = flattenedElements.findIndex(
+        const currentParentIndex = clonedLocalElements.findIndex(
           (el) => el.id === currentLocation.parentId
         );
-
-        const currentParent = flattenedElements[currentParentIndex];
-
-        const nextLocationIndex = flattenedElements.findIndex(
+        const nextLocationIndex = clonedLocalElements.findIndex(
           (el) => el.id === nextLocation.id
         );
-
-        const nextParent = flattenedElements[nextLocationIndex];
-
+        const currentParent = clonedLocalElements[currentParentIndex];
         const itemInQuestion = (currentParent.children as ConstructedDeckElement[]).find(
           (el) => el.id === currentLocation.id
         );
-
         if (!itemInQuestion) return localElements;
-
-        const updatedChildrenForParent = (currentParent.children as ConstructedDeckElement[]).filter(
+        const updatedParent = (currentParent.children as ConstructedDeckElement[]).filter(
           (el) => el.id !== currentLocation.id
         );
 
-        currentParent.children = updatedChildrenForParent;
-
-        (nextParent.children as ConstructedDeckElement[]).unshift(
-          itemInQuestion
-        );
+        clonedLocalElements[currentParentIndex].children = updatedParent;
+        clonedLocalElements.splice(nextLocationIndex, 0, itemInQuestion);
 
         return clonedLocalElements;
       });
@@ -251,13 +245,6 @@ export const LayerInspector: FC = () => {
     });
   }, []);
 
-  const getIsExpanded = useCallback(
-    (id) => {
-      return !collapsedLayers.includes(id);
-    },
-    [collapsedLayers]
-  );
-
   return (
     <Container>
       <Title>Layers</Title>
@@ -265,21 +252,68 @@ export const LayerInspector: FC = () => {
       <Layers>
         <DndProvider backend={HTML5Backend}>
           {localElements.map((element, index) => {
+            const isHovered = element.id === hoveredElementId;
+            const isSelected = element.id === selectedElement?.id;
+            const isExpanded = !collapsedLayers.includes(element.id);
+            const isContainerElement = CONTAINER_ELEMENTS.includes(
+              element.component
+            );
+            const isChildSelected =
+              Array.isArray(element.children) &&
+              !!element.children.find(
+                (child) => child.id === selectedElement?.id
+              );
+
             return (
-              <InpectorLayer
-                key={element.id}
-                element={element}
+              <LayerDragWrapper
                 index={index}
-                getIsExpanded={getIsExpanded}
-                handleExpand={handleExpand}
-                onClick={selectElement}
+                key={element.id}
                 onDrag={moveElement}
                 onDrop={commitChangedOrder}
+                parentId={undefined}
+                id={element.id}
+                isContainerElement={isContainerElement}
                 onDragInside={moveElementInside}
                 onDragOutside={moveElementOutside}
-                onMouseEnter={hoverElement}
-                onMouseLeave={unhoverElement}
-              />
+              >
+                <ElementCard
+                  element={element}
+                  isHovered={isHovered}
+                  isSelected={isSelected}
+                  isExpanded={isExpanded}
+                  isParentSelected={!isExpanded && isChildSelected}
+                  handleExpand={handleExpand}
+                  onClick={() => selectElement(element.id)}
+                  onMouseEnter={() => hoverElement(element.id)}
+                  onMouseLeave={unhoverElement}
+                />
+                {isExpanded &&
+                  Array.isArray(element.children) &&
+                  element.children.map((childElement, childElementIndex) => (
+                    <LayerDragWrapper
+                      key={childElement.id}
+                      index={childElementIndex}
+                      parentId={element.id}
+                      id={childElement.id}
+                      onDrag={moveElement}
+                      onDrop={commitChangedOrder}
+                      isContainerElement={false}
+                    >
+                      <ElementCard
+                        element={childElement}
+                        isHovered={childElement.id === hoveredElementId}
+                        isSelected={childElement.id === selectedElement?.id}
+                        isExpanded={!collapsedLayers.includes(childElement.id)}
+                        isParentSelected={isSelected}
+                        isChildElement
+                        onClick={() => selectElement(childElement.id)}
+                        onMouseEnter={() => hoverElement(childElement.id)}
+                        onMouseLeave={unhoverElement}
+                        handleExpand={handleExpand}
+                      />
+                    </LayerDragWrapper>
+                  ))}
+              </LayerDragWrapper>
             );
           })}
         </DndProvider>
@@ -305,24 +339,3 @@ const Title = styled.div`
   font-size: 0.9em;
   font-weight: 500;
 `;
-
-function flattenElementsDeep(
-  elements: ConstructedDeckElement[]
-): ConstructedDeckElement[] {
-  let flattenedElements: ConstructedDeckElement[] = [];
-  let queue: ConstructedDeckElement[] = [...elements];
-
-  while (queue.length > 0) {
-    let element = queue.shift();
-
-    if (element) {
-      flattenedElements.push(element);
-
-      if (element.children && Array.isArray(element.children)) {
-        element.children.forEach((childElement) => queue.push(childElement));
-      }
-    }
-  }
-
-  return flattenedElements;
-}

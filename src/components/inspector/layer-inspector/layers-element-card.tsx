@@ -36,10 +36,10 @@ interface Props {
   isChildElement?: boolean;
   isExpanded?: boolean;
   element: ConstructedDeckElement;
-  onClick: (e: MouseEvent<HTMLDivElement>) => void;
-  onMouseEnter: (e: MouseEvent<HTMLDivElement>) => void;
+  onClick: (id: string) => void;
+  onMouseEnter: (id: string) => void;
   onMouseLeave: (e: MouseEvent<HTMLDivElement>) => void;
-  handleExpand?: () => void;
+  handleExpand?: (id: string) => void;
 }
 
 /**
@@ -78,8 +78,8 @@ export const ElementCard: React.FC<Props> = ({
       isSelected={isSelected}
       isParentSelected={isParentSelected}
       isChildElement={isChildElement}
-      onClick={onClick}
-      onMouseEnter={onMouseEnter}
+      onClick={() => onClick(element.id)}
+      onMouseEnter={() => onMouseEnter(element.id)}
       onMouseLeave={onMouseLeave}
     >
       <Icon
@@ -97,7 +97,7 @@ export const ElementCard: React.FC<Props> = ({
           onClick={(e: MouseEvent<HTMLButtonElement>) => {
             e.stopPropagation();
             if (handleExpand) {
-              handleExpand();
+              handleExpand(element.id);
             }
           }}
         />

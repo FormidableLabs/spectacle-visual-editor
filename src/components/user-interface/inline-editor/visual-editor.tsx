@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Children, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Editor,
@@ -10,7 +10,14 @@ import {
   DefaultDraftBlockRenderMap
 } from 'draft-js';
 import { Map } from 'immutable';
-import { Heading, OrderedList, Quote, Text, UnorderedList } from 'spectacle';
+import {
+  Heading,
+  ListItem,
+  OrderedList,
+  UnorderedList,
+  Quote,
+  Text
+} from 'spectacle';
 import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
 import { IconButton, Positioner, defaultTheme, Tooltip } from 'evergreen-ui';
 import styled from 'styled-components';
@@ -53,11 +60,23 @@ const StyledIconButton = styled(IconButton)`
   }
 `;
 
-const EditorWrapper = styled.div`
-  .public-DraftStyleDefault-listLTR {
-    margin-left: 0 !important;
-  }
-`;
+/* Wrapper for spectacle UnorderedList and OrderedList - necessary for rendering list items in ListItem components */
+const List = ({
+  component: Component,
+  children,
+  ...props
+}: {
+  component: React.ComponentType<any>;
+  children: React.ReactElement[];
+}) => (
+  <Component {...props}>
+    {Children.map(children, (child: React.ReactElement) => {
+      const childProps = { ...child.props };
+      delete childProps.className;
+      return <ListItem key={child.key} {...childProps} />;
+    })}
+  </Component>
+);
 
 export const VisualEditor = () => {
   const selectedElement = useSelector(selectedElementSelector);
@@ -104,11 +123,11 @@ export const VisualEditor = () => {
     },
     'ordered-list-item': {
       element: 'li',
-      wrapper: <OrderedList {...componentProps} />
+      wrapper: <List component={OrderedList} {...componentProps} />
     },
     'unordered-list-item': {
       element: 'li',
-      wrapper: <UnorderedList {...componentProps} />
+      wrapper: <List component={UnorderedList} {...componentProps} />
     },
     unstyled: {
       element: 'div',
@@ -166,7 +185,7 @@ export const VisualEditor = () => {
       position="top"
       targetOffset={30}
       target={({ getRef }) => (
-        <EditorWrapper ref={getRef}>
+        <div ref={getRef}>
           <Editor
             editorState={editorState}
             textAlignment={textAlignment}
@@ -174,7 +193,7 @@ export const VisualEditor = () => {
             onChange={setEditorState}
             handleKeyCommand={handleKeyCommand}
           />
-        </EditorWrapper>
+        </div>
       )}
     >
       {({ css, getRef, state, style }) => (

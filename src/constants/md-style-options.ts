@@ -9,7 +9,10 @@ import {
   HeaderOneIcon,
   HeaderTwoIcon,
   HeaderIcon,
-  CodeIcon
+  CodeIcon,
+  AlignLeftIcon,
+  AlignCenterIcon,
+  AlignRightIcon
 } from 'evergreen-ui';
 
 export enum HEADING_TYPES {
@@ -32,60 +35,6 @@ export enum BLOCK_TYPES {
   BLOCKQUOTE = 'blockquote'
 }
 
-export const HEADING_OPTIONS = {
-  [HEADING_TYPES.H1]: {
-    tooltip: 'Heading 1',
-    icon: HeaderOneIcon
-  },
-  [HEADING_TYPES.H2]: {
-    tooltip: 'Heading 2',
-    icon: HeaderTwoIcon
-  },
-  [HEADING_TYPES.H3]: {
-    tooltip: 'Heading 3',
-    icon: HeaderIcon // TODO: Update to HeaderThreeIcon when Evergreen UI have upgraded @blueprintjs/icons to include the latest icons
-  }
-};
-
-export const INLINE_STYLE_OPTIONS = {
-  [INLINE_STYLE_TYPES.BOLD]: {
-    tooltip: 'Bold ⌘B',
-    icon: BoldIcon
-  },
-  [INLINE_STYLE_TYPES.ITALIC]: {
-    tooltip: 'Italic ⌘I',
-    icon: ItalicIcon
-  },
-  [INLINE_STYLE_TYPES.STRIKETHROUGH]: {
-    tooltip: 'Strikethrough',
-    icon: StrikethroughIcon
-  },
-  [INLINE_STYLE_TYPES.UNDERLINE]: {
-    // TODO: Figure out why underline isnt saving
-    tooltip: 'Underline ⌘U',
-    icon: UnderlineIcon
-  },
-  [INLINE_STYLE_TYPES.CODE]: {
-    tooltip: 'Code ⌘J',
-    icon: CodeIcon
-  }
-};
-
-export const BLOCK_OPTIONS = {
-  [BLOCK_TYPES.UL]: {
-    tooltip: 'Unordered List',
-    icon: PropertiesIcon
-  },
-  [BLOCK_TYPES.OL]: {
-    tooltip: 'Ordered List',
-    icon: NumberedListIcon
-  },
-  [BLOCK_TYPES.BLOCKQUOTE]: {
-    tooltip: 'Blockquote',
-    icon: CitationIcon
-  }
-};
-
 export enum LIST_STYLE_TYPE_OPTIONS {
   NONE = 'none',
   DISC = 'disc',
@@ -104,7 +53,7 @@ export enum FONT_WEIGHT_OPTIONS {
   SEVEN_HUNDRED = '700'
 }
 
-export enum LIST_TEXT_ALIGN_OPTIONS {
+export enum TEXT_ALIGN_TYPES {
   LEFT = 'left',
   CENTER = 'center',
   RIGHT = 'right'
@@ -435,5 +384,74 @@ export const FONT_FAMILY_WEIGHTS: {
   [FONT_FAMILY_OPTIONS.KARLA]: {
     weights: ['200', '300', '400', '500', '600', '700', '800'],
     italicWeights: ['200', '300', '400', '500', '600', '700', '800']
+  }
+};
+
+export const HEADING_OPTIONS = {
+  [HEADING_TYPES.H1]: {
+    tooltip: 'Heading 1',
+    icon: HeaderOneIcon
+  },
+  [HEADING_TYPES.H2]: {
+    tooltip: 'Heading 2',
+    icon: HeaderTwoIcon
+  },
+  [HEADING_TYPES.H3]: {
+    tooltip: 'Heading 3',
+    icon: HeaderIcon // TODO: Update to HeaderThreeIcon when Evergreen UI have upgraded @blueprintjs/icons to include the latest icons
+  }
+};
+
+export const INLINE_STYLE_OPTIONS = {
+  [INLINE_STYLE_TYPES.BOLD]: {
+    tooltip: 'Bold ⌘B',
+    icon: BoldIcon
+  },
+  [INLINE_STYLE_TYPES.ITALIC]: {
+    tooltip: 'Italic ⌘I',
+    icon: ItalicIcon
+  },
+  [INLINE_STYLE_TYPES.STRIKETHROUGH]: {
+    tooltip: 'Strikethrough',
+    icon: StrikethroughIcon
+  },
+  [INLINE_STYLE_TYPES.UNDERLINE]: {
+    // TODO: Figure out why underline isnt saving
+    tooltip: 'Underline ⌘U',
+    icon: UnderlineIcon
+  },
+  [INLINE_STYLE_TYPES.CODE]: {
+    tooltip: 'Code ⌘J',
+    icon: CodeIcon
+  }
+};
+
+export const BLOCK_OPTIONS = {
+  [BLOCK_TYPES.UL]: {
+    tooltip: 'Unordered List',
+    icon: PropertiesIcon
+  },
+  [BLOCK_TYPES.OL]: {
+    tooltip: 'Ordered List',
+    icon: NumberedListIcon
+  },
+  [BLOCK_TYPES.BLOCKQUOTE]: {
+    tooltip: 'Blockquote',
+    icon: CitationIcon
+  }
+};
+
+export const TEXT_ALIGN_OPTIONS = {
+  [TEXT_ALIGN_TYPES.LEFT]: {
+    tooltip: 'Align Left',
+    icon: AlignLeftIcon
+  },
+  [TEXT_ALIGN_TYPES.CENTER]: {
+    tooltip: 'Align Center',
+    icon: AlignCenterIcon
+  },
+  [TEXT_ALIGN_TYPES.RIGHT]: {
+    tooltip: 'Align Right',
+    icon: AlignRightIcon
   }
 };

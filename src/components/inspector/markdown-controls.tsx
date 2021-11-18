@@ -21,7 +21,7 @@ import { ConstructedDeckElement } from '../../types/deck-elements';
 import { SelectInput } from '../inputs/select';
 import {
   MD_COMPONENT_PROPS,
-  LIST_TEXT_ALIGN_OPTIONS,
+  TEXT_ALIGN_TYPES,
   FONT_WEIGHT_OPTIONS,
   FONT_FAMILY_OPTIONS,
   FONT_FAMILY_WEIGHTS,
@@ -81,8 +81,7 @@ export const MarkdownControls: FC<Props> = ({
     selectedElement?.props?.componentProps?.fontWeight ||
     FONT_WEIGHT_OPTIONS.FOUR_HUNDRED;
   const textAlign =
-    selectedElement?.props?.componentProps?.textAlign ||
-    LIST_TEXT_ALIGN_OPTIONS.LEFT;
+    selectedElement?.props?.componentProps?.textAlign || TEXT_ALIGN_TYPES.LEFT;
   const [inputState, setInputState] = useState({
     color,
     fontSize
@@ -208,7 +207,7 @@ export const MarkdownControls: FC<Props> = ({
       </SplitContainer>
       <SegmentedInput
         label="Text Align"
-        options={Object.values(LIST_TEXT_ALIGN_OPTIONS)}
+        options={Object.values(TEXT_ALIGN_TYPES)}
         value={textAlign}
         onChange={(value) =>
           onChangeComponentProps(MD_COMPONENT_PROPS.TEXT_ALIGN, value)

@@ -21,7 +21,10 @@ import {
   HEADING_TYPES,
   HEADING_OPTIONS,
   INLINE_STYLE_OPTIONS,
-  BLOCK_OPTIONS
+  BLOCK_OPTIONS,
+  TEXT_ALIGN_TYPES,
+  TEXT_ALIGN_OPTIONS,
+  MD_COMPONENT_PROPS
 } from '../../../constants/md-style-options';
 
 import 'draft-js/dist/Draft.css';
@@ -45,14 +48,7 @@ const ToolbarSection = styled.div`
 
 const StyledIconButton = styled(IconButton)`
   background-color: ${(props) =>
-    props.isSelected
-      ? defaultTheme.colors.background.blueTint
-      : '#fff'} !important;
-  svg {
-    fill: ${(props) =>
-      props.isSelected
-        ? defaultTheme.colors.icon.selected
-        : defaultTheme.colors.icon.default} !important;
+    props.isSelected ? '#d0dce8' : '#fff'} !important;
   }
 `;
 
@@ -107,8 +103,8 @@ export const VisualEditor = () => {
 
   /* Function that applies inline styles to the current selection */
   const applyFormattingOption = (
-    type: 'inlineStyle' | 'block',
-    option: HEADING_TYPES | INLINE_STYLE_TYPES | BLOCK_TYPES
+    type: 'inlineStyle' | 'block' | 'textAlign',
+    value: HEADING_TYPES | INLINE_STYLE_TYPES | BLOCK_TYPES | TEXT_ALIGN_TYPES
   ) => (e: React.MouseEvent) => {
     e.preventDefault();
 
@@ -119,11 +115,21 @@ export const VisualEditor = () => {
     );
 
     if (type === 'inlineStyle') {
-      setEditorState(RichUtils.toggleInlineStyle(editorStateFocused, option));
+      setEditorState(RichUtils.toggleInlineStyle(editorStateFocused, value));
     }
 
     if (type === 'block') {
-      setEditorState(RichUtils.toggleBlockType(editorStateFocused, option));
+      setEditorState(RichUtils.toggleBlockType(editorStateFocused, value));
+    }
+
+    if (type === 'textAlign') {
+      handleElementChanged({
+        componentProps: {
+          ...selectedElementComponentProps,
+          [MD_COMPONENT_PROPS.TEXT_ALIGN]: value
+        }
+      });
+      setEditorState(editorStateFocused);
     }
   };
 
@@ -139,6 +145,9 @@ export const VisualEditor = () => {
     return 'not-handled';
   };
 
+  const textAlignment =
+    selectedElementComponentProps?.textAlign ?? TEXT_ALIGN_TYPES.LEFT;
+
   return (
     <Positioner
       isShown
@@ -149,6 +158,7 @@ export const VisualEditor = () => {
           <Editor
             editorState={editorState}
             blockRenderMap={componentMapper}
+            textAlignment={textAlignment}
             onChange={setEditorState}
             handleKeyCommand={handleKeyCommand}
           />
@@ -221,6 +231,27 @@ export const VisualEditor = () => {
                     key={`visual-editor-${key}`}
                     icon={option.icon}
                     onClick={applyFormattingOption('block', key as BLOCK_TYPES)}
+                    appearance="minimal"
+                    isSelected={isSelected}
+                  />
+                </Tooltip>
+              );
+            })}
+          </ToolbarSection>
+
+          <ToolbarSection>
+            {Object.keys(TEXT_ALIGN_OPTIONS).map((key) => {
+              const option = TEXT_ALIGN_OPTIONS[key as TEXT_ALIGN_TYPES];
+              const isSelected = textAlignment === key;
+              return (
+                <Tooltip key={`visual-editor-${key}`} content={option.tooltip}>
+                  <StyledIconButton
+                    key={`visual-editor-${key}`}
+                    icon={option.icon}
+                    onClick={applyFormattingOption(
+                      'textAlign',
+                      key as TEXT_ALIGN_TYPES
+                    )}
                     appearance="minimal"
                     isSelected={isSelected}
                   />

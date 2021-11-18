@@ -2,7 +2,6 @@ import {
   BoldIcon,
   ItalicIcon,
   StrikethroughIcon,
-  UnderlineIcon,
   PropertiesIcon,
   NumberedListIcon,
   CitationIcon,
@@ -24,7 +23,6 @@ export enum HEADING_TYPES {
 export enum INLINE_STYLE_TYPES {
   BOLD = 'BOLD',
   ITALIC = 'ITALIC',
-  UNDERLINE = 'UNDERLINE',
   STRIKETHROUGH = 'STRIKETHROUGH',
   CODE = 'CODE'
 }
@@ -414,11 +412,6 @@ export const INLINE_STYLE_OPTIONS = {
   [INLINE_STYLE_TYPES.STRIKETHROUGH]: {
     tooltip: 'Strikethrough',
     icon: StrikethroughIcon
-  },
-  [INLINE_STYLE_TYPES.UNDERLINE]: {
-    // TODO: Figure out why underline isnt saving
-    tooltip: 'Underline ⌘U',
-    icon: UnderlineIcon
   },
   [INLINE_STYLE_TYPES.CODE]: {
     tooltip: 'Code ⌘J',

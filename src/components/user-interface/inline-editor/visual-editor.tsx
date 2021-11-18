@@ -116,13 +116,9 @@ export const VisualEditor = () => {
 
     if (type === 'inlineStyle') {
       setEditorState(RichUtils.toggleInlineStyle(editorStateFocused, value));
-    }
-
-    if (type === 'block') {
+    } else if (type === 'block') {
       setEditorState(RichUtils.toggleBlockType(editorStateFocused, value));
-    }
-
-    if (type === 'textAlign') {
+    } else if (type === 'textAlign') {
       handleElementChanged({
         componentProps: {
           ...selectedElementComponentProps,

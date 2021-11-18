@@ -37,7 +37,7 @@ export const InlineEditor: React.FC = () => {
           style={style}
           data-state={state}
           css={(css as unknown) as string}
-          ref={getRef as any} // TODO: Figure out why TS is moaning here
+          ref={getRef as any}
         >
           <SegmentedControl
             options={[

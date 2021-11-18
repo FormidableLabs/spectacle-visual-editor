@@ -6,10 +6,11 @@ import {
   RichUtils,
   convertToRaw,
   convertFromRaw,
-  EditorCommand
+  EditorCommand,
+  DefaultDraftBlockRenderMap
 } from 'draft-js';
 import { Map } from 'immutable';
-import { Heading, Quote, Text } from 'spectacle';
+import { Heading, OrderedList, Quote, Text, UnorderedList } from 'spectacle';
 import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
 import { IconButton, Positioner, defaultTheme, Tooltip } from 'evergreen-ui';
 import styled from 'styled-components';
@@ -52,6 +53,12 @@ const StyledIconButton = styled(IconButton)`
   }
 `;
 
+const EditorWrapper = styled.div`
+  .public-DraftStyleDefault-listLTR {
+    margin-left: 0 !important;
+  }
+`;
+
 export const VisualEditor = () => {
   const selectedElement = useSelector(selectedElementSelector);
 
@@ -78,7 +85,7 @@ export const VisualEditor = () => {
     children: null, // Required prop, gets overwritten by Draft.js
     ...selectedElementComponentProps
   };
-  const componentMapper = Map({
+  const blockRenderMap = Map({
     'header-one': {
       element: 'div',
       wrapper: <Heading fontSize="h1" {...componentProps} />
@@ -95,9 +102,18 @@ export const VisualEditor = () => {
       element: 'div',
       wrapper: <Quote {...componentProps} />
     },
+    'ordered-list-item': {
+      element: 'li',
+      wrapper: <OrderedList {...componentProps} />
+    },
+    'unordered-list-item': {
+      element: 'li',
+      wrapper: <UnorderedList {...componentProps} />
+    },
     unstyled: {
       element: 'div',
-      wrapper: <Text {...componentProps} />
+      wrapper: <Text {...componentProps} />,
+      aliasedElements: ['p']
     }
   });
 
@@ -150,15 +166,15 @@ export const VisualEditor = () => {
       position="top"
       targetOffset={30}
       target={({ getRef }) => (
-        <div ref={getRef}>
+        <EditorWrapper ref={getRef}>
           <Editor
             editorState={editorState}
-            blockRenderMap={componentMapper}
             textAlignment={textAlignment}
+            blockRenderMap={DefaultDraftBlockRenderMap.merge(blockRenderMap)}
             onChange={setEditorState}
             handleKeyCommand={handleKeyCommand}
           />
-        </div>
+        </EditorWrapper>
       )}
     >
       {({ css, getRef, state, style }) => (

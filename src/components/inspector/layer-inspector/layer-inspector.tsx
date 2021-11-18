@@ -34,6 +34,8 @@ export const LayerInspector: FC = () => {
   const moveElement = useCallback(
     (currentLocation: Layer, nextLocation: Layer) => {
       setLocalElements((localElements) => {
+        console.log('moveElement');
+        debugger;
         // Only allow movement within the same parent context in this function
         if (currentLocation.parentId !== nextLocation.parentId) {
           return localElements;
@@ -43,10 +45,12 @@ export const LayerInspector: FC = () => {
         // If it is not defined, the element is a top-level element
         if (currentLocation.parentId) {
           const clonedLocalElements = cloneDeep(localElements);
-          const parentIndex = clonedLocalElements.findIndex(
+          const flattenedElements = flattenElementsDeep(clonedLocalElements);
+
+          const parentIndex = flattenedElements.findIndex(
             (el) => el.id === (currentLocation.parentId as string)
           );
-          const parent = clonedLocalElements[parentIndex];
+          const parent = flattenedElements[parentIndex];
 
           if (!parent || !Array.isArray(parent.children)) {
             return clonedLocalElements;
@@ -56,6 +60,7 @@ export const LayerInspector: FC = () => {
           const currentIndex = parentChildren.findIndex((el) => {
             return el.id === currentLocation.id;
           });
+
           const nextIndex = parentChildren.findIndex((el) => {
             return el.id === nextLocation.id;
           });
@@ -66,7 +71,7 @@ export const LayerInspector: FC = () => {
             nextIndex
           );
 
-          clonedLocalElements[parentIndex].children = reorderedElementChildren;
+          flattenedElements[parentIndex].children = reorderedElementChildren;
           return clonedLocalElements;
         }
 
@@ -89,13 +94,19 @@ export const LayerInspector: FC = () => {
       direction: 'top' | 'bottom'
     ) => {
       setLocalElements((localElements) => {
+        console.log('moveElementInside');
+        debugger;
+
         const clonedLocalElements = cloneDeep(localElements);
-        const parentIndex = clonedLocalElements.findIndex(
+        const flattenedElements = flattenElementsDeep(clonedLocalElements);
+
+        const parentIndex = flattenedElements.findIndex(
           (el) => el.id === nextLocation.id
         );
-        const parent = clonedLocalElements[parentIndex];
+        const parent = flattenedElements[parentIndex];
         const parentChildren = parent.children;
-        const itemInQuestion = clonedLocalElements.find(
+
+        const itemInQuestion = flattenedElements.find(
           (el) => el.id === currentLocation.id
         );
 
@@ -113,9 +124,12 @@ export const LayerInspector: FC = () => {
           parentChildren.push(itemInQuestion);
         }
 
+        // I think this is fine b/c we should be moving top level elemements
+        // which exist in the clonedLocalElements array
         const x = clonedLocalElements.filter(
           (el) => el.id !== currentLocation.id
         );
+
         return x;
       });
     },
@@ -125,12 +139,13 @@ export const LayerInspector: FC = () => {
   const moveElementOutside = useCallback(
     (currentLocation: Layer, nextLocation: Layer) => {
       setLocalElements((localElements) => {
+        console.log('moveElementOutside');
+        debugger;
+
         if (currentLocation.parentId === undefined) return localElements;
 
         const clonedLocalElements = cloneDeep(localElements);
-
-        let flattenedElements = flattenElementsDeep(clonedLocalElements);
-        debugger;
+        const flattenedElements = flattenElementsDeep(clonedLocalElements);
 
         const currentParentIndex = flattenedElements.findIndex(
           (el) => el.id === currentLocation.parentId
@@ -172,51 +187,57 @@ export const LayerInspector: FC = () => {
       // commitChangedOrder is called with a stale version of localElements.
       // Use update function to get the most recent change. Return original value.
       setLocalElements((localElements) => {
-        const nextLocationIndex = localElements.findIndex(
+        console.log('commitChangedOrder');
+        debugger;
+
+        const flattenedElements = flattenElementsDeep(localElements);
+        const nextLocationIndex = flattenedElements.findIndex(
           (el) => el.id === nextParent
         );
 
         // Update drop location
-        const elementsToUpdate =
-          typeof nextParent === 'string'
-            ? localElements[nextLocationIndex].children
-            : localElements;
+        const elementsToUpdate = Boolean(nextParent)
+          ? flattenedElements[nextLocationIndex].children
+          : localElements;
+
         if (!Array.isArray(elementsToUpdate)) {
           return localElements;
         }
+
         dispatch(
           deckSlice.actions.reorderActiveSlideElements({
             elementIds: elementsToUpdate.map((element) => element.id),
-            parentId:
-              typeof nextParent === 'string'
-                ? localElements[nextLocationIndex].id
-                : undefined
+            parentId: Boolean(nextParent)
+              ? flattenedElements[nextLocationIndex].id
+              : undefined
           })
         );
+        debugger;
 
         // If element has moved outside of parent, update previous parent
         if (previousParent !== nextParent) {
-          const previousLocationIndex = localElements.findIndex(
+          const previousLocationIndex = flattenedElements.findIndex(
             (el) => el.id === previousParent
           );
 
-          const elementsToUpdate =
-            typeof previousParent === 'string'
-              ? localElements[previousLocationIndex].children
-              : localElements;
+          const elementsToUpdate = Boolean(previousParent)
+            ? flattenedElements[previousLocationIndex].children
+            : localElements;
+
           if (!Array.isArray(elementsToUpdate)) {
             return localElements;
           }
+
           dispatch(
             deckSlice.actions.reorderActiveSlideElements({
               elementIds: elementsToUpdate.map((element) => element.id),
-              parentId:
-                typeof previousParent === 'string'
-                  ? localElements[previousLocationIndex].id
-                  : undefined
+              parentId: Boolean(previousParent)
+                ? flattenedElements[previousLocationIndex].id
+                : undefined
             })
           );
         }
+
         return localElements;
       });
     },

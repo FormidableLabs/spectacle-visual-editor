@@ -526,6 +526,7 @@ export const deckSlice = createSlice({
       state,
       action: PayloadAction<{ parentId?: string; elementIds: string[] }>
     ) => {
+      debugger;
       if (!action.payload.parentId) {
         const activeSlide = getActiveSlideImmer(state);
 
@@ -540,6 +541,7 @@ export const deckSlice = createSlice({
         id: action.payload.parentId as string,
         changes: { children: action.payload.elementIds }
       });
+
       state.isSaved = false;
     },
 

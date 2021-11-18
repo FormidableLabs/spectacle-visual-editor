@@ -45,6 +45,7 @@ export const LayerDragWrapper: React.FC<Props> = ({
     },
 
     hover(item: { id: string; parentId?: string; index: number }, monitor) {
+      debugger;
       if (!ref.current) return;
 
       const dragId = item.id;

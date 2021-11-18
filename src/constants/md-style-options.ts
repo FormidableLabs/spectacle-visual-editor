@@ -1,3 +1,91 @@
+import {
+  BoldIcon,
+  ItalicIcon,
+  StrikethroughIcon,
+  UnderlineIcon,
+  PropertiesIcon,
+  NumberedListIcon,
+  CitationIcon,
+  HeaderOneIcon,
+  HeaderTwoIcon,
+  HeaderIcon,
+  CodeIcon
+} from 'evergreen-ui';
+
+export enum HEADING_TYPES {
+  H1 = 'header-one',
+  H2 = 'header-two',
+  H3 = 'header-three'
+}
+
+export enum INLINE_STYLE_TYPES {
+  BOLD = 'BOLD',
+  ITALIC = 'ITALIC',
+  UNDERLINE = 'UNDERLINE',
+  STRIKETHROUGH = 'STRIKETHROUGH',
+  CODE = 'CODE'
+}
+
+export enum BLOCK_TYPES {
+  UL = 'unordered-list-item',
+  OL = 'ordered-list-item',
+  BLOCKQUOTE = 'blockquote'
+}
+
+export const HEADING_OPTIONS = {
+  [HEADING_TYPES.H1]: {
+    tooltip: 'Heading 1',
+    icon: HeaderOneIcon
+  },
+  [HEADING_TYPES.H2]: {
+    tooltip: 'Heading 2',
+    icon: HeaderTwoIcon
+  },
+  [HEADING_TYPES.H3]: {
+    tooltip: 'Heading 3',
+    icon: HeaderIcon // TODO: Update to HeaderThreeIcon when Evergreen UI have upgraded @blueprintjs/icons to include the latest icons
+  }
+};
+
+export const INLINE_STYLE_OPTIONS = {
+  [INLINE_STYLE_TYPES.BOLD]: {
+    tooltip: 'Bold ⌘B',
+    icon: BoldIcon
+  },
+  [INLINE_STYLE_TYPES.ITALIC]: {
+    tooltip: 'Italic ⌘I',
+    icon: ItalicIcon
+  },
+  [INLINE_STYLE_TYPES.STRIKETHROUGH]: {
+    tooltip: 'Strikethrough',
+    icon: StrikethroughIcon
+  },
+  [INLINE_STYLE_TYPES.UNDERLINE]: {
+    // TODO: Figure out why underline isnt saving
+    tooltip: 'Underline ⌘U',
+    icon: UnderlineIcon
+  },
+  [INLINE_STYLE_TYPES.CODE]: {
+    tooltip: 'Code ⌘J',
+    icon: CodeIcon
+  }
+};
+
+export const BLOCK_OPTIONS = {
+  [BLOCK_TYPES.UL]: {
+    tooltip: 'Unordered List',
+    icon: PropertiesIcon
+  },
+  [BLOCK_TYPES.OL]: {
+    tooltip: 'Ordered List',
+    icon: NumberedListIcon
+  },
+  [BLOCK_TYPES.BLOCKQUOTE]: {
+    tooltip: 'Blockquote',
+    icon: CitationIcon
+  }
+};
+
 export enum LIST_STYLE_TYPE_OPTIONS {
   NONE = 'none',
   DISC = 'disc',

@@ -60,8 +60,8 @@ const StyledIconButton = styled(IconButton)`
   }
 `;
 
-/* Wrapper for spectacle UnorderedList and OrderedList - necessary for rendering list items in ListItem components */
-const List = ({
+/* Wrapper for spectacle UnorderedList and OrderedList - renders children as ListItem components */
+const ListWrapper = ({
   component: Component,
   children,
   ...props
@@ -72,7 +72,7 @@ const List = ({
   <Component {...props}>
     {Children.map(children, (child: React.ReactElement) => {
       const childProps = { ...child.props };
-      delete childProps.className;
+      delete childProps.className; // Remove Draft.js default styling
       return <ListItem key={child.key} {...childProps} />;
     })}
   </Component>
@@ -100,6 +100,7 @@ export const VisualEditor = () => {
   /* Map markdown elements to spectacle components */
   const selectedElementComponentProps =
     selectedElement?.props?.componentProps || {};
+
   const componentProps = {
     children: null, // Required prop, gets overwritten by Draft.js
     ...selectedElementComponentProps
@@ -123,11 +124,11 @@ export const VisualEditor = () => {
     },
     'ordered-list-item': {
       element: 'li',
-      wrapper: <List component={OrderedList} {...componentProps} />
+      wrapper: <ListWrapper component={OrderedList} {...componentProps} />
     },
     'unordered-list-item': {
       element: 'li',
-      wrapper: <List component={UnorderedList} {...componentProps} />
+      wrapper: <ListWrapper component={UnorderedList} {...componentProps} />
     },
     unstyled: {
       element: 'div',

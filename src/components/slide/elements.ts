@@ -6,7 +6,9 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     component: 'Markdown',
     children: '# Oh Hello There',
     props: {
-      componentProps: {}
+      componentProps: {
+        textAlign: 'left'
+      }
     }
   },
   TEXT: {

@@ -18,7 +18,7 @@ import {
   Quote,
   Text
 } from 'spectacle';
-import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
+import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
 import { IconButton, Positioner, defaultTheme, Tooltip } from 'evergreen-ui';
 import styled from 'styled-components';
 import { useEditElement } from '../../../hooks/use-edit-element';
@@ -60,6 +60,24 @@ const StyledIconButton = styled(IconButton)`
   }
 `;
 
+/* Additional markdown config for draftjs-md-converter */
+const extraMarkdownDictionary = {
+  STRIKETHROUGH: '~~',
+  CODE: '`'
+};
+const extraMarkdownStyles = {
+  inlineStyles: {
+    Delete: {
+      type: 'STRIKETHROUGH',
+      symbol: '~~'
+    },
+    Code: {
+      type: 'CODE',
+      symbol: '`'
+    }
+  }
+};
+
 /* Wrapper for spectacle UnorderedList and OrderedList - renders children as ListItem components */
 const ListWrapper = ({
   component: Component,
@@ -83,7 +101,7 @@ export const VisualEditor = () => {
 
   /* Setup editor with markdown from store */
   const content = convertFromRaw(
-    markdownToDraft(String(selectedElement?.children))
+    mdToDraftjs(String(selectedElement?.children), extraMarkdownStyles as any)
   );
   const [editorState, setEditorState] = useState(() =>
     EditorState.createWithContent(content)
@@ -93,7 +111,10 @@ export const VisualEditor = () => {
   const editorContent = editorState.getCurrentContent();
   const handleElementChanged = useEditElement();
   useEffect(() => {
-    const markdown = draftToMarkdown(convertToRaw(editorContent));
+    const markdown = draftjsToMd(
+      convertToRaw(editorContent),
+      extraMarkdownDictionary
+    );
     handleElementChanged({ children: markdown });
   }, [editorContent, handleElementChanged]);
 

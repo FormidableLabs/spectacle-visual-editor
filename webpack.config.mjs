@@ -15,7 +15,8 @@ export default (env, argv) => {
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
-      modules: [path.join(__dirname, 'src'), 'node_modules']
+      modules: [path.join(__dirname, 'src'), 'node_modules'],
+      fallback: { path: false }
     },
     module: {
       rules: [
@@ -33,6 +34,10 @@ export default (env, argv) => {
           resolve: {
             fullySpecified: false
           }
+        },
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader']
         }
       ]
     },

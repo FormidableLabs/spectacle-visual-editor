@@ -52,7 +52,8 @@ export const sampleElementsData: DeckElement[] = [
     id: childId2,
     props: {
       componentProps: {
-        margin: '10px'
+        margin: '10px',
+        textAlign: 'center'
       }
     },
     children: '## Spectacle',
@@ -61,6 +62,11 @@ export const sampleElementsData: DeckElement[] = [
   {
     component: 'Markdown',
     id: childId4,
+    props: {
+      componentProps: {
+        textAlign: 'center'
+      }
+    },
     children: '# Second Slide',
     parent: sampleSlidesData[1].id
   },
@@ -77,12 +83,22 @@ export const sampleElementsData: DeckElement[] = [
     component: 'Markdown',
     id: childId6,
     children: '# Third Slide',
+    props: {
+      componentProps: {
+        textAlign: 'center'
+      }
+    },
     parent: sampleSlidesData[2].id
   },
   {
     component: 'Markdown',
     id: childId7,
     children: '# Fourth Slide',
+    props: {
+      componentProps: {
+        textAlign: 'center'
+      }
+    },
     parent: sampleSlidesData[3].id
   }
 ];

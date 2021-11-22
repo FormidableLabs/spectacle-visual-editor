@@ -101,9 +101,9 @@ export const VisualEditor = () => {
 
   /* Setup editor with markdown from store */
   const content = convertFromRaw(
-    mdToDraftjs(String(selectedElement?.children), extraMarkdownStyles as any)
+    mdToDraftjs(String(selectedElement?.children), extraMarkdownStyles)
   );
-  const [editorState, setEditorState] = useState(() =>
+  const [editorState, setEditorState] = useState(
     EditorState.createWithContent(content)
   );
 

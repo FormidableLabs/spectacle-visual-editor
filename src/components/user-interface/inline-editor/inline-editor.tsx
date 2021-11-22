@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Positioner, SegmentedControl } from 'evergreen-ui';
-import styled from 'styled-components';
+import styled, { CSSObject } from 'styled-components';
 import { MarkdownEditor } from './markdown-editor';
 import { VisualEditor } from './visual-editor';
 
 type EditorTypes = 'markdown' | 'visual';
 
-const Toolbar = styled.div<{ css: string }>`
+const Toolbar = styled.div<{ css: CSSObject }>`
   ${({ css }) => css}
 `;
 
@@ -33,12 +33,7 @@ export const InlineEditor: React.FC = () => {
       )}
     >
       {({ css, getRef, state, style }) => (
-        <Toolbar
-          style={style}
-          data-state={state}
-          css={(css as unknown) as string}
-          ref={getRef as any}
-        >
+        <Toolbar style={style} data-state={state} css={css} ref={getRef as any}>
           <SegmentedControl
             options={[
               { label: 'Visual', value: 'visual' },

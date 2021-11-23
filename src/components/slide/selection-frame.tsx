@@ -132,13 +132,17 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   }, [children, editableElementId]);
 
   /**
-   *  If the child's dimensions change, let the moveable instance know
+   *  If the child's dimensions or css position change, let the moveable instance know
    */
   useEffect(() => {
     if (moveableRef?.current?.props?.target) {
       moveableRef.current.updateRect();
     }
-  }, [children?.props?.width, children?.props?.height]);
+  }, [
+    children?.props?.width,
+    children?.props?.height,
+    children?.props?.position
+  ]);
 
   /**
    *  If the child's content changes and can cause resizing, let the moveable instance know

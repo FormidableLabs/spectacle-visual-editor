@@ -1,8 +1,8 @@
-import { defaultTheme } from 'evergreen-ui';
+import { defaultTheme, Theme } from 'evergreen-ui';
 
 const WHITE = '#FFF';
 
-export const theme = {
+export const theme: Theme = {
   ...defaultTheme,
   colors: {
     ...defaultTheme.colors,
@@ -50,6 +50,10 @@ export const theme = {
     },
     Select: {
       ...defaultTheme.components.Select,
+      baseStyle: {
+        ...defaultTheme.components.Select.baseStyle,
+        backgroundColor: WHITE
+      },
       appearances: {
         ...defaultTheme.components.Select.appearances,
         default: {
@@ -59,6 +63,11 @@ export const theme = {
           _disabled: {
             backgroundColor: defaultTheme.colors.gray200
           }
+        }
+      },
+      sizes: {
+        medium: {
+          blah: 'blah'
         }
       }
     }

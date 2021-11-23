@@ -12,8 +12,7 @@ import { theme } from './theme';
 
 render(
   <Provider store={store}>
-    {/* TODO: Figure out why any is necessary here */}
-    <ThemeProvider value={theme as any}>
+    <ThemeProvider value={theme}>
       <Router>
         <VisualEditor path={PATHS.VISUAL_EDITOR} />
         <PreviewDeck path={PATHS.PREVIEW_DECK} />

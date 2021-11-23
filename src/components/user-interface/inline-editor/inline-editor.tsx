@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Positioner, SegmentedControl } from 'evergreen-ui';
+import { Button, Group, Positioner } from 'evergreen-ui';
 import styled, { CSSObject } from 'styled-components';
 import { MarkdownEditor } from './markdown-editor';
 import { VisualEditor } from './visual-editor';
@@ -34,16 +34,22 @@ export const InlineEditor: React.FC = () => {
     >
       {({ css, getRef, state, style }) => (
         <Toolbar style={style} data-state={state} css={css} ref={getRef as any}>
-          <SegmentedControl
-            options={[
-              { label: 'Visual', value: 'visual' },
-              { label: 'Markdown', value: 'markdown' }
-            ]}
-            value={editorPreference}
-            onChange={(value) => setEditorPreference(value as EditorTypes)}
-            width="150px"
-            backgroundColor="#d0dce8"
-          />
+          <Group width={200}>
+            <Button
+              isActive={editorPreference === 'visual'}
+              onClick={() => setEditorPreference('visual')}
+              flex={1}
+            >
+              Visual
+            </Button>
+            <Button
+              isActive={editorPreference === 'markdown'}
+              onClick={() => setEditorPreference('markdown')}
+              flex={1}
+            >
+              Markdown
+            </Button>
+          </Group>
         </Toolbar>
       )}
     </Positioner>

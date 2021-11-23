@@ -19,8 +19,13 @@ import {
   Text
 } from 'spectacle';
 import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
-import { IconButton, Positioner, defaultTheme, Tooltip } from 'evergreen-ui';
-import styled from 'styled-components';
+import {
+  IconButton,
+  Positioner,
+  deprecatedDefaultTheme,
+  Tooltip
+} from 'evergreen-ui';
+import styled, { CSSObject } from 'styled-components';
 import { useEditElement } from '../../../hooks/use-edit-element';
 import { selectedElementSelector } from '../../../slices/deck-slice';
 import {
@@ -37,7 +42,7 @@ import {
 
 import 'draft-js/dist/Draft.css';
 
-const Toolbar = styled.div<{ css: string }>`
+const Toolbar = styled.div<{ css: CSSObject }>`
   display: flex;
   background-color: #fff;
   padding: 4px;
@@ -50,7 +55,7 @@ const ToolbarSection = styled.div`
   & + & {
     margin-left: 4px;
     padding-left: 4px;
-    border-left: 1px solid ${defaultTheme.scales.neutral.N4A};
+    border-left: 1px solid ${deprecatedDefaultTheme.scales.neutral.N4A};
   }
 `;
 
@@ -219,12 +224,7 @@ export const VisualEditor = () => {
       )}
     >
       {({ css, getRef, state, style }) => (
-        <Toolbar
-          style={style}
-          data-state={state}
-          css={(css as unknown) as string}
-          ref={getRef as any}
-        >
+        <Toolbar style={style} data-state={state} css={css} ref={getRef as any}>
           <ToolbarSection>
             {Object.keys(HEADING_OPTIONS).map((key) => {
               const option = HEADING_OPTIONS[key as HEADING_TYPES];
@@ -235,14 +235,14 @@ export const VisualEditor = () => {
                   .getType() === key;
               return (
                 <Tooltip key={`visual-editor-${key}`} content={option.tooltip}>
-                  <StyledIconButton
+                  <IconButton
                     icon={option.icon}
                     onClick={applyFormattingOption(
                       'block',
                       key as HEADING_TYPES
                     )}
                     appearance="minimal"
-                    isSelected={isSelected}
+                    isActive={isSelected}
                   />
                 </Tooltip>
               );

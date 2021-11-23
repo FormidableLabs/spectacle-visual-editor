@@ -61,7 +61,7 @@ interface Props {
   slideProps: {
     containerStyle: InterpolationValue;
     onSlideClick?(id: string): void;
-    handleKeyPress?(event: React.KeyboardEvent, id: string): void;
+    handleKeyPress?(key: string, id: string): void;
   };
   backgroundColor?: string;
   backgroundPosition?: string;
@@ -85,7 +85,7 @@ export const Slide: React.FC<Props> = ({
     <SlideScaleWrapper
       containerStyle={containerStyle}
       onClick={() => onSlideClick?.(id)}
-      onKeyDown={(event) => handleKeyPress?.(event, id)}
+      onKeyDown={(event) => handleKeyPress?.(event.key, id)}
       {...rest}
     >
       <SlideWrapper

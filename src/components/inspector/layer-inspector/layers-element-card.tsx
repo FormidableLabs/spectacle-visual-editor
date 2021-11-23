@@ -5,7 +5,7 @@ import {
   ChevronDownIcon,
   CodeIcon,
   ColumnLayoutIcon,
-  defaultTheme,
+  deprecatedDefaultTheme,
   Icon,
   IconButton,
   MediaIcon,
@@ -120,19 +120,19 @@ const Layer = styled.div<{
   padding: 0 10px 0 ${(props) => (props.isChildElement ? '34px' : '10px')};
   color: ${(props) =>
     props.isSelected || props.isParentSelected
-      ? defaultTheme.scales.blue.B9
-      : defaultTheme.scales.neutral.N9};
+      ? deprecatedDefaultTheme.scales.blue.B9
+      : deprecatedDefaultTheme.scales.neutral.N9};
   background: ${(props) =>
     props.isSelected
-      ? defaultTheme.scales.blue.B3A
+      ? deprecatedDefaultTheme.scales.blue.B3A
       : props.isHovered
-      ? defaultTheme.scales.neutral.N2A
+      ? deprecatedDefaultTheme.scales.neutral.N2A
       : props.isParentSelected
-      ? defaultTheme.scales.blue.B1A
+      ? deprecatedDefaultTheme.scales.blue.B1A
       : 'none'};
 
   &:focus {
-    border: 1px solid ${defaultTheme.palette.blue.base};
+    border: 1px solid ${deprecatedDefaultTheme.palette.blue.base};
   }
 `;
 

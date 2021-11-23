@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import {
-  defaultTheme,
+  deprecatedDefaultTheme,
   ChevronDownIcon,
   ChevronUpIcon,
   IconButton
@@ -22,8 +22,8 @@ const TitleBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid ${defaultTheme.scales.neutral.N5A};
-  color: ${defaultTheme.scales.neutral.N9};
+  border-bottom: 1px solid ${deprecatedDefaultTheme.scales.neutral.N5A};
+  color: ${deprecatedDefaultTheme.scales.neutral.N9};
   font-size: 1.1em;
   font-weight: 500;
   margin-bottom: 12px;

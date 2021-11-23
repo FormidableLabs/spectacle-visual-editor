@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import { defaultTheme } from 'evergreen-ui';
+import { deprecatedDefaultTheme } from 'evergreen-ui';
 import { padding, PaddingProps } from 'styled-system';
 
 export const InspectorContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  background: ${defaultTheme.scales.neutral.N4};
+  background: ${deprecatedDefaultTheme.scales.neutral.N4};
   overflow: hidden;
 `;
 

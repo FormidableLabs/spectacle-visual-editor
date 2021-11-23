@@ -3,9 +3,10 @@ import {
   IconButton,
   Label,
   Pane,
-  SegmentedControl,
+  Group,
   TextInputField,
-  Tooltip
+  Tooltip,
+  Button
 } from 'evergreen-ui';
 import React, {
   ChangeEvent,
@@ -236,17 +237,28 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
 
   return (
     <Container label="Object Placement">
-      <SegmentedControl
-        options={[
-          { label: 'In-line', value: false },
-          { label: 'Absolute', value: true }
-        ]}
-        value={freeMovement}
-        onChange={() => {
-          setFreeMovement(!freeMovement);
-          onToggle();
-        }}
-      />
+      <Group marginBottom={8}>
+        <Button
+          flex={1}
+          isActive={!freeMovement}
+          onClick={() => {
+            setFreeMovement(false);
+            onToggle();
+          }}
+        >
+          In-line
+        </Button>
+        <Button
+          flex={1}
+          isActive={freeMovement}
+          onClick={() => {
+            setFreeMovement(true);
+            onToggle();
+          }}
+        >
+          Absolute
+        </Button>
+      </Group>
 
       {freeMovement && (
         <>

@@ -11,7 +11,7 @@ import {
   IconButton,
   PlusIcon,
   Tooltip,
-  defaultTheme
+  deprecatedDefaultTheme
 } from 'evergreen-ui';
 import { useRootSelector } from '../../../store';
 import { moveArrayItem } from '../../../util/move-array-item';
@@ -152,8 +152,8 @@ export const TimelineSlideViewer: React.FC<Props> = ({
 
 const Container = styled.div`
   display: flex;
-  background: ${defaultTheme.scales.neutral.N6};
-  border-top: 1px ${defaultTheme.scales.neutral.N7} solid;
+  background: ${deprecatedDefaultTheme.scales.neutral.N6};
+  border-top: 1px ${deprecatedDefaultTheme.scales.neutral.N7} solid;
 `;
 
 const Slides = styled.div`

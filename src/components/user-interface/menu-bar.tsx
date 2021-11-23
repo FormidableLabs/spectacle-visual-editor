@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import {
-  defaultTheme,
+  deprecatedDefaultTheme,
   Menu,
   Popover,
   Position,
@@ -53,8 +53,9 @@ import { useRootSelector } from '../../store';
 
 const MenuBarContainer = styled.div`
   width: 100%;
-  background: ${defaultTheme.scales.neutral.N3};
-  border-bottom: ${defaultTheme.scales.neutral.N6} 1px solid;
+  height: 38px;
+  background: ${deprecatedDefaultTheme.scales.neutral.N3};
+  border-bottom: ${deprecatedDefaultTheme.scales.neutral.N6} 1px solid;
   display: flex;
   align-items: center;
 `;
@@ -155,7 +156,7 @@ export const MenuBar = () => {
       <MenuSection>
         <Tooltip content="Open Deck ⌘O">
           <StyledIconButton
-            fill={defaultTheme.colors.icon.selected}
+            fill={deprecatedDefaultTheme.colors.icon.selected}
             icon={FolderCloseIcon}
             appearance="minimal"
             onClick={() => {
@@ -165,7 +166,7 @@ export const MenuBar = () => {
         </Tooltip>
         <Tooltip content="New Deck ⌘S">
           <StyledIconButton
-            fill={defaultTheme.colors.icon.selected}
+            fill={deprecatedDefaultTheme.colors.icon.selected}
             icon={DocumentIcon}
             appearance="minimal"
             onClick={() => dispatch(createNewDeck())}
@@ -174,7 +175,7 @@ export const MenuBar = () => {
         <Tooltip content="Save Deck ⌘S">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={deprecatedDefaultTheme.colors.icon.selected}
               icon={FloppyDiskIcon}
               appearance="minimal"
               disabled={isSaved}
@@ -265,7 +266,7 @@ export const MenuBar = () => {
         >
           <Tooltip content="Insert">
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={deprecatedDefaultTheme.colors.icon.selected}
               icon={PlusIcon}
               appearance="minimal"
             />
@@ -299,7 +300,7 @@ export const MenuBar = () => {
         >
           <Tooltip content="Slides">
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={deprecatedDefaultTheme.colors.icon.selected}
               icon={GridViewIcon}
               appearance="minimal"
             />
@@ -311,7 +312,7 @@ export const MenuBar = () => {
         <Tooltip content="Undo ⌘Z">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={deprecatedDefaultTheme.colors.icon.selected}
               icon={UndoIcon}
               appearance="minimal"
               disabled={!hasPast}
@@ -324,7 +325,7 @@ export const MenuBar = () => {
         <Tooltip content="Redo ⇧⌘Z">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={deprecatedDefaultTheme.colors.icon.selected}
               icon={RedoIcon}
               appearance="minimal"
               disabled={!hasFuture}
@@ -337,7 +338,7 @@ export const MenuBar = () => {
         <Tooltip content="Cut ⌘X">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={deprecatedDefaultTheme.colors.icon.selected}
               icon={CutIcon}
               appearance="minimal"
               disabled={!selectedElement}
@@ -351,7 +352,7 @@ export const MenuBar = () => {
         <Tooltip content="Copy ⌘C">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={deprecatedDefaultTheme.colors.icon.selected}
               icon={DuplicateIcon}
               appearance="minimal"
               disabled={!selectedElement}
@@ -364,7 +365,7 @@ export const MenuBar = () => {
         <Tooltip content="Paste ⌘P">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={deprecatedDefaultTheme.colors.icon.selected}
               icon={ClipboardIcon}
               appearance="minimal"
               disabled={!hasPaste}
@@ -394,7 +395,7 @@ export const MenuBar = () => {
 
         <Tooltip content="Delete ⌘D">
           <StyledIconButton
-            fill={defaultTheme.colors.icon.danger}
+            fill={deprecatedDefaultTheme.colors.icon.danger}
             icon={TrashIcon}
             appearance="minimal"
             intent="danger"
@@ -416,7 +417,7 @@ export const MenuBar = () => {
       <MenuSection>
         <Tooltip content="Present Deck">
           <StyledIconButton
-            fill={defaultTheme.colors.icon.selected}
+            fill={deprecatedDefaultTheme.colors.icon.selected}
             icon={FullscreenIcon}
             appearance="minimal"
             onClick={() => {
@@ -445,7 +446,7 @@ export const MenuBar = () => {
         >
           <Tooltip content="Preview Size">
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={deprecatedDefaultTheme.colors.icon.selected}
               icon={ZoomInIcon}
               appearance="minimal"
             />
@@ -508,7 +509,7 @@ const MenuSection = styled.div`
 
 const SectionDivider = styled.div`
   height: 65%;
-  border-left: 1px solid ${defaultTheme.scales.neutral.N4A};
+  border-left: 1px solid ${deprecatedDefaultTheme.scales.neutral.N4A};
 `;
 
 const StyledIconButton = styled(IconButton)`

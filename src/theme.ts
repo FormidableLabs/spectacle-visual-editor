@@ -1,5 +1,10 @@
 import { defaultTheme, Theme } from 'evergreen-ui';
 
+/*
+  Override theme tokens and component styles globally
+  For more information, see: https://evergreen.segment.com/introduction/theming
+*/
+
 const WHITE = '#FFF';
 
 export const theme: Theme = {

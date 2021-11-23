@@ -60,6 +60,12 @@ const MenuBarContainer = styled.div`
   align-items: center;
 `;
 
+const DeckTitleInput = styled(TextInput)`
+  &:not(:hover):not(:focus) {
+    border-color: ${defaultTheme.colors.gray100};
+  }
+`;
+
 const LogoContainer = styled.div`
   margin: 0 2px 0 16px;
 `;
@@ -140,7 +146,7 @@ export const MenuBar = () => {
       <MenuSection>
         <Tooltip content="Rename">
           <DeckTitle>
-            <TextInput
+            <DeckTitleInput
               placeholder="Untitled Deck"
               value={title}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>

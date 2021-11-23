@@ -94,6 +94,7 @@ interface Colors {
   border?: Border;
   icon?: Icon;
   text?: Text;
+  white: string;
 }
 
 interface Border {

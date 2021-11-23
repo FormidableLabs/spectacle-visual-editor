@@ -54,12 +54,6 @@ const ToolbarSection = styled.div`
   }
 `;
 
-const StyledIconButton = styled(IconButton)`
-  background-color: ${(props) =>
-    props.isSelected ? '#d0dce8' : '#fff'} !important;
-  }
-`;
-
 /* Additional markdown config for draftjs-md-converter */
 const extraMarkdownDictionary = {
   STRIKETHROUGH: '~~',
@@ -250,7 +244,7 @@ export const VisualEditor = () => {
               const isSelected = editorState.getCurrentInlineStyle().has(key);
               return (
                 <Tooltip key={`visual-editor-${key}`} content={option.tooltip}>
-                  <StyledIconButton
+                  <IconButton
                     key={`visual-editor-${key}`}
                     icon={option.icon}
                     onClick={applyFormattingOption(
@@ -258,7 +252,7 @@ export const VisualEditor = () => {
                       key as INLINE_STYLE_TYPES
                     )}
                     appearance="minimal"
-                    isSelected={isSelected}
+                    isActive={isSelected}
                   />
                 </Tooltip>
               );
@@ -275,12 +269,12 @@ export const VisualEditor = () => {
                   .getType() === key;
               return (
                 <Tooltip key={`visual-editor-${key}`} content={option.tooltip}>
-                  <StyledIconButton
+                  <IconButton
                     key={`visual-editor-${key}`}
                     icon={option.icon}
                     onClick={applyFormattingOption('block', key as BLOCK_TYPES)}
                     appearance="minimal"
-                    isSelected={isSelected}
+                    isActive={isSelected}
                   />
                 </Tooltip>
               );
@@ -293,7 +287,7 @@ export const VisualEditor = () => {
               const isSelected = textAlignment === key;
               return (
                 <Tooltip key={`visual-editor-${key}`} content={option.tooltip}>
-                  <StyledIconButton
+                  <IconButton
                     key={`visual-editor-${key}`}
                     icon={option.icon}
                     onClick={applyFormattingOption(
@@ -301,7 +295,7 @@ export const VisualEditor = () => {
                       key as TEXT_ALIGN_TYPES
                     )}
                     appearance="minimal"
-                    isSelected={isSelected}
+                    isActive={isSelected}
                   />
                 </Tooltip>
               );

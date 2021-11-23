@@ -4,6 +4,10 @@ const WHITE = '#FFF';
 
 export const theme = {
   ...defaultTheme,
+  colors: {
+    ...defaultTheme.colors,
+    white: WHITE
+  },
   components: {
     ...defaultTheme.components,
     Button: {
@@ -15,6 +19,16 @@ export const theme = {
           _active: {
             color: defaultTheme.colors.selected,
             backgroundColor: defaultTheme.colors.blueTint
+          }
+        },
+        minimal: {
+          ...defaultTheme.components.Button.appearances.minimal,
+          _active: {
+            color: defaultTheme.colors.selected,
+            backgroundColor: defaultTheme.colors.blueTint,
+            '& svg': {
+              fill: defaultTheme.colors.selected
+            }
           }
         }
       }

@@ -74,7 +74,6 @@ export const ThemeValues = () => {
               marginBottom={0}
               key={`${sizeKey}-font-size-value`}
               type="number"
-              inputHeight={24}
               label={capitalize(sizeKey)}
               value={inputState.size[sizeKey]}
               disabled={false}
@@ -130,7 +129,6 @@ export const ThemeValues = () => {
             Object.keys(themeValues.fontSizes).map((fontSizeKey) => (
               <TextInputField
                 key={`${fontSizeKey}-font-size-value`}
-                inputHeight={24}
                 label={capitalize(fontSizeKey)}
                 value={inputState.fontSizes[fontSizeKey]}
                 disabled={false}

@@ -186,7 +186,7 @@ export const MenuBar = () => {
         <Tooltip content="Export as HTML file">
           <div>
             <StyledIconButton
-              fill="#1070ca"
+              fill={defaultTheme.colors.selected}
               icon={UploadIcon}
               appearance="minimal"
               disabled={!slides.length}

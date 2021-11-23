@@ -368,14 +368,17 @@ const SplitContainer = styled.div`
   grid-template-columns: 50% 50%;
   grid-column-gap: 10px;
   width: calc(100% - 10px);
+  margin-bottom: 8px;
+
+  * {
+    margin-bottom: 0;
+  }
 
   > div {
-    margin-bottom: 6px;
     display: flex;
     align-items: center;
 
     label {
-      margin-bottom: 0;
       min-width: 54px;
     }
   }

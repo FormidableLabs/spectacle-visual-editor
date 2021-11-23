@@ -19,12 +19,7 @@ import {
   Text
 } from 'spectacle';
 import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
-import {
-  IconButton,
-  Positioner,
-  deprecatedDefaultTheme,
-  Tooltip
-} from 'evergreen-ui';
+import { IconButton, Positioner, Tooltip, defaultTheme } from 'evergreen-ui';
 import styled, { CSSObject } from 'styled-components';
 import { useEditElement } from '../../../hooks/use-edit-element';
 import { selectedElementSelector } from '../../../slices/deck-slice';
@@ -55,7 +50,7 @@ const ToolbarSection = styled.div`
   & + & {
     margin-left: 4px;
     padding-left: 4px;
-    border-left: 1px solid ${deprecatedDefaultTheme.scales.neutral.N4A};
+    border-left: 1px solid ${defaultTheme.colors.gray400};
   }
 `;
 

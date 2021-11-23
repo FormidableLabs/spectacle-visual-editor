@@ -16,7 +16,7 @@ import { isDeckElement } from '../../../util/is-deck-element';
 import { LayerDragWrapper, Layer } from '../../helpers/layer-drag-wrapper';
 import { ElementCard } from './layers-element-card';
 import { moveArrayItem } from '../../../util/move-array-item';
-import { deprecatedDefaultTheme } from 'evergreen-ui';
+import { defaultTheme } from 'evergreen-ui';
 import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
 
 export const LayerInspector: FC = () => {
@@ -332,7 +332,7 @@ const Layers = styled.div`
 
 const Title = styled.div`
   padding: 10px;
-  color: ${deprecatedDefaultTheme.scales.neutral.N9};
+  color: ${defaultTheme.colors.muted};
   font-size: 0.9em;
   font-weight: 500;
 `;

@@ -5,7 +5,6 @@ import {
   ChevronDownIcon,
   CodeIcon,
   ColumnLayoutIcon,
-  deprecatedDefaultTheme,
   Icon,
   IconButton,
   MediaIcon,
@@ -13,7 +12,8 @@ import {
   AlignLeftIcon,
   PercentageIcon,
   FullscreenIcon,
-  AnnotationIcon
+  AnnotationIcon,
+  defaultTheme
 } from 'evergreen-ui';
 import { isImageElement, isMdElement } from '../validators';
 import { ConstructedDeckElement } from '../../../types/deck-elements';
@@ -120,19 +120,19 @@ const Layer = styled.div<{
   padding: 0 10px 0 ${(props) => (props.isChildElement ? '34px' : '10px')};
   color: ${(props) =>
     props.isSelected || props.isParentSelected
-      ? deprecatedDefaultTheme.scales.blue.B9
-      : deprecatedDefaultTheme.scales.neutral.N9};
+      ? defaultTheme.colors.selected
+      : defaultTheme.colors.default};
   background: ${(props) =>
     props.isSelected
-      ? deprecatedDefaultTheme.scales.blue.B3A
+      ? defaultTheme.colors.blue100
       : props.isHovered
-      ? deprecatedDefaultTheme.scales.neutral.N2A
+      ? defaultTheme.colors.gray200
       : props.isParentSelected
-      ? deprecatedDefaultTheme.scales.blue.B1A
+      ? defaultTheme.colors.blue50
       : 'none'};
 
   &:focus {
-    border: 1px solid ${deprecatedDefaultTheme.palette.blue.base};
+    border: 1px solid ${defaultTheme.colors.selected};
   }
 `;
 

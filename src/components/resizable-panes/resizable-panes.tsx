@@ -1,4 +1,4 @@
-import { deprecatedDefaultTheme } from 'evergreen-ui';
+import { defaultTheme } from 'evergreen-ui';
 import React, {
   createRef,
   FC,
@@ -39,7 +39,7 @@ const Splitter = styled.div<{ isHorizontal: boolean; isResizing: boolean }>`
   flex-shrink: 0;
   width: ${(props) => (props.isHorizontal ? '1px' : '100%')};
   height: ${(props) => (props.isHorizontal ? '100%' : '1px')};
-  background: ${deprecatedDefaultTheme.scales.neutral.N6};
+  background: ${defaultTheme.colors.gray500};
   cursor: ${(props) => (props.isHorizontal ? 'col-resize' : 'row-resize')};
   &::after {
     content: '';
@@ -47,7 +47,7 @@ const Splitter = styled.div<{ isHorizontal: boolean; isResizing: boolean }>`
     z-index: 2;
     width: ${(props) => (props.isHorizontal ? '5px' : '100%')};
     height: ${(props) => (props.isHorizontal ? '100%' : '5px')};
-    background: ${deprecatedDefaultTheme.palette.blue.base};
+    background: ${defaultTheme.colors.selected};
     transform: ${(props) =>
       props.isHorizontal ? 'translateX(-2px)' : 'translateY(-2px)'};
     opacity: ${(props) => (props.isResizing ? 1 : 0)};

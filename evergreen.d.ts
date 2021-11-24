@@ -9,7 +9,10 @@ declare module 'evergreen-ui' {
   interface Theme extends CustomTheme {}
 }
 
-/* Converted defaultTheme object to an interfaces */
+/*
+  Component types taken from evergreen-ui
+  https://github.com/segmentio/evergreen/blob/master/index.d.ts#L35
+*/
 type Components =
   | 'Alert'
   | 'Avatar'
@@ -41,6 +44,7 @@ type Components =
   | 'TextDropdownButton'
   | 'Tooltip';
 
+/* Converted defaultTheme object to an interfaces */
 interface CustomTheme {
   tokens: never; // deprecated, see https://github.com/segmentio/evergreen/blob/master/src/themes/default/index.js#L7-L8
   colors: {

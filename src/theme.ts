@@ -69,11 +69,6 @@ export const theme: Theme = {
             backgroundColor: defaultTheme.colors.gray200
           }
         }
-      },
-      sizes: {
-        medium: {
-          blah: 'blah'
-        }
       }
     }
   }

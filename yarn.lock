@@ -8935,10 +8935,10 @@ eventsource@^1.0.7:
   dependencies:
     original "^1.0.0"
 
-evergreen-ui@^6.6.1:
-  version "6.6.1"
-  resolved "https://registry.yarnpkg.com/evergreen-ui/-/evergreen-ui-6.6.1.tgz#c14d84ae10a1d89048d1f4a4c7e8643097c6376c"
-  integrity sha512-ADFLuWFQb/bzL954XAcovwd4SR6KIPtubxnanONSePv/InNS18f6g2QVo2IQ7IIWlmtWOnPgu+9kO4a56TWvEA==
+evergreen-ui@^6.6.2:
+  version "6.6.2"
+  resolved "https://registry.yarnpkg.com/evergreen-ui/-/evergreen-ui-6.6.2.tgz#9b2d433d22f18c6e7ef0a071a0ab852ccb0153b0"
+  integrity sha512-GnAnPEEKGGoDBaoe1ODb+k/Gb2/MuRVwi7mKgBn7+JiVk8iByCrGIZcAOGe9beUTdu8NYROKqdtyEAVB0v+NuQ==
   dependencies:
     "@babel/runtime" "^7.1.2"
     "@segment/react-tiny-virtual-list" "^2.2.1"

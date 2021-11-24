@@ -7,7 +7,7 @@ import {
   CitationIcon,
   HeaderOneIcon,
   HeaderTwoIcon,
-  HeaderIcon,
+  HeaderThreeIcon,
   CodeIcon,
   AlignLeftIcon,
   AlignCenterIcon,
@@ -396,7 +396,7 @@ export const HEADING_OPTIONS = {
   },
   [HEADING_TYPES.H3]: {
     tooltip: 'Heading 3',
-    icon: HeaderIcon // TODO: Update to HeaderThreeIcon when Evergreen UI have upgraded @blueprintjs/icons to include the latest icons
+    icon: HeaderThreeIcon
   }
 };
 

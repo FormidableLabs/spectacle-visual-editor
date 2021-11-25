@@ -12,8 +12,8 @@ import {
   Button,
   CaretDownIcon,
   FormField,
-  Menu,
-  Popover,
+  Option,
+  SelectMenu,
   TextInputField
 } from 'evergreen-ui';
 import styled from 'styled-components';
@@ -129,28 +129,26 @@ export const MarkdownControls: FC<Props> = ({
         }
         value={inputState.color}
       />
-      <FormField label="Font Family">
-        <Popover
-          position="bottom-left"
-          content={({ close }) => (
-            <Menu>
-              <FontFamilyList>
-                {Object.values(FONT_FAMILY_OPTIONS).map((fontFamily) => (
-                  <Menu.Item
-                    key={fontFamily}
-                    onSelect={() => {
-                      onChangeComponentProps(
-                        MD_COMPONENT_PROPS.FONT_FAMILY,
-                        fontFamily
-                      );
-                      close();
-                    }}
-                  >
-                    <FontFamily name={fontFamily} />
-                  </Menu.Item>
-                ))}
-              </FontFamilyList>
-            </Menu>
+      <FormField label="Font family">
+        <SelectMenu
+          filterPlaceholder="Search fonts"
+          hasTitle={false}
+          closeOnSelect
+          options={Object.values(FONT_FAMILY_OPTIONS).map((option) => ({
+            label: option,
+            value: option
+          }))}
+          selected={fontFamily}
+          onSelect={(selected) =>
+            onChangeComponentProps(
+              MD_COMPONENT_PROPS.FONT_FAMILY,
+              selected.value
+            )
+          }
+          itemRenderer={(props) => (
+            <Option {...props}>
+              <FontFamily name={props.label as FONT_FAMILY_OPTIONS} />
+            </Option>
           )}
         >
           <Button
@@ -161,7 +159,7 @@ export const MarkdownControls: FC<Props> = ({
           >
             {fontFamily || 'Select Font Family'}
           </Button>
-        </Popover>
+        </SelectMenu>
       </FormField>
       <SplitContainer>
         <TextInputField
@@ -238,13 +236,8 @@ const SplitContainer = styled.div`
   }
 `;
 
-const FontFamilyList = styled.div`
-  max-height: 300px;
-  padding: 8px 0;
-  overflow: auto;
-`;
-
 const FontFamilyPreview = styled.span<{ fontFamily: string }>`
   font-family: ${(props) => props.fontFamily}, sans-serif;
+  font-size: 14px;
   font-display: swap;
 `;

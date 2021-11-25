@@ -69,54 +69,48 @@ export enum MD_COMPONENT_PROPS {
   MARGIN_VERTICAL = 'marginY'
 }
 
-// Selected fonts from https://typewise.xyz/
+// Selected fonts from https://www.typewolf.com/google-fonts
 export enum FONT_FAMILY_OPTIONS {
-  ROBOTO = 'Roboto',
-  ROBOTO_SLAB = 'Roboto Slab',
-  WORK_SANS = 'Work Sans',
-  OPEN_SANS = 'Open Sans',
-  PLAYFAIR_DISPLAY = 'Playfair Display',
-  MONTSERRAT = 'Montserrat',
-  RALEWAY = 'Raleway',
-  ALEGREYA = 'Alegreya',
-  MERRIWEATHER = 'Merriweather',
-  ROBOTO_MONO = 'Roboto Mono',
+  INTER = 'Inter',
+  DM_SANS = 'DM Sans',
   SPACE_MONO = 'Space Mono',
-  RUFINA = 'Rufina',
-  QUATTROCENTO = 'Quattrocento',
-  LATO = 'Lato',
+  SPACE_GROTESK = 'Space Grotesk',
+  WORK_SANS = 'Work Sans',
+  SYNE = 'Syne',
+  LIBRE_FRANKLIN = 'Libre Franklin',
+  CORMORANT = 'Cormorant',
+  FIRA_SANS = 'Fira Sans',
+  ECZAR = 'Eczar',
+  ALEGREYA_SANS = 'Alegreya Sans',
+  ALEGREYA = 'Alegreya',
   SOURCE_SANS_PRO = 'Source Sans Pro',
   SOURCE_SERIF_PRO = 'Source Serif Pro',
+  ROBOTO = 'Roboto',
+  ROBOTO_SLAB = 'Roboto Slab',
+  BIO_RHYME = 'BioRhyme',
+  INKNUT_ANTIQUA = 'Inknut Antiqua',
   POPPINS = 'Poppins',
-  LOBSTER = 'Lobster',
-  PATUA_ONE = 'Patua One',
-  ABRIL_FATFACE = 'Abril Fatface',
-  ROZHA_ONE = 'Rozha One',
-  ULTRA = 'Ultra',
   ARCHIVO_NARROW = 'Archivo Narrow',
-  OSWALD = 'Oswald',
-  ZILLA_SLAB = 'Zilla Slab',
-  OVERPASS = 'Overpass',
-  JOSEFIN_SANS = 'Josefin Sans',
-  OLD_STANDARD_TT = 'Old Standard TT',
-  GENTIUM_BASIC = 'Gentium Basic',
-  VARELA_ROUND = 'Varela Round',
-  RAJDHANI = 'Rajdhani',
-  NUNITO_SANS = 'Nunito Sans',
-  NEUTON = 'Neuton',
-  CABIN = 'Cabin',
-  NOTO_SERIF = 'Noto Serif',
-  LIBRE_FRANKLIN = 'Libre Franklin',
-  RUBIK = 'Rubik',
-  COMFORTAA = 'Comfortaa',
+  LIBRE_BASKERVILLE = 'Libre Baskerville',
+  PLAYFAIR_DISPLAY = 'Playfair Display',
+  KARLA = 'Karla',
+  LORA = 'Lora',
+  PROZA_LIBRE = 'Proza Libre',
+  SPECTRAL = 'Spectral',
+  IBM_PLEX_SANS = 'IBM Plex Sans',
+  CRIMSON_PRO = 'Crimson Pro',
+  MONTSERRAT = 'Montserrat',
+  LATO = 'Lato',
   PT_SANS = 'PT Sans',
   PT_SERIF = 'PT Serif',
-  ANONYMOUS_PRO = 'Anonymous Pro',
+  CARDO = 'Cardo',
+  CHIVO = 'Chivo',
+  NEUTON = 'Neuton',
+  RUBIK = 'Rubik',
+  OPEN_SANS = 'Open Sans',
   INCONSOLATA = 'Inconsolata',
-  BITTER = 'Bitter',
-  DOMINE = 'Domine',
-  SPECTRAL = 'Spectral',
-  KARLA = 'Karla'
+  RALEWAY = 'Raleway',
+  MERRIWEATHER = 'Merriweather'
 }
 
 export const FONT_WEIGHTS = {
@@ -139,12 +133,20 @@ export const FONT_FAMILY_WEIGHTS: {
     italicWeights: FontWeight[];
   };
 } = {
-  [FONT_FAMILY_OPTIONS.ROBOTO]: {
-    weights: ['100', '300', '400', '500', '700', '800', '900'],
-    italicWeights: ['100', '300', '400', '500', '700', '800', '900']
-  },
-  [FONT_FAMILY_OPTIONS.ROBOTO_SLAB]: {
+  [FONT_FAMILY_OPTIONS.INTER]: {
     weights: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+    italicWeights: []
+  },
+  [FONT_FAMILY_OPTIONS.DM_SANS]: {
+    weights: ['400', '500', '700'],
+    italicWeights: ['400', '500', '700']
+  },
+  [FONT_FAMILY_OPTIONS.SPACE_MONO]: {
+    weights: ['400', '700'],
+    italicWeights: ['400', '700']
+  },
+  [FONT_FAMILY_OPTIONS.SPACE_GROTESK]: {
+    weights: ['300', '400', '500', '600', '700'],
     italicWeights: []
   },
   [FONT_FAMILY_OPTIONS.WORK_SANS]: {
@@ -161,163 +163,9 @@ export const FONT_FAMILY_WEIGHTS: {
       '900'
     ]
   },
-  [FONT_FAMILY_OPTIONS.OPEN_SANS]: {
-    weights: ['300', '400', '600', '700', '800'],
-    italicWeights: ['300', '400', '600', '700', '800']
-  },
-  [FONT_FAMILY_OPTIONS.PLAYFAIR_DISPLAY]: {
-    weights: ['400', '500', '600', '700', '800', '900'],
-    italicWeights: ['400', '500', '600', '700', '800', '900']
-  },
-  [FONT_FAMILY_OPTIONS.MONTSERRAT]: {
-    weights: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-    italicWeights: [
-      '100',
-      '200',
-      '300',
-      '400',
-      '500',
-      '600',
-      '700',
-      '800',
-      '900'
-    ]
-  },
-  [FONT_FAMILY_OPTIONS.RALEWAY]: {
-    weights: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-    italicWeights: [
-      '100',
-      '200',
-      '300',
-      '400',
-      '500',
-      '600',
-      '700',
-      '800',
-      '900'
-    ]
-  },
-  [FONT_FAMILY_OPTIONS.ALEGREYA]: {
-    weights: ['400', '500', '600', '700', '800', '900'],
-    italicWeights: ['400', '500', '600', '700', '800', '900']
-  },
-  [FONT_FAMILY_OPTIONS.MERRIWEATHER]: {
-    weights: ['300', '400', '700', '900'],
-    italicWeights: ['300', '400', '700', '900']
-  },
-  [FONT_FAMILY_OPTIONS.ROBOTO_MONO]: {
-    weights: ['100', '200', '300', '400', '500', '600', '700'],
-    italicWeights: ['100', '200', '300', '400', '500', '600', '700']
-  },
-  [FONT_FAMILY_OPTIONS.SPACE_MONO]: {
-    weights: ['400', '700'],
-    italicWeights: ['400', '700']
-  },
-  [FONT_FAMILY_OPTIONS.RUFINA]: {
-    weights: ['400', '700'],
+  [FONT_FAMILY_OPTIONS.SYNE]: {
+    weights: ['400', '500', '600', '700', '800'],
     italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.QUATTROCENTO]: {
-    weights: ['400', '700'],
-    italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.LATO]: {
-    weights: ['100', '300', '400', '700', '900'],
-    italicWeights: ['100', '300', '400', '700', '900']
-  },
-  [FONT_FAMILY_OPTIONS.SOURCE_SANS_PRO]: {
-    weights: ['200', '300', '400', '600', '700', '900'],
-    italicWeights: ['200', '300', '400', '600', '700', '900']
-  },
-  [FONT_FAMILY_OPTIONS.SOURCE_SERIF_PRO]: {
-    weights: ['200', '300', '400', '600', '700', '900'],
-    italicWeights: ['200', '300', '400', '600', '700', '900']
-  },
-  [FONT_FAMILY_OPTIONS.POPPINS]: {
-    weights: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-    italicWeights: [
-      '100',
-      '200',
-      '300',
-      '400',
-      '500',
-      '600',
-      '700',
-      '800',
-      '900'
-    ]
-  },
-  [FONT_FAMILY_OPTIONS.LOBSTER]: {
-    weights: ['400'],
-    italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.PATUA_ONE]: {
-    weights: ['400'],
-    italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.ABRIL_FATFACE]: {
-    weights: ['400'],
-    italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.ROZHA_ONE]: {
-    weights: ['400'],
-    italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.ULTRA]: {
-    weights: ['400'],
-    italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.ARCHIVO_NARROW]: {
-    weights: ['400', '500', '600', '700'],
-    italicWeights: ['400', '500', '600', '700']
-  },
-  [FONT_FAMILY_OPTIONS.OSWALD]: {
-    weights: ['200', '300', '400', '500', '600', '700'],
-    italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.ZILLA_SLAB]: {
-    weights: ['300', '400', '500', '600', '700'],
-    italicWeights: ['300', '400', '500', '600', '700']
-  },
-  [FONT_FAMILY_OPTIONS.OVERPASS]: {
-    weights: ['100', '200', '300', '400', '600', '700', '800', '900'],
-    italicWeights: ['100', '200', '300', '400', '600', '700', '800', '900']
-  },
-  [FONT_FAMILY_OPTIONS.JOSEFIN_SANS]: {
-    weights: ['100', '200', '300', '400', '500', '600', '700'],
-    italicWeights: ['100', '200', '300', '400', '500', '600', '700']
-  },
-  [FONT_FAMILY_OPTIONS.OLD_STANDARD_TT]: {
-    weights: ['400', '700'],
-    italicWeights: ['400']
-  },
-  [FONT_FAMILY_OPTIONS.GENTIUM_BASIC]: {
-    weights: ['400', '700'],
-    italicWeights: ['400', '700']
-  },
-  [FONT_FAMILY_OPTIONS.VARELA_ROUND]: {
-    weights: ['400'],
-    italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.RAJDHANI]: {
-    weights: ['300', '400', '500', '600', '700'],
-    italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.NUNITO_SANS]: {
-    weights: ['200', '300', '400', '600', '700', '800', '900'],
-    italicWeights: ['200', '300', '400', '600', '700', '800', '900']
-  },
-  [FONT_FAMILY_OPTIONS.NEUTON]: {
-    weights: ['200', '300', '400', '700', '800'],
-    italicWeights: ['400']
-  },
-  [FONT_FAMILY_OPTIONS.CABIN]: {
-    weights: ['400', '500', '600', '700'],
-    italicWeights: ['400', '500', '600', '700']
-  },
-  [FONT_FAMILY_OPTIONS.NOTO_SERIF]: {
-    weights: ['400', '700'],
-    italicWeights: ['400', '700']
   },
   [FONT_FAMILY_OPTIONS.LIBRE_FRANKLIN]: {
     weights: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -333,31 +181,11 @@ export const FONT_FAMILY_WEIGHTS: {
       '900'
     ]
   },
-  [FONT_FAMILY_OPTIONS.RUBIK]: {
-    weights: ['300', '400', '500', '600', '700', '800', '900'],
-    italicWeights: ['300', '400', '500', '600', '700', '800', '900']
-  },
-  [FONT_FAMILY_OPTIONS.COMFORTAA]: {
+  [FONT_FAMILY_OPTIONS.CORMORANT]: {
     weights: ['300', '400', '500', '600', '700'],
-    italicWeights: []
+    italicWeights: ['300', '400', '500', '600', '700']
   },
-  [FONT_FAMILY_OPTIONS.PT_SANS]: {
-    weights: ['400', '700'],
-    italicWeights: ['400', '700']
-  },
-  [FONT_FAMILY_OPTIONS.PT_SERIF]: {
-    weights: ['400', '700'],
-    italicWeights: ['400', '700']
-  },
-  [FONT_FAMILY_OPTIONS.ANONYMOUS_PRO]: {
-    weights: ['400', '700'],
-    italicWeights: ['400', '700']
-  },
-  [FONT_FAMILY_OPTIONS.INCONSOLATA]: {
-    weights: ['200', '300', '400', '500', '600', '700', '800', '900'],
-    italicWeights: []
-  },
-  [FONT_FAMILY_OPTIONS.BITTER]: {
+  [FONT_FAMILY_OPTIONS.FIRA_SANS]: {
     weights: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
     italicWeights: [
       '100',
@@ -371,17 +199,159 @@ export const FONT_FAMILY_WEIGHTS: {
       '900'
     ]
   },
-  [FONT_FAMILY_OPTIONS.DOMINE]: {
+  [FONT_FAMILY_OPTIONS.ECZAR]: {
+    weights: ['400', '500', '600', '700', '800'],
+    italicWeights: []
+  },
+  [FONT_FAMILY_OPTIONS.ALEGREYA_SANS]: {
+    weights: ['100', '300', '400', '500', '700', '800', '900'],
+    italicWeights: ['100', '300', '400', '500', '700', '800', '900']
+  },
+  [FONT_FAMILY_OPTIONS.ALEGREYA]: {
+    weights: ['400', '500', '600', '700', '800', '900'],
+    italicWeights: ['400', '500', '600', '700', '800', '900']
+  },
+  [FONT_FAMILY_OPTIONS.SOURCE_SANS_PRO]: {
+    weights: ['200', '300', '400', '600', '700', '900'],
+    italicWeights: ['200', '300', '400', '600', '700', '900']
+  },
+  [FONT_FAMILY_OPTIONS.SOURCE_SERIF_PRO]: {
+    weights: ['200', '300', '400', '600', '700', '900'],
+    italicWeights: ['200', '300', '400', '600', '700', '900']
+  },
+  [FONT_FAMILY_OPTIONS.ROBOTO]: {
+    weights: ['100', '300', '400', '500', '700', '800', '900'],
+    italicWeights: ['100', '300', '400', '500', '700', '800', '900']
+  },
+  [FONT_FAMILY_OPTIONS.ROBOTO_SLAB]: {
+    weights: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+    italicWeights: []
+  },
+  [FONT_FAMILY_OPTIONS.BIO_RHYME]: {
+    weights: ['200', '300', '400', '700', '800'],
+    italicWeights: []
+  },
+  [FONT_FAMILY_OPTIONS.INKNUT_ANTIQUA]: {
+    weights: ['300', '400', '500', '600', '700', '800', '900'],
+    italicWeights: []
+  },
+  [FONT_FAMILY_OPTIONS.POPPINS]: {
+    weights: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+    italicWeights: [
+      '100',
+      '200',
+      '300',
+      '400',
+      '500',
+      '600',
+      '700',
+      '800',
+      '900'
+    ]
+  },
+  [FONT_FAMILY_OPTIONS.ARCHIVO_NARROW]: {
     weights: ['400', '500', '600', '700'],
     italicWeights: ['400', '500', '600', '700']
+  },
+  [FONT_FAMILY_OPTIONS.LIBRE_BASKERVILLE]: {
+    weights: ['400', '700'],
+    italicWeights: ['400']
+  },
+  [FONT_FAMILY_OPTIONS.PLAYFAIR_DISPLAY]: {
+    weights: ['400', '500', '600', '700', '800', '900'],
+    italicWeights: ['400', '500', '600', '700', '800', '900']
+  },
+  [FONT_FAMILY_OPTIONS.KARLA]: {
+    weights: ['200', '300', '400', '500', '600', '700', '800'],
+    italicWeights: ['200', '300', '400', '500', '600', '700', '800']
+  },
+  [FONT_FAMILY_OPTIONS.LORA]: {
+    weights: ['400', '500', '600', '700'],
+    italicWeights: ['400', '500', '600', '700']
+  },
+  [FONT_FAMILY_OPTIONS.PROZA_LIBRE]: {
+    weights: ['400', '500', '600', '700', '800'],
+    italicWeights: ['400', '500', '600', '700', '800']
   },
   [FONT_FAMILY_OPTIONS.SPECTRAL]: {
     weights: ['200', '300', '400', '500', '600', '700', '800'],
     italicWeights: ['200', '300', '400', '500', '600', '700', '800']
   },
-  [FONT_FAMILY_OPTIONS.KARLA]: {
-    weights: ['200', '300', '400', '500', '600', '700', '800'],
-    italicWeights: ['200', '300', '400', '500', '600', '700', '800']
+  [FONT_FAMILY_OPTIONS.IBM_PLEX_SANS]: {
+    weights: ['100', '200', '300', '400', '500', '600', '700'],
+    italicWeights: ['100', '200', '300', '400', '500', '600', '700']
+  },
+  [FONT_FAMILY_OPTIONS.CRIMSON_PRO]: {
+    weights: ['200', '300', '400', '500', '600', '700', '800', '900'],
+    italicWeights: ['200', '300', '400', '500', '600', '700', '800', '900']
+  },
+  [FONT_FAMILY_OPTIONS.MONTSERRAT]: {
+    weights: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+    italicWeights: [
+      '100',
+      '200',
+      '300',
+      '400',
+      '500',
+      '600',
+      '700',
+      '800',
+      '900'
+    ]
+  },
+  [FONT_FAMILY_OPTIONS.LATO]: {
+    weights: ['100', '300', '400', '700', '900'],
+    italicWeights: ['100', '300', '400', '700', '900']
+  },
+  [FONT_FAMILY_OPTIONS.PT_SANS]: {
+    weights: ['400', '700'],
+    italicWeights: ['400', '700']
+  },
+  [FONT_FAMILY_OPTIONS.PT_SERIF]: {
+    weights: ['400', '700'],
+    italicWeights: ['400', '700']
+  },
+  [FONT_FAMILY_OPTIONS.CARDO]: {
+    weights: ['400', '700'],
+    italicWeights: ['400']
+  },
+  [FONT_FAMILY_OPTIONS.CHIVO]: {
+    weights: ['300', '400', '700', '900'],
+    italicWeights: ['300', '400', '700', '900']
+  },
+  [FONT_FAMILY_OPTIONS.NEUTON]: {
+    weights: ['200', '300', '400', '700', '800'],
+    italicWeights: ['400']
+  },
+  [FONT_FAMILY_OPTIONS.RUBIK]: {
+    weights: ['300', '400', '500', '600', '700', '800', '900'],
+    italicWeights: ['300', '400', '500', '600', '700', '800', '900']
+  },
+  [FONT_FAMILY_OPTIONS.OPEN_SANS]: {
+    weights: ['300', '400', '600', '700', '800'],
+    italicWeights: ['300', '400', '600', '700', '800']
+  },
+  [FONT_FAMILY_OPTIONS.INCONSOLATA]: {
+    weights: ['200', '300', '400', '500', '600', '700', '800', '900'],
+    italicWeights: []
+  },
+  [FONT_FAMILY_OPTIONS.RALEWAY]: {
+    weights: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+    italicWeights: [
+      '100',
+      '200',
+      '300',
+      '400',
+      '500',
+      '600',
+      '700',
+      '800',
+      '900'
+    ]
+  },
+  [FONT_FAMILY_OPTIONS.MERRIWEATHER]: {
+    weights: ['300', '400', '700', '900'],
+    italicWeights: ['300', '400', '700', '900']
   }
 };
 

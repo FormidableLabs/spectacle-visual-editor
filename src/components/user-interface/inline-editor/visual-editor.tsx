@@ -78,7 +78,10 @@ const extraMarkdownStyles = {
   }
 };
 
-/* Wrapper for spectacle UnorderedList and OrderedList - renders children as ListItem components */
+/*
+  Wrapper for spectacle’s UnorderedList and OrderedList components.
+  Renders children as ListItem components.
+*/
 const ListWrapper = ({
   component: Component,
   children,
@@ -94,6 +97,21 @@ const ListWrapper = ({
       return <ListItem key={child.key} {...childProps} />;
     })}
   </Component>
+);
+
+/*
+  Wrapper for spectacle’s Quote component.
+  Renders children within Text component to match MD parsing on spectacle.
+*/
+const QuoteWrapper = ({
+  children,
+  ...props
+}: {
+  children: React.ReactElement[];
+}) => (
+  <Quote {...props}>
+    <Text {...props}>{children}</Text>
+  </Quote>
 );
 
 export const VisualEditor = () => {
@@ -141,7 +159,7 @@ export const VisualEditor = () => {
     },
     blockquote: {
       element: 'div',
-      wrapper: <Quote {...componentProps} />
+      wrapper: <QuoteWrapper {...componentProps} />
     },
     'ordered-list-item': {
       element: 'li',

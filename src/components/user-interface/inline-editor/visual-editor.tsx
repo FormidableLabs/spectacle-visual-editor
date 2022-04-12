@@ -1,4 +1,4 @@
-import React, { Children, useEffect, useState } from 'react';
+import React, { Children, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Editor,
@@ -112,14 +112,30 @@ export const VisualEditor = () => {
     handleElementChanged({ children: markdown });
   }, [editorContent, handleElementChanged]);
 
-  /* Map markdown elements to spectacle components */
-  const selectedElementComponentProps =
-    selectedElement?.props?.componentProps || {};
+  const selectedElementComponentProps = useMemo(
+    () => selectedElement?.props?.componentProps || {},
+    [selectedElement?.props?.componentProps]
+  );
 
+  /*
+    Update editor styles when selected element formatting props change
+    forceSelection is a low-risk way of forcing the editor to rerender
+    https://github.com/facebook/draft-js/issues/458#issuecomment-272531222
+  */
+  useEffect(() => {
+    setEditorState(
+      EditorState.forceSelection(editorState, editorState.getSelection())
+    );
+    // We only want to force a re-render when selected element props change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedElementComponentProps]);
+
+  /* Map Draft.js elements to spectacle components */
   const componentProps = {
     children: null, // Required prop, gets overwritten by Draft.js
     ...selectedElementComponentProps
   };
+
   const blockRenderMap = Map({
     'header-one': {
       element: 'div',

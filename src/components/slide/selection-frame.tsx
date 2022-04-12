@@ -132,6 +132,30 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   }, [children, editableElementId]);
 
   /**
+   * If shift is held down, the image should keep its ratio when resizing
+   */
+  const [isShiftDown, setIsShiftDown] = useState(false);
+
+  const handleUserKeyPress = useCallback(
+    (event: KeyboardEvent, isKeyDown: boolean) => {
+      const { key } = event;
+      if (key === 'Shift') {
+        setIsShiftDown(isKeyDown);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', (event) =>
+      handleUserKeyPress(event, true)
+    );
+    window.addEventListener('keyup', (event) =>
+      handleUserKeyPress(event, false)
+    );
+  }, [handleUserKeyPress]);
+
+  /**
    *  If the child's dimensions or css position change, let the moveable instance know
    */
   useEffect(() => {
@@ -232,7 +256,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           resizable={RESIZABLE_ELEMENTS.includes(children.props.type)}
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
-          keepRatio={children.props.type === 'Image'}
+          keepRatio={isShiftDown}
           draggable={children.props.componentProps?.isFreeMovement}
           onDrag={handleOnDragMovement}
           onDragEnd={handleOnDragMovementEnd}

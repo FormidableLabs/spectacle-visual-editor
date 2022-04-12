@@ -168,13 +168,15 @@ const SplitContainer = styled.div`
   width: calc(100% - 10px);
   margin-bottom: 12px;
 
+  * {
+    margin-bottom: 0;
+  }
+
   > div {
-    margin-bottom: 6px;
     display: flex;
     align-items: center;
 
     label {
-      margin-bottom: 0;
       min-width: 54px;
     }
   }

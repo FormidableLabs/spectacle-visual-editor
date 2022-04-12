@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormField, SegmentedControl } from 'evergreen-ui';
+import { Button, FormField, Group } from 'evergreen-ui';
 
 interface Props {
   label: string;
@@ -16,15 +16,19 @@ export const SegmentedInput: React.FC<Props> = ({
 }) => {
   return (
     <FormField label={label} marginBottom={24}>
-      <SegmentedControl
-        value={value}
-        options={options.map((op) => ({
-          // Capitalize first letter of option
-          label: op.trim().replace(/^\w/, (c) => c.toUpperCase()),
-          value: op
-        }))}
-        onChange={(value) => onChange(value)}
-      />
+      <Group display="flex">
+        {options.map((op) => (
+          <Button
+            key={op}
+            isActive={value === op}
+            onClick={() => onChange(op)}
+            flex={1}
+          >
+            {/* Capitalize first letter of option */}
+            {op.trim().replace(/^\w/, (c) => c.toUpperCase())}
+          </Button>
+        ))}
+      </Group>
     </FormField>
   );
 };

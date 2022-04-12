@@ -11,11 +11,12 @@ import { SWATCH_NAMES, DEFAULT_COLORS } from '../../constants/color-swatches';
 
 extend([namesPlugin]); // convert CSS colors to RGBA strings
 
-export const Container = styled.div`
+export const Container = styled.div<{ isDisabled: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: flex-end;
   margin-bottom: 24px;
+  ${(props) => props.isDisabled && 'pointer-events: none;'}
 
   div {
     flex: 1;
@@ -25,12 +26,13 @@ export const Container = styled.div`
 const ColorSwatch = styled.span`
   display: inline-block;
   border: 1px solid hsla(0, 0%, 0%, 0.5);
-  border-radius: 22px;
+  border-radius: 24px;
   margin-left: 8px;
+  margin-bottom: 3px;
   box-shadow: inset 0 0 0 1px white;
   background: ${({ color }) => color};
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 `;
 
 export const PopoverContainer = styled.div`
@@ -96,7 +98,7 @@ interface Props {
 
 export const ColorPickerInput: React.FC<Props> = ({
   label,
-  disabled,
+  disabled = false,
   onChangeInput,
   value,
   onUpdateValue,
@@ -168,12 +170,11 @@ export const ColorPickerInput: React.FC<Props> = ({
         </PopoverContainer>
       }
     >
-      <Container>
+      <Container isDisabled={disabled}>
         <TextInputField
           label={label}
           value={value}
           disabled={disabled}
-          inputHeight={24}
           marginBottom={0}
           onBlur={(e: FocusEvent<HTMLInputElement>) => {
             const currentValue = e.target.value;

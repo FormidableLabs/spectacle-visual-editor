@@ -332,7 +332,7 @@ const Layers = styled.div`
 
 const Title = styled.div`
   padding: 10px;
-  color: ${defaultTheme.scales.neutral.N9};
+  color: ${defaultTheme.colors.muted};
   font-size: 0.9em;
   font-weight: 500;
 `;

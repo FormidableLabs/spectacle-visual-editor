@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import {
-  defaultTheme,
   ChevronDownIcon,
   ChevronUpIcon,
-  IconButton
+  IconButton,
+  defaultTheme
 } from 'evergreen-ui';
 
 const ContentPanel = styled.div<{ open: boolean }>`
@@ -22,8 +22,8 @@ const TitleBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid ${defaultTheme.scales.neutral.N5A};
-  color: ${defaultTheme.scales.neutral.N9};
+  border-bottom: 1px solid ${defaultTheme.colors.gray400};
+  color: ${defaultTheme.colors.default};
   font-size: 1.1em;
   font-weight: 500;
   margin-bottom: 12px;

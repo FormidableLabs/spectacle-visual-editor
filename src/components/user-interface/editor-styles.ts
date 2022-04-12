@@ -3,7 +3,7 @@ import { SlideScaleWrapper } from '../slide/slide';
 import { defaultTheme } from 'evergreen-ui';
 
 export const EditorBody = styled.div`
-  background: ${defaultTheme.scales.neutral.N5};
+  background: ${defaultTheme.colors.gray300};
   width: 100vw;
   height: 100vh;
   overflow: hidden;
@@ -27,7 +27,7 @@ export const EditorCanvas = styled.div<{ scale: string }>`
   overflow: auto;
 
   ${SlideScaleWrapper} {
-    box-shadow: 1px 2px 5px ${defaultTheme.scales.neutral.N8A};
+    box-shadow: ${defaultTheme.shadows[2]};
     overflow: scroll;
   }
 `;

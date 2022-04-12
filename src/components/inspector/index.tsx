@@ -33,6 +33,7 @@ export const Inspector = () => {
             <Tab
               key={tab}
               id={tab}
+              appearance="primary"
               onSelect={() => setActiveTab(tab)}
               isSelected={tab === activeTab}
               aria-controls={`panel-${tab}`}

@@ -53,10 +53,17 @@ import { useRootSelector } from '../../store';
 
 const MenuBarContainer = styled.div`
   width: 100%;
-  background: ${defaultTheme.scales.neutral.N3};
-  border-bottom: ${defaultTheme.scales.neutral.N6} 1px solid;
+  height: 38px;
+  background: ${defaultTheme.colors.gray100};
+  border-bottom: ${defaultTheme.colors.gray500} 1px solid;
   display: flex;
   align-items: center;
+`;
+
+const DeckTitleInput = styled(TextInput)`
+  &:not(:hover):not(:focus) {
+    border-color: ${defaultTheme.colors.gray100};
+  }
 `;
 
 const LogoContainer = styled.div`
@@ -139,7 +146,7 @@ export const MenuBar = () => {
       <MenuSection>
         <Tooltip content="Rename">
           <DeckTitle>
-            <TextInput
+            <DeckTitleInput
               placeholder="Untitled Deck"
               value={title}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -155,7 +162,7 @@ export const MenuBar = () => {
       <MenuSection>
         <Tooltip content="Open Deck ⌘O">
           <StyledIconButton
-            fill={defaultTheme.colors.icon.selected}
+            fill={defaultTheme.colors.selected}
             icon={FolderCloseIcon}
             appearance="minimal"
             onClick={() => {
@@ -165,7 +172,7 @@ export const MenuBar = () => {
         </Tooltip>
         <Tooltip content="New Deck ⌘S">
           <StyledIconButton
-            fill={defaultTheme.colors.icon.selected}
+            fill={defaultTheme.colors.selected}
             icon={DocumentIcon}
             appearance="minimal"
             onClick={() => dispatch(createNewDeck())}
@@ -174,7 +181,7 @@ export const MenuBar = () => {
         <Tooltip content="Save Deck ⌘S">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={defaultTheme.colors.selected}
               icon={FloppyDiskIcon}
               appearance="minimal"
               disabled={isSaved}
@@ -185,7 +192,7 @@ export const MenuBar = () => {
         <Tooltip content="Export as HTML file">
           <div>
             <StyledIconButton
-              fill="#1070ca"
+              fill={defaultTheme.colors.selected}
               icon={UploadIcon}
               appearance="minimal"
               disabled={!slides.length}
@@ -265,7 +272,7 @@ export const MenuBar = () => {
         >
           <Tooltip content="Insert">
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={defaultTheme.colors.selected}
               icon={PlusIcon}
               appearance="minimal"
             />
@@ -299,7 +306,7 @@ export const MenuBar = () => {
         >
           <Tooltip content="Slides">
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={defaultTheme.colors.selected}
               icon={GridViewIcon}
               appearance="minimal"
             />
@@ -311,7 +318,7 @@ export const MenuBar = () => {
         <Tooltip content="Undo ⌘Z">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={defaultTheme.colors.selected}
               icon={UndoIcon}
               appearance="minimal"
               disabled={!hasPast}
@@ -324,7 +331,7 @@ export const MenuBar = () => {
         <Tooltip content="Redo ⇧⌘Z">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={defaultTheme.colors.selected}
               icon={RedoIcon}
               appearance="minimal"
               disabled={!hasFuture}
@@ -337,7 +344,7 @@ export const MenuBar = () => {
         <Tooltip content="Cut ⌘X">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={defaultTheme.colors.selected}
               icon={CutIcon}
               appearance="minimal"
               disabled={!selectedElement}
@@ -351,7 +358,7 @@ export const MenuBar = () => {
         <Tooltip content="Copy ⌘C">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={defaultTheme.colors.selected}
               icon={DuplicateIcon}
               appearance="minimal"
               disabled={!selectedElement}
@@ -364,7 +371,7 @@ export const MenuBar = () => {
         <Tooltip content="Paste ⌘P">
           <div>
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={defaultTheme.colors.selected}
               icon={ClipboardIcon}
               appearance="minimal"
               disabled={!hasPaste}
@@ -394,7 +401,7 @@ export const MenuBar = () => {
 
         <Tooltip content="Delete ⌘D">
           <StyledIconButton
-            fill={defaultTheme.colors.icon.danger}
+            fill={defaultTheme.intents.danger.icon}
             icon={TrashIcon}
             appearance="minimal"
             intent="danger"
@@ -416,7 +423,7 @@ export const MenuBar = () => {
       <MenuSection>
         <Tooltip content="Present Deck">
           <StyledIconButton
-            fill={defaultTheme.colors.icon.selected}
+            fill={defaultTheme.colors.selected}
             icon={FullscreenIcon}
             appearance="minimal"
             onClick={() => {
@@ -445,7 +452,7 @@ export const MenuBar = () => {
         >
           <Tooltip content="Preview Size">
             <StyledIconButton
-              fill={defaultTheme.colors.icon.selected}
+              fill={defaultTheme.colors.selected}
               icon={ZoomInIcon}
               appearance="minimal"
             />
@@ -508,7 +515,7 @@ const MenuSection = styled.div`
 
 const SectionDivider = styled.div`
   height: 65%;
-  border-left: 1px solid ${defaultTheme.scales.neutral.N4A};
+  border-left: 1px solid ${defaultTheme.colors.gray400};
 `;
 
 const StyledIconButton = styled(IconButton)`

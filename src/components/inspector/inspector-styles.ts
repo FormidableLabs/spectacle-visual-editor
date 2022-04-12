@@ -6,7 +6,7 @@ export const InspectorContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  background: ${defaultTheme.scales.neutral.N4};
+  background: ${defaultTheme.colors.gray100};
   overflow: hidden;
 `;
 

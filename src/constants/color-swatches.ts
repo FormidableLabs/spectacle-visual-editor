@@ -1,4 +1,4 @@
-import { defaultTheme } from 'evergreen-ui';
+import { deprecatedDefaultTheme } from 'evergreen-ui';
 
 export const SWATCH_NAMES = {
   THEME_COLORS: 'Theme Colors',
@@ -6,9 +6,9 @@ export const SWATCH_NAMES = {
 };
 
 // Sort Evergreen UI color palette into types
-const THEME_COLORS_BY_TYPE = Object.values(defaultTheme.palette).reduce<
-  Record<string, string[]>
->((colorTypes, color) => {
+const THEME_COLORS_BY_TYPE = Object.values(
+  deprecatedDefaultTheme.palette
+).reduce<Record<string, string[]>>((colorTypes, color) => {
   const newColorTypes = { ...colorTypes };
   newColorTypes.dark = [...(colorTypes.dark || []), color.dark];
   newColorTypes.base = [...(colorTypes.base || []), color.base];

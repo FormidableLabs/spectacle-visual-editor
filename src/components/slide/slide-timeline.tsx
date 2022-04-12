@@ -17,8 +17,8 @@ interface Props {
  */
 export const SlideTimeline: React.FC<Props> = ({ onSlideClick, children }) => {
   const handleKeyPress = useCallback(
-    (event, id) => {
-      if (event.keyCode === 13) {
+    (key: string, id: string) => {
+      if (key === 'Enter') {
         onSlideClick(id);
       }
     },

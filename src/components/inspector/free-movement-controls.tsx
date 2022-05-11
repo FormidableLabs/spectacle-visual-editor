@@ -44,14 +44,27 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
 
   /* Update forms with values from dragged selection frame */
   useEffect(() => {
+    if (!selectedElement?.props) {
+      console.error('selectedElement.props is undefined');
+      return;
+    }
+
+    const {
+      componentProps = {},
+      width: propsWidth = 0,
+      height: propsHeight = 0
+    } = selectedElement.props;
+
+    const { isFreeMovement, positionX = 0, positionY = 0 } = componentProps;
+
     setInputState({
-      freeMovement: !!selectedElement?.props?.componentProps?.isFreeMovement,
-      displayPositionX: selectedElement?.props?.componentProps?.positionX || 0,
-      displayPositionY: selectedElement?.props?.componentProps?.positionY || 0,
-      positionX: selectedElement?.props?.componentProps?.positionX || 0,
-      positionY: selectedElement?.props?.componentProps?.positionY || 0,
-      width: selectedElement?.props?.width || 0,
-      height: selectedElement?.props?.height || 0
+      freeMovement: !!isFreeMovement,
+      displayPositionX: positionX,
+      displayPositionY: positionY,
+      positionX: positionX,
+      positionY: positionY,
+      width: propsWidth,
+      height: propsHeight
     });
   }, [selectedElement]);
 

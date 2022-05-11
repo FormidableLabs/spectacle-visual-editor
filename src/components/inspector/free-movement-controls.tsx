@@ -13,7 +13,8 @@ import React, {
   FocusEvent,
   useCallback,
   useEffect,
-  useState
+  useState,
+  useMemo
 } from 'react';
 import styled from 'styled-components';
 import {
@@ -32,7 +33,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
 }) => {
   const themeValues = useRootSelector(themeSelector);
   const [inputState, setInputState] = useState({
-    freeMovement: selectedElement?.props?.componentProps?.isFreeMovement,
+    freeMovement: !!selectedElement?.props?.componentProps?.isFreeMovement,
     displayPositionX: selectedElement?.props?.componentProps?.positionX || 0,
     displayPositionY: selectedElement?.props?.componentProps?.positionY || 0,
     positionX: selectedElement?.props?.componentProps?.positionX || 0,
@@ -44,17 +45,19 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
   /* Update forms with values from dragged selection frame */
   useEffect(() => {
     setInputState({
-      freeMovement: selectedElement?.props?.componentProps?.isFreeMovement,
-      displayPositionX: selectedElement?.props?.componentProps?.positionX,
-      displayPositionY: selectedElement?.props?.componentProps?.positionY,
-      positionX: selectedElement?.props?.componentProps?.positionX,
-      positionY: selectedElement?.props?.componentProps?.positionY,
-      width: selectedElement?.props?.width,
-      height: selectedElement?.props?.height
+      freeMovement: !!selectedElement?.props?.componentProps?.isFreeMovement,
+      displayPositionX: selectedElement?.props?.componentProps?.positionX || 0,
+      displayPositionY: selectedElement?.props?.componentProps?.positionY || 0,
+      positionX: selectedElement?.props?.componentProps?.positionX || 0,
+      positionY: selectedElement?.props?.componentProps?.positionY || 0,
+      width: selectedElement?.props?.width || 0,
+      height: selectedElement?.props?.height || 0
     });
   }, [selectedElement]);
 
-  const [freeMovement, setFreeMovement] = useState(inputState.freeMovement);
+  const freeMovement = useMemo(() => !!inputState.freeMovement, [
+    inputState.freeMovement
+  ]);
 
   const handleComponentElementChanged = useCallback(
     (propName: string, val?: string | number | boolean) => {
@@ -117,16 +120,11 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
     [handleComponentElementChanged, handleDefaultElementChanged, inputState]
   );
 
-  const onToggle = () => {
-    /* Initialize with 0s */
-    if (!inputState.freeMovement) {
-      setInputState({
-        ...inputState,
-        positionX: 0,
-        positionY: 0
-      });
-    }
-    if (!freeMovement) {
+  /**
+   * @param fmStatus absolute/free movement status
+   */
+  const setFreeMovement = (fmStatus: boolean) => {
+    if (fmStatus) {
       handleOnEvent({
         value: 'absolute',
         shouldSetInputState: false,
@@ -160,7 +158,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
         }
       });
     }
-    handleComponentElementChanged('isFreeMovement', !freeMovement);
+    handleComponentElementChanged('isFreeMovement', fmStatus);
   };
 
   const alignHorizontally = useCallback(
@@ -243,7 +241,6 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
           isActive={!freeMovement}
           onClick={() => {
             setFreeMovement(false);
-            onToggle();
           }}
         >
           In-line
@@ -253,7 +250,6 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
           isActive={freeMovement}
           onClick={() => {
             setFreeMovement(true);
-            onToggle();
           }}
         >
           Absolute

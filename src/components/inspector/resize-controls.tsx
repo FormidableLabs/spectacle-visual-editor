@@ -21,10 +21,32 @@ export const ResizeControls: React.FC<ElementControlsProps> = ({
 
   /* Update forms with values from dragged selection frame */
   useEffect(() => {
-    setInputState({
-      width: selectedElement?.props?.width,
-      height: selectedElement?.props?.height
-    });
+    switch (selectedElement?.component) {
+      case 'Markdown':
+        // Set inputs to prop values with node offset values as fallback
+        let selectedElementWidth;
+        let selectedElementHeight;
+
+        const selectedElementNode = document.getElementById(
+          selectedElement?.id || ''
+        );
+
+        if (selectedElementNode) {
+          selectedElementWidth = `${selectedElementNode.offsetWidth}px`;
+          selectedElementHeight = `${selectedElementNode.offsetHeight}px`;
+        }
+
+        setInputState({
+          width: selectedElement?.props?.width || selectedElementWidth,
+          height: selectedElement?.props?.height || selectedElementHeight
+        });
+        break;
+      default:
+        setInputState({
+          width: selectedElement?.props?.width,
+          height: selectedElement?.props?.height
+        });
+    }
   }, [selectedElement]);
 
   //   const [freeMovement, setFreeMovement] = useState(inputState.freeMovement);

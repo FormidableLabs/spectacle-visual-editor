@@ -1,4 +1,4 @@
-import { DeckElement, DeckSlide } from './deck-elements';
+import { DeckElement, DeckSlide, DeckSlideTemplate } from './deck-elements';
 import { SpectacleTheme } from './theme';
 
 export interface Deck {
@@ -7,6 +7,8 @@ export interface Deck {
   createdAt: Date;
   updatedAt: Date;
   slides: DeckSlide[];
+  slideTemplate: DeckSlideTemplate;
+  slideTemplateOpen: boolean;
   elements: DeckElement[];
   theme: SpectacleTheme;
 }

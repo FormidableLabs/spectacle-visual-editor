@@ -15,7 +15,8 @@ import {
   CONTAINER_ELEMENTS,
   DeckElement,
   DeckElementMap,
-  DeckSlide
+  DeckSlide,
+  DeckSlideTemplate
 } from '../types/deck-elements';
 import { RootState } from '../store';
 import { SpectacleTheme } from '../types/theme';
@@ -33,6 +34,8 @@ type DeckState = {
   id: null | string;
   title: string;
   slides: EntityState<DeckSlide>;
+  slideTemplate: DeckSlideTemplate;
+  slideTemplateOpen: boolean;
   elements: EntityState<DeckElement>;
   activeSlideId: null | string;
   hoveredEditableElementId: null | string;
@@ -64,6 +67,8 @@ const initialState: DeckState = {
   id: null,
   title: '',
   slides: slidesAdapter.getInitialState(),
+  slideTemplate: { children: [] },
+  slideTemplateOpen: false,
   elements: elementsAdapter.getInitialState(),
   activeSlideId: null,
   hoveredEditableElementId: null,
@@ -95,6 +100,7 @@ export const deckSlice = createSlice({
       state.title = action.payload.title;
       state.theme = action.payload.theme;
       state.activeSlideId = action.payload.slides[0].id;
+      state.slideTemplate = action.payload.slideTemplate;
 
       slidesAdapter.addMany(state.slides, action.payload.slides);
       elementsAdapter.addMany(state.elements, action.payload.elements);
@@ -120,6 +126,8 @@ export const deckSlice = createSlice({
         updatedAt,
         title: state.title,
         theme: state.theme,
+        slideTemplate: state.slideTemplate,
+        slideTemplateOpen: false,
         slides,
         elements
       };
@@ -566,6 +574,10 @@ export const deckSlice = createSlice({
       elementsAdapter.addMany(state.elements, action.payload.elementMap);
       state.selectedEditableElementId = null;
       state.isSaved = false;
+    },
+
+    setSlideTemplateOpen: (state, action: PayloadAction<boolean>) => {
+      state.slideTemplateOpen = action.payload;
     }
   }
 });
@@ -612,6 +624,10 @@ export const hoveredEditableElementIdSelector = (state: RootState) =>
 export const selectedEditableElementIdSelector = (state: RootState) =>
   state.deck.present.selectedEditableElementId;
 export const themeSelector = (state: RootState) => state.deck.present.theme;
+export const slideTemplateSelector = (state: RootState) =>
+  state.deck.present.slideTemplate;
+export const slideTemplateOpenSelector = (state: RootState) =>
+  state.deck.present.slideTemplateOpen;
 
 export const slidesSelector = createSelector(
   slidesEntitySelector,

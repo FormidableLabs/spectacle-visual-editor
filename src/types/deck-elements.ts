@@ -48,6 +48,10 @@ export type DeckSlide = Omit<
   children: string[];
 };
 
+export type DeckSlideTemplate = {
+  children: string[];
+};
+
 export type ConstructedDeckElement = Omit<
   DeckElement,
   'children' | 'parent'

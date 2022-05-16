@@ -48,9 +48,8 @@ export type DeckSlide = Omit<
   children: string[];
 };
 
-export type DeckSlideTemplate = {
-  children: string[];
-};
+// TODO: refine type for outer element
+export type DeckSlideTemplate = DeckSlide;
 
 export type ConstructedDeckElement = Omit<
   DeckElement,

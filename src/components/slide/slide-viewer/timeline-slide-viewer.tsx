@@ -1,6 +1,10 @@
 import { useDispatch } from 'react-redux';
 import React, { useEffect, useRef } from 'react';
-import { activeSlideIdSelector, deckSlice } from '../../../slices/deck-slice';
+import {
+  activeSlideIdSelector,
+  deckSlice,
+  slideTemplateOpenSelector
+} from '../../../slices/deck-slice';
 import { SlideViewerWrapper } from './slide-viewer-wrapper';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -30,6 +34,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
   slideProps
 }) => {
   const activeSlideId = useRootSelector(activeSlideIdSelector);
+  const slideTemplateOpen = useRootSelector(slideTemplateOpenSelector);
   const dispatch = useDispatch();
   const [localSlides, setLocalSlides] = React.useState<React.ReactElement[]>(
     []
@@ -49,8 +54,9 @@ export const TimelineSlideViewer: React.FC<Props> = ({
         slideProps: {
           ...slideProps,
           // Hi-jack containerStyle to add active style for active slide
+          // unless slide template is open
           containerStyle: (() => {
-            if (activeSlideId === slide?.props?.id) {
+            if (activeSlideId === slide?.props?.id && !slideTemplateOpen) {
               return [
                 ...(slideProps?.containerStyle || []),
                 activeSlideContainerStyle
@@ -63,7 +69,7 @@ export const TimelineSlideViewer: React.FC<Props> = ({
         key: slide.props.id
       });
     });
-  }, [activeSlideId, children, scale, slideProps]);
+  }, [activeSlideId, slideTemplateOpen, children, scale, slideProps]);
 
   // Keep local slides in sync with actual slides
   React.useEffect(() => {

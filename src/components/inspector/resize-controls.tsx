@@ -34,6 +34,7 @@ export const ResizeControls: React.FC<ElementControlsProps> = ({
         let selectedElementWidth;
         let selectedElementHeight;
 
+        // TODO: does not work on template because slide isn't present on timeline
         const selectedElementNode = document.getElementById(
           selectedElement?.id || ''
         );

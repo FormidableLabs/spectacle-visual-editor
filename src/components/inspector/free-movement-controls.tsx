@@ -206,6 +206,7 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
 
   const handleAlignment = useCallback(
     (type: ALIGNMENT_TYPES) => {
+      // TODO: does not work on template because slide isn't present on timeline
       const selectedElementNode = document.getElementById(
         selectedElement?.id || ''
       );

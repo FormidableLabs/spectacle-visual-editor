@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   deckSlice,
   activeSlideSelector,
-  themeSelector
+  themeSelector,
+  slideTemplateOpenSelector
 } from '../../slices/deck-slice';
 import { Accordion } from '../user-interface/accordion';
 import { MdInput } from '../inputs/md';
@@ -22,6 +23,7 @@ export const SlideInspector = () => {
 
   const themeValues = useRootSelector(themeSelector);
   const activeSlide = useSelector(activeSlideSelector);
+  const slideTemplateOpen = useSelector(slideTemplateOpenSelector);
 
   const handleElementChanged = useCallback(
     (value) =>
@@ -39,6 +41,11 @@ export const SlideInspector = () => {
   const customBackgroundColor = activeSlide?.props?.backgroundColor as
     | string
     | undefined;
+
+  // Hide options when template open
+  if (slideTemplateOpen) {
+    return null;
+  }
 
   return (
     <Pane padding={10}>

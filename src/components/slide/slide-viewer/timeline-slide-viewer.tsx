@@ -141,7 +141,9 @@ export const TimelineSlideViewer: React.FC<Props> = ({
       {/* Template */}
       <TemplateContainer>
         <SlideViewerWrapper slideIndex={-1}>
-          <Slide>{templateNode}</Slide>
+          <Tooltip content="Slide Template">
+            <Slide>{templateNode}</Slide>
+          </Tooltip>
         </SlideViewerWrapper>
       </TemplateContainer>
       {/* Slides */}

@@ -43,8 +43,17 @@ import {
 
 export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const dispatch = useDispatch();
-  const { activeSlideNode, slideNodes, slideTemplateNode } = useSlideNodes();
-  const { handleCanvasMouseDown, handleSlideSelected } = useEditorActions();
+  const {
+    activeSlideNode,
+    slideNodes,
+    activeTemplateNode,
+    templateNode
+  } = useSlideNodes();
+  const {
+    handleCanvasMouseDown,
+    handleSlideSelected,
+    handleTemplateSelected
+  } = useEditorActions();
   const [loadedInitialDeck, setLoadedInitialDeck] = useState(false);
   const [loadedFontFamilies, setLoadedFontFamilies] = useState<Array<string>>(
     []
@@ -154,12 +163,16 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
           onMouseDown={handleCanvasMouseDown}
         >
           <SlideViewer scale={slideScale}>
-            {slideTemplateOpen ? slideTemplateNode : activeSlideNode}
+            {slideTemplateOpen ? activeTemplateNode : activeSlideNode}
           </SlideViewer>
         </EditorCanvas>
         <Inspector />
       </ResizablePanes>
-      <SlideTimeline onSlideClick={handleSlideSelected}>
+      <SlideTimeline
+        onSlideClick={handleSlideSelected}
+        template={templateNode}
+        onTemplateClick={handleTemplateSelected}
+      >
         {slideNodes}
       </SlideTimeline>
     </EditorBody>

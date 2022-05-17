@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   activeSlideIdSelector,
   deckSlice,
@@ -23,6 +23,8 @@ import { moveArrayItem } from '../../../util/move-array-item';
 interface Props {
   scale: number;
   slideProps: Record<string, any>;
+  template: React.ReactNode;
+  onTemplateClick(): void;
 }
 
 /**
@@ -31,18 +33,18 @@ interface Props {
 export const TimelineSlideViewer: React.FC<Props> = ({
   children,
   scale,
-  slideProps
+  slideProps,
+  template,
+  onTemplateClick
 }) => {
   const activeSlideId = useRootSelector(activeSlideIdSelector);
   const slideTemplateOpen = useRootSelector(slideTemplateOpenSelector);
   const dispatch = useDispatch();
-  const [localSlides, setLocalSlides] = React.useState<React.ReactElement[]>(
-    []
-  );
+  const [localSlides, setLocalSlides] = useState<React.ReactElement[]>([]);
   const slidesRef = useRef<HTMLDivElement>(null);
 
   // Flatten out slides, tweak for active slide
-  const slides = React.useMemo(() => {
+  const slides = useMemo(() => {
     const slideEls = (children instanceof Array
       ? Array.from(children)
       : [children]
@@ -71,8 +73,37 @@ export const TimelineSlideViewer: React.FC<Props> = ({
     });
   }, [activeSlideId, slideTemplateOpen, children, scale, slideProps]);
 
+  const templateNode = useMemo(() => {
+    if (!template) {
+      return null;
+    }
+
+    const templateEl = template as React.ReactElement;
+
+    return React.cloneElement(templateEl, {
+      scale,
+      slideProps: {
+        ...slideProps,
+        // Override click action
+        onSlideClick: onTemplateClick,
+        // Add active style when template is open
+        containerStyle: (() => {
+          if (slideTemplateOpen) {
+            return [
+              ...(slideProps?.containerStyle || []),
+              activeSlideContainerStyle
+            ];
+          }
+
+          return slideProps?.containerStyle || [];
+        })()
+      },
+      key: templateEl.props.id
+    });
+  }, [scale, slideProps, template, slideTemplateOpen, onTemplateClick]);
+
   // Keep local slides in sync with actual slides
-  React.useEffect(() => {
+  useEffect(() => {
     setLocalSlides(slides);
   }, [slides]);
 
@@ -107,6 +138,13 @@ export const TimelineSlideViewer: React.FC<Props> = ({
 
   return (
     <Container>
+      {/* Template */}
+      <TemplateContainer>
+        <SlideViewerWrapper slideIndex={-1}>
+          <Slide>{templateNode}</Slide>
+        </SlideViewerWrapper>
+      </TemplateContainer>
+      {/* Slides */}
       <Slides ref={slidesRef}>
         <DndProvider backend={HTML5Backend}>
           {localSlides.map((slide, idx) => (
@@ -160,6 +198,22 @@ const Container = styled.div`
   display: flex;
   background: ${defaultTheme.colors.gray400};
   border-top: 1px ${defaultTheme.colors.gray500} solid;
+`;
+
+const TemplateContainer = styled.div`
+  margin-right: 10px;
+  position: relative;
+
+  &::before {
+    background-color: ${defaultTheme.colors.gray600};
+    content: '';
+    height: calc(100% - 10px);
+    position: absolute;
+    right: -5px;
+    top: 5px;
+    transform: translateX(50%);
+    width: 1px;
+  }
 `;
 
 const Slides = styled.div`

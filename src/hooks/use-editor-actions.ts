@@ -25,5 +25,10 @@ export const useEditorActions = () => {
     [dispatch]
   );
 
-  return { handleCanvasMouseDown, handleSlideSelected };
+  const handleTemplateSelected = useCallback(
+    () => dispatch(deckSlice.actions.setSlideTemplateOpen(true)),
+    [dispatch]
+  );
+
+  return { handleCanvasMouseDown, handleSlideSelected, handleTemplateSelected };
 };

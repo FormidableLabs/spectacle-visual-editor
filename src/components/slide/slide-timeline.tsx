@@ -10,12 +10,19 @@ const slideContainerStyle = css`
 
 interface Props {
   onSlideClick(id: string): void;
+  template: React.ReactNode;
+  onTemplateClick(): void;
 }
 
 /**
  * SlideTimeline is a vertical strip used to scroll and view all the slides in a deck.
  */
-export const SlideTimeline: React.FC<Props> = ({ onSlideClick, children }) => {
+export const SlideTimeline: React.FC<Props> = ({
+  children,
+  onSlideClick,
+  template,
+  onTemplateClick
+}) => {
   const handleKeyPress = useCallback(
     (key: string, id: string) => {
       if (key === 'Enter') {
@@ -35,6 +42,8 @@ export const SlideTimeline: React.FC<Props> = ({ onSlideClick, children }) => {
         role: 'button'
       }}
       scale={0.1}
+      template={template}
+      onTemplateClick={onTemplateClick}
     >
       {children}
     </TimelineSlideViewer>

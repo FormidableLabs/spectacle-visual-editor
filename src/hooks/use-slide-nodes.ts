@@ -35,7 +35,15 @@ export const useSlideNodes = () => {
     [activeSlideJson]
   );
 
-  const slideTemplateNode = useMemo(
+  const templateNode = useMemo(
+    () =>
+      slideTemplateJson
+        ? generateInternalSlideTree(slideTemplateJson as GenerateOptions)
+        : [],
+    [slideTemplateJson]
+  );
+
+  const activeTemplateNode = useMemo(
     () =>
       slideTemplateJson
         ? generateInternalEditableSlideTree(
@@ -45,5 +53,5 @@ export const useSlideNodes = () => {
     [slideTemplateJson]
   );
 
-  return { slideNodes, activeSlideNode, slideTemplateNode };
+  return { slideNodes, activeSlideNode, templateNode, activeTemplateNode };
 };

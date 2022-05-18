@@ -48,9 +48,6 @@ export type DeckSlide = Omit<
   children: string[];
 };
 
-// TODO: refine type for outer element
-export type DeckSlideTemplate = DeckSlide;
-
 export type ConstructedDeckElement = Omit<
   DeckElement,
   'children' | 'parent'
@@ -58,6 +55,16 @@ export type ConstructedDeckElement = Omit<
   children?: string | ConstructedDeckElement[];
 };
 
-export type ConstructedDeckSlide = Omit<DeckSlide, 'children' | 'parent'> & {
+export type ConstructedDeckSlide = Omit<DeckSlide, 'children'> & {
   children: ConstructedDeckElement[];
+};
+
+// TODO: refine type for outer element if necessary
+export type DeckSlideTemplate = DeckSlide;
+
+export type ConstructedDeckSlideTemplate = Omit<
+  DeckSlideTemplate,
+  'component' | 'children'
+> & {
+  component: 'div';
 };

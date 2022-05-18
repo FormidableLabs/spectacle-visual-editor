@@ -9,7 +9,10 @@ import {
   constructedSlideTemplateSelector
 } from '../../slices/deck-slice';
 import { useRootSelector } from '../../store';
-import { ConstructedDeckSlide } from '../../types/deck-elements';
+import {
+  ConstructedDeckSlide,
+  ConstructedDeckSlideTemplate
+} from '../../types/deck-elements';
 import { toaster } from 'evergreen-ui';
 import { PATHS } from '../../constants/paths';
 
@@ -38,22 +41,20 @@ export const PreviewDeck: React.FC<RouteComponentProps> = () => {
       }
 
       // Slide component non-nestable, adjust as div
-      const adjusted = {
+      const adjusted: ConstructedDeckSlideTemplate = {
         ...slideTemplateJson,
         component: 'div',
         props: {
           style: {
-            border: '1px solid green',
             height: '100%',
-            width: '100%',
-            position: 'relative'
+            position: 'relative',
+            width: '100%'
           }
         }
       };
 
-      // TODO: refine type of outer element
       const node = (generatePreviewSlideTree as (
-        opt: ConstructedDeckSlide
+        opt: ConstructedDeckSlideTemplate
       ) => React.ReactElement)(adjusted);
 
       setSlideTemplateNode(node);

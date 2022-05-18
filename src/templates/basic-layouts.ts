@@ -7,18 +7,33 @@ export const basicLayout = (): {
   elementIds: string[];
   elementMap: DeckElementMap;
 } => {
-  const elementId = v4();
+  const elementId1 = v4();
+  const elementId2 = v4();
 
   return {
-    elementIds: [elementId],
+    elementIds: [elementId1, elementId2],
     elementMap: {
-      [elementId]: {
+      [elementId1]: {
         component: 'Markdown',
-        id: elementId,
+        id: elementId1,
+        props: {
+          componentProps: {
+            textAlign: 'center'
+          }
+        },
         parent: ROOT_ELEMENT,
         children: indentNormalizer(`
           # Header
-
+        `)
+      },
+      [elementId2]: {
+        component: 'Markdown',
+        id: elementId2,
+        props: {
+          componentProps: {}
+        },
+        parent: ROOT_ELEMENT,
+        children: indentNormalizer(`
           This is a paragraph.
         `)
       }
@@ -30,18 +45,33 @@ export const codePaneLayout = (): {
   elementIds: string[];
   elementMap: DeckElementMap;
 } => {
-  const elementId = v4();
+  const elementId1 = v4();
+  const elementId2 = v4();
 
   return {
-    elementIds: [elementId],
+    elementIds: [elementId1, elementId2],
     elementMap: {
-      [elementId]: {
+      [elementId1]: {
         component: 'Markdown',
-        id: elementId,
+        id: elementId1,
+        props: {
+          componentProps: {
+            textAlign: 'center'
+          }
+        },
         parent: ROOT_ELEMENT,
         children: indentNormalizer(`
           # Header
-
+        `)
+      },
+      [elementId2]: {
+        component: 'Markdown',
+        id: elementId2,
+        props: {
+          componentProps: {}
+        },
+        parent: ROOT_ELEMENT,
+        children: indentNormalizer(`
           \`\`\`jsx
           export function Counter() {
             const [counter, setCounter] = useState(0);

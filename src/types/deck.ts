@@ -1,7 +1,6 @@
 import { DeckElement, DeckSlide, DeckSlideTemplate } from './deck-elements';
 import { SpectacleTheme } from './theme';
 
-// TODO: refine date types
 export interface Deck {
   id: string;
   title: string;

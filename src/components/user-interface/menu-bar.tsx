@@ -130,6 +130,7 @@ export const MenuBar = () => {
 
   const saveFile = useSaveFile();
 
+  // TODO: refine to depth level 3/4
   const shouldNestableElementsBeDisabled = (insertItem: SPECTACLE_ELEMENTS) => {
     if (selectedElement) {
       return nonNestableElements.includes(insertItem);
@@ -476,8 +477,8 @@ const InsertItems: { title: string; element: typeof ELEMENTS[number] }[] = [
 ];
 
 const nonNestableElements: SPECTACLE_ELEMENTS[] = [
-  ELEMENTS.BOX.component,
-  ELEMENTS.GRID.component
+  // ELEMENTS.BOX.component,
+  // ELEMENTS.GRID.component
 ];
 
 type TooltipConditonalWrapperProps = {

@@ -1,6 +1,6 @@
 import 'regenerator-runtime';
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { Router } from '@reach/router';
 import { ThemeProvider } from 'evergreen-ui';
@@ -10,14 +10,16 @@ import { store } from './store';
 import { PATHS } from './constants/paths';
 import { theme } from './theme';
 
-render(
+const container = document.getElementById('root');
+const root = createRoot(container!);
+
+root.render(
   <Provider store={store}>
-    <ThemeProvider value={theme}>
+    <ThemeProvider<typeof theme> value={theme}>
       <Router>
         <VisualEditor path={PATHS.VISUAL_EDITOR} />
         <PreviewDeck path={PATHS.PREVIEW_DECK} />
       </Router>
     </ThemeProvider>
-  </Provider>,
-  document.getElementById('root')
+  </Provider>
 );

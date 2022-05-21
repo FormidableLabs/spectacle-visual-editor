@@ -1,10 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import {
-  $getSelection,
-  $isElementNode,
-  $isRangeSelection,
-  ElementFormatType
-} from 'lexical';
+import { $getSelection, $isRangeSelection, ElementFormatType } from 'lexical';
 import { useCallback } from 'react';
 import { css } from 'styled-components';
 import { useVisualEditorContext } from '../visual-editor';
@@ -46,10 +41,12 @@ export const StylePlugin = () => {
 
       if ($isRangeSelection(selection)) {
         const anchorNode = selection.anchor.getNode();
-        const element = anchorNode.getParentOrThrow();
-        const children = element.getParent()?.getChildren();
-        children?.forEach((child) => {
-          const elementKey = child.getKey();
+        const root = anchorNode.getParents().find((p) => p.getKey() === 'root');
+        const textNodes = root?.getAllTextNodes();
+
+        textNodes?.forEach((textNode) => {
+          const element = textNode.getParentOrThrow();
+          const elementKey = element.getKey();
           const elementDOM = editor.getElementByKey(elementKey);
 
           if (elementDOM !== null) {
@@ -61,8 +58,8 @@ export const StylePlugin = () => {
             const style = css(props).join(' ');
             elementDOM.setAttribute('style', style);
 
-            if (!!props.textAlign && !isReadOnly && $isElementNode(child)) {
-              child.setFormat(props.textAlign as ElementFormatType);
+            if (!!props.textAlign && !isReadOnly) {
+              element.setFormat(props.textAlign as ElementFormatType);
             }
           }
         });

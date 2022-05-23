@@ -38,7 +38,10 @@ import { ToolbarButton } from './toolbar-button';
 import { useVisualEditorContext } from '../visual-editor';
 import { useVisualEditorUpdate } from '../../../../hooks';
 
-const Toolbar = styled.div<{ css: CSSObject }>`
+interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
+  css: CSSObject;
+}
+const Toolbar = styled.div<ToolbarProps>`
   display: flex;
   background-color: #fff;
   padding: 4px;
@@ -51,10 +54,10 @@ const Divider = styled.div`
   margin: 0px 4px;
 `;
 
-export const ToolbarPlugin = React.forwardRef<any, any>(function ToolbarPlugin(
-  props,
-  ref
-) {
+export const ToolbarPlugin = React.forwardRef<
+  React.RefObject<HTMLElement>,
+  ToolbarProps
+>(function ToolbarPlugin(props, ref) {
   const [editor] = useLexicalComposerContext();
   const {
     selectedElementComponentProps,
@@ -132,7 +135,7 @@ export const ToolbarPlugin = React.forwardRef<any, any>(function ToolbarPlugin(
   );
 
   return (
-    <Toolbar ref={ref} {...props}>
+    <Toolbar ref={ref as any} {...props}>
       <ToolbarButton
         tooltip={HEADING_OPTIONS.h1.tooltip}
         icon={HEADING_OPTIONS.h1.icon}

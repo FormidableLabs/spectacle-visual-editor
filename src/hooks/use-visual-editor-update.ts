@@ -21,7 +21,7 @@ export const useVisualEditorUpdate = (
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         () => {
-          callback();
+          callback(false);
           return false;
         },
         LowPriority

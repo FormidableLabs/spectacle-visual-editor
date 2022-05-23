@@ -15,22 +15,23 @@ import {
 } from 'evergreen-ui';
 
 export enum HEADING_TYPES {
-  H1 = 'header-one',
-  H2 = 'header-two',
-  H3 = 'header-three'
+  H1 = 'h1',
+  H2 = 'h2',
+  H3 = 'h3'
 }
 
 export enum INLINE_STYLE_TYPES {
-  BOLD = 'BOLD',
-  ITALIC = 'ITALIC',
-  STRIKETHROUGH = 'STRIKETHROUGH',
-  CODE = 'CODE'
+  BOLD = 'bold',
+  ITALIC = 'italic',
+  STRIKETHROUGH = 'strikethrough',
+  CODE = 'code'
 }
 
 export enum BLOCK_TYPES {
-  UL = 'unordered-list-item',
-  OL = 'ordered-list-item',
-  BLOCKQUOTE = 'blockquote'
+  UL = 'ul',
+  OL = 'ol',
+  QUOTE = 'quote',
+  CODE = 'code'
 }
 
 export enum LIST_STYLE_TYPE_OPTIONS {
@@ -428,7 +429,7 @@ export const BLOCK_OPTIONS = {
     tooltip: 'Ordered List',
     icon: NumberedListIcon
   },
-  [BLOCK_TYPES.BLOCKQUOTE]: {
+  [BLOCK_TYPES.QUOTE]: {
     tooltip: 'Blockquote',
     icon: CitationIcon
   }

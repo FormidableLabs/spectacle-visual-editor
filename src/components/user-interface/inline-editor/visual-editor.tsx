@@ -1,326 +1,128 @@
-import React, { Children, useEffect, useState } from 'react';
+import React, { useMemo, createContext, useContext } from 'react';
 import { useSelector } from 'react-redux';
+import { EditorState, LexicalEditor } from 'lexical';
+import LexicalComposer from '@lexical/react/LexicalComposer';
+import RichTextPlugin from '@lexical/react/LexicalRichTextPlugin';
+import ContentEditable from '@lexical/react/LexicalContentEditable';
+import ListPlugin from '@lexical/react/LexicalListPlugin';
+import LexicalOnChangePlugin from '@lexical/react/LexicalOnChangePlugin';
+import LexicalMarkdownShortcutPlugin from '@lexical/react/LexicalMarkdownShortcutPlugin';
+import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { ListItemNode, ListNode } from '@lexical/list';
+import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import {
-  Editor,
-  EditorState,
-  RichUtils,
-  convertToRaw,
-  convertFromRaw,
-  EditorCommand,
-  DefaultDraftBlockRenderMap
-} from 'draft-js';
-import { Map } from 'immutable';
-import {
-  Heading,
-  ListItem,
-  OrderedList,
-  UnorderedList,
-  Quote,
-  Text
-} from 'spectacle';
-import { mdToDraftjs, draftjsToMd } from 'draftjs-md-converter';
-import { IconButton, Positioner, Tooltip, defaultTheme } from 'evergreen-ui';
-import styled, { CSSObject } from 'styled-components';
+  $convertFromMarkdownString,
+  $convertToMarkdownString,
+  TRANSFORMERS
+} from '@lexical/markdown';
+import { Positioner } from 'evergreen-ui';
 import { useEditElement } from '../../../hooks/use-edit-element';
 import { selectedElementSelector } from '../../../slices/deck-slice';
 import {
-  BLOCK_TYPES,
-  INLINE_STYLE_TYPES,
-  HEADING_TYPES,
-  HEADING_OPTIONS,
-  INLINE_STYLE_OPTIONS,
-  BLOCK_OPTIONS,
-  TEXT_ALIGN_TYPES,
-  TEXT_ALIGN_OPTIONS,
-  MD_COMPONENT_PROPS
-} from '../../../constants/md-style-options';
+  LexicalThemeWrapper,
+  ToolbarPlugin,
+  StylePlugin
+} from './visual-editor-components';
 
-import 'draft-js/dist/Draft.css';
+interface IVisualEditorContext {
+  selectedElementComponentProps: any;
+  handleElementChanged: (
+    sender: any
+  ) => {
+    payload: {
+      [key: string]: any;
+    } & {
+      children?: string | undefined;
+    };
+    type: string;
+  };
+}
 
-const Toolbar = styled.div<{ css: CSSObject }>`
-  display: flex;
-  background-color: #fff;
-  padding: 4px;
-  border-radius: 3px;
-  ${({ css }) => css}
-`;
+const VisualEditorContext = createContext<IVisualEditorContext>({
+  selectedElementComponentProps: {},
+  handleElementChanged: () => ({ payload: {}, type: '' })
+});
 
-const ToolbarSection = styled.div`
-  display: flex;
-  & + & {
-    margin-left: 4px;
-    padding-left: 4px;
-    border-left: 1px solid ${defaultTheme.colors.gray400};
-  }
-`;
-
-/* Additional markdown config for draftjs-md-converter */
-const extraMarkdownDictionary = {
-  STRIKETHROUGH: '~~',
-  CODE: '`'
-};
-const extraMarkdownStyles = {
-  inlineStyles: {
-    Delete: {
-      type: 'STRIKETHROUGH',
-      symbol: '~~'
-    },
-    Code: {
-      type: 'CODE',
-      symbol: '`'
-    }
-  }
-};
-
-/*
-  Wrapper for spectacle’s UnorderedList and OrderedList components.
-  Renders children as ListItem components.
-*/
-const ListWrapper = ({
-  component: Component,
-  children,
-  ...props
-}: {
-  component: React.ComponentType<any>;
-  children: React.ReactElement[];
-}) => (
-  <Component {...props}>
-    {Children.map(children, (child: React.ReactElement) => {
-      const childProps = { ...child.props };
-      delete childProps.className; // Remove Draft.js default styling
-      return <ListItem key={child.key} {...childProps} />;
-    })}
-  </Component>
-);
-
-/*
-  Wrapper for spectacle’s Quote component.
-  Renders children within Text component to match MD parsing on spectacle.
-*/
-const QuoteWrapper = ({
-  children,
-  ...props
-}: {
-  children: React.ReactElement[];
-}) => (
-  <Quote {...props}>
-    <Text {...props}>{children}</Text>
-  </Quote>
-);
+export const useVisualEditorContext = () => useContext(VisualEditorContext);
 
 export const VisualEditor = () => {
   const selectedElement = useSelector(selectedElementSelector);
-
-  /* Setup editor with markdown from store */
-  const content = convertFromRaw(
-    mdToDraftjs(String(selectedElement?.children), extraMarkdownStyles)
-  );
-  const [editorState, setEditorState] = useState(
-    EditorState.createWithContent(content)
+  const selectedElementComponentProps = useMemo(
+    () => selectedElement?.props?.componentProps || {},
+    [selectedElement?.props?.componentProps]
   );
 
-  /* Sync editor content with markdown in store */
-  const editorContent = editorState.getCurrentContent();
+  const initialEditorState = () => {
+    $convertFromMarkdownString(String(selectedElement?.children), TRANSFORMERS);
+  };
+
   const handleElementChanged = useEditElement();
-  useEffect(() => {
-    const markdown = draftjsToMd(
-      convertToRaw(editorContent),
-      extraMarkdownDictionary
-    );
-    handleElementChanged({ children: markdown });
-  }, [editorContent, handleElementChanged]);
 
-  /* Map markdown elements to spectacle components */
-  const selectedElementComponentProps =
-    selectedElement?.props?.componentProps || {};
-
-  const componentProps = {
-    children: null, // Required prop, gets overwritten by Draft.js
-    ...selectedElementComponentProps
+  const onEditorChange = (state: EditorState, editor: LexicalEditor) => {
+    editor.update(() => {
+      const markdown = $convertToMarkdownString(TRANSFORMERS);
+      handleElementChanged({ children: markdown });
+    });
   };
-  const blockRenderMap = Map({
-    'header-one': {
-      element: 'div',
-      wrapper: <Heading fontSize="h1" {...componentProps} />
-    },
-    'header-two': {
-      element: 'div',
-      wrapper: <Heading fontSize="h2" {...componentProps} />
-    },
-    'header-three': {
-      element: 'div',
-      wrapper: <Heading fontSize="h3" {...componentProps} />
-    },
-    blockquote: {
-      element: 'div',
-      wrapper: <QuoteWrapper {...componentProps} />
-    },
-    'ordered-list-item': {
-      element: 'li',
-      wrapper: <ListWrapper component={OrderedList} {...componentProps} />
-    },
-    'unordered-list-item': {
-      element: 'li',
-      wrapper: <ListWrapper component={UnorderedList} {...componentProps} />
-    },
-    unstyled: {
-      element: 'div',
-      wrapper: <Text {...componentProps} />,
-      aliasedElements: ['p']
-    }
-  });
-
-  /* Function that applies inline styles to the current selection */
-  const applyFormattingOption = (
-    type: 'inlineStyle' | 'block' | 'textAlign',
-    value: HEADING_TYPES | INLINE_STYLE_TYPES | BLOCK_TYPES | TEXT_ALIGN_TYPES
-  ) => (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    /* Restore focus on selected text */
-    const editorStateFocused = EditorState.forceSelection(
-      editorState,
-      editorState.getSelection()
-    );
-
-    if (type === 'inlineStyle') {
-      setEditorState(RichUtils.toggleInlineStyle(editorStateFocused, value));
-    } else if (type === 'block') {
-      setEditorState(RichUtils.toggleBlockType(editorStateFocused, value));
-    } else if (type === 'textAlign') {
-      handleElementChanged({
-        componentProps: {
-          ...selectedElementComponentProps,
-          [MD_COMPONENT_PROPS.TEXT_ALIGN]: value
-        }
-      });
-      setEditorState(editorStateFocused);
-    }
-  };
-
-  /* Function that manages keyboard shortcuts i.e. cmd+b to bold text */
-  const handleKeyCommand = (command: EditorCommand) => {
-    const newEditorState = RichUtils.handleKeyCommand(editorState, command);
-
-    if (newEditorState) {
-      setEditorState(newEditorState);
-      return 'handled';
-    }
-
-    return 'not-handled';
-  };
-
-  const textAlignment =
-    selectedElementComponentProps?.textAlign ?? TEXT_ALIGN_TYPES.LEFT;
 
   return (
-    <Positioner
-      isShown
-      position="top"
-      targetOffset={30}
-      target={({ getRef }) => (
-        <div ref={getRef}>
-          <Editor
-            editorState={editorState}
-            textAlignment={textAlignment}
-            blockRenderMap={DefaultDraftBlockRenderMap.merge(blockRenderMap)}
-            onChange={setEditorState}
-            handleKeyCommand={handleKeyCommand}
-          />
-        </div>
-      )}
+    <VisualEditorContext.Provider
+      value={{ selectedElementComponentProps, handleElementChanged }}
     >
-      {({ css, getRef, state, style }) => (
-        <Toolbar style={style} data-state={state} css={css} ref={getRef as any}>
-          <ToolbarSection>
-            {Object.keys(HEADING_OPTIONS).map((key) => {
-              const option = HEADING_OPTIONS[key as HEADING_TYPES];
-              const isSelected =
-                editorState
-                  .getCurrentContent()
-                  .getBlockForKey(editorState.getSelection().getStartKey())
-                  .getType() === key;
-              return (
-                <Tooltip key={`visual-editor-${key}`} content={option.tooltip}>
-                  <IconButton
-                    icon={option.icon}
-                    onClick={applyFormattingOption(
-                      'block',
-                      key as HEADING_TYPES
-                    )}
-                    appearance="minimal"
-                    isActive={isSelected}
+      <LexicalThemeWrapper>
+        {(theme) =>
+          !!theme && (
+            <LexicalComposer
+              initialConfig={{
+                theme,
+                onError(error: Error) {
+                  throw error;
+                },
+                nodes: [
+                  HeadingNode,
+                  ListNode,
+                  ListItemNode,
+                  QuoteNode,
+                  CodeNode,
+                  CodeHighlightNode
+                ]
+              }}
+            >
+              <Positioner
+                isShown
+                position="top"
+                targetOffset={30}
+                target={({ getRef }) => (
+                  <div ref={getRef}>
+                    <RichTextPlugin
+                      initialEditorState={initialEditorState}
+                      contentEditable={
+                        <ContentEditable className="editor-input" />
+                      }
+                      placeholder={null}
+                    />
+                    <ListPlugin />
+                    <StylePlugin />
+                    <LexicalOnChangePlugin onChange={onEditorChange} />
+                    <LexicalMarkdownShortcutPlugin
+                      transformers={TRANSFORMERS}
+                    />
+                  </div>
+                )}
+              >
+                {({ css, getRef, state, style }) => (
+                  <ToolbarPlugin
+                    style={style}
+                    data-state={state}
+                    css={css}
+                    ref={getRef}
                   />
-                </Tooltip>
-              );
-            })}
-          </ToolbarSection>
-
-          <ToolbarSection>
-            {Object.keys(INLINE_STYLE_OPTIONS).map((key) => {
-              const option = INLINE_STYLE_OPTIONS[key as INLINE_STYLE_TYPES];
-              const isSelected = editorState.getCurrentInlineStyle().has(key);
-              return (
-                <Tooltip key={`visual-editor-${key}`} content={option.tooltip}>
-                  <IconButton
-                    key={`visual-editor-${key}`}
-                    icon={option.icon}
-                    onClick={applyFormattingOption(
-                      'inlineStyle',
-                      key as INLINE_STYLE_TYPES
-                    )}
-                    appearance="minimal"
-                    isActive={isSelected}
-                  />
-                </Tooltip>
-              );
-            })}
-          </ToolbarSection>
-
-          <ToolbarSection>
-            {Object.keys(BLOCK_OPTIONS).map((key) => {
-              const option = BLOCK_OPTIONS[key as BLOCK_TYPES];
-              const isSelected =
-                editorState
-                  .getCurrentContent()
-                  .getBlockForKey(editorState.getSelection().getStartKey())
-                  .getType() === key;
-              return (
-                <Tooltip key={`visual-editor-${key}`} content={option.tooltip}>
-                  <IconButton
-                    key={`visual-editor-${key}`}
-                    icon={option.icon}
-                    onClick={applyFormattingOption('block', key as BLOCK_TYPES)}
-                    appearance="minimal"
-                    isActive={isSelected}
-                  />
-                </Tooltip>
-              );
-            })}
-          </ToolbarSection>
-
-          <ToolbarSection>
-            {Object.keys(TEXT_ALIGN_OPTIONS).map((key) => {
-              const option = TEXT_ALIGN_OPTIONS[key as TEXT_ALIGN_TYPES];
-              const isSelected = textAlignment === key;
-              return (
-                <Tooltip key={`visual-editor-${key}`} content={option.tooltip}>
-                  <IconButton
-                    key={`visual-editor-${key}`}
-                    icon={option.icon}
-                    onClick={applyFormattingOption(
-                      'textAlign',
-                      key as TEXT_ALIGN_TYPES
-                    )}
-                    appearance="minimal"
-                    isActive={isSelected}
-                  />
-                </Tooltip>
-              );
-            })}
-          </ToolbarSection>
-        </Toolbar>
-      )}
-    </Positioner>
+                )}
+              </Positioner>
+            </LexicalComposer>
+          )
+        }
+      </LexicalThemeWrapper>
+    </VisualEditorContext.Provider>
   );
 };

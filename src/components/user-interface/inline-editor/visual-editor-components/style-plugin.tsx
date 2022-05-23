@@ -31,6 +31,9 @@ const getStyleObjectFromString = (str: string | null) => {
   return style;
 };
 
+/**
+ * StylePlugin is a lexical visual editor plugin that applies DeckElement componentProps to rich text elements
+ */
 export const StylePlugin = () => {
   const [editor] = useLexicalComposerContext();
   const { selectedElementComponentProps } = useVisualEditorContext();

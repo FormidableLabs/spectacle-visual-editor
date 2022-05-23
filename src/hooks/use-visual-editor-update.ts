@@ -4,6 +4,9 @@ import { useEffect } from 'react';
 
 const LowPriority = 1;
 
+/**
+ * Implements a callback parameter that is registered when a LexicalEditor is updated
+ */
 export const useVisualEditorUpdate = (
   editor: LexicalEditor,
   callback: (isReadOnly?: boolean) => void

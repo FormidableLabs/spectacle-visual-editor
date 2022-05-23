@@ -14,6 +14,10 @@ const Heading1 = styled(Heading).attrs({ fontSize: 'h1' })``;
 const Heading2 = styled(Heading).attrs({ fontSize: 'h2' })``;
 const Heading3 = styled(Heading).attrs({ fontSize: 'h3' })``;
 
+/**
+ * List of styles to be preloaded to dynamically retrieve styled-component classNames.
+ * If a styled-component is not in this list, it will not be consumed by the theme properly.
+ */
 const styles = [
   Text,
   Quote,
@@ -25,6 +29,9 @@ const styles = [
   UnorderedList
 ];
 
+/**
+ * Retrieves a styled-component className
+ */
 const getClassName = (component: StyledComponent<any, any>) =>
   (component as any).componentStyle?.lastClassName;
 
@@ -35,6 +42,9 @@ export const LexicalThemeWrapper = ({
 }) => {
   const [theme, setTheme] = useState<EditorThemeClasses>();
 
+  /**
+   * The visual editor is rendered after the theme has successfully retrieved all of its styles/classNames
+   */
   useEffect(() => {
     setTheme({
       paragraph: getClassName(Text),
@@ -73,6 +83,9 @@ export const LexicalThemeWrapper = ({
   );
 };
 
+/**
+ * Global editor styles that are not associated with Spectacle styled-components
+ */
 const GlobalLexicalThemeStyles = createGlobalStyle`
     .editor-text-bold {
         font-weight: bold;

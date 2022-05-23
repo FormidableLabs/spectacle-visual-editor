@@ -4,32 +4,7 @@ import { useCallback } from 'react';
 import { css } from 'styled-components';
 import { useVisualEditorContext } from '../visual-editor';
 import { useVisualEditorUpdate } from '../../../../hooks';
-
-const formatStringToCamelCase = (str: string) => {
-  const splitted = str.split('-');
-  if (splitted.length === 1) return splitted[0];
-  return (
-    splitted[0] +
-    splitted
-      .slice(1)
-      .map((word) => word[0].toUpperCase() + word.slice(1))
-      .join('')
-  );
-};
-
-const getStyleObjectFromString = (str: string | null) => {
-  const style: { [key: string]: string } = {};
-  if (!str) return style;
-  str.split(';').forEach((el) => {
-    const [property, value] = el.split(':');
-    if (!property) return;
-
-    const formattedProperty = formatStringToCamelCase(property.trim());
-    style[formattedProperty] = value.trim();
-  });
-
-  return style;
-};
+import { getStyleObjectFromString } from '../../../../util/get-style-object-from-string';
 
 /**
  * StylePlugin is a lexical visual editor plugin that applies DeckElement componentProps to rich text elements

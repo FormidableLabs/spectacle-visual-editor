@@ -119,14 +119,14 @@ export const ToolbarPlugin = React.forwardRef<any, any>(function ToolbarPlugin(
 
   const formatTextAlignment = useCallback(
     (value: TEXT_ALIGN_TYPES) => {
-      editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, value);
-
       handleElementChanged({
         componentProps: {
           ...selectedElementComponentProps,
           [MD_COMPONENT_PROPS.TEXT_ALIGN]: value
         }
       });
+
+      editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, value);
     },
     [editor, selectedElementComponentProps, handleElementChanged]
   );

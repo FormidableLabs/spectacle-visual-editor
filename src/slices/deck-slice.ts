@@ -543,6 +543,32 @@ export const deckSlice = createSlice({
       state.isSaved = false;
     },
 
+    reorderElements: (
+      state,
+      action: PayloadAction<{
+        activeSlideChildren: string[];
+        elements: { [key: string]: string[] | undefined };
+      }>
+    ) => {
+      const { activeSlideChildren, elements } = action.payload;
+
+      // Updates the element order of the active slide
+      const activeSlide = getActiveSlideImmer(state);
+      if (activeSlide && activeSlideChildren) {
+        activeSlide.children = activeSlideChildren;
+      }
+
+      // Updates element order of nested elements
+      if (elements) {
+        Object.entries(elements).forEach(([id, children]) => {
+          elementsAdapter.updateOne(state.elements, {
+            id,
+            changes: { children }
+          });
+        });
+      }
+    },
+
     applyLayoutToSlide: (
       state,
       action: PayloadAction<{

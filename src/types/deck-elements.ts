@@ -53,6 +53,7 @@ export type ConstructedDeckElement = Omit<
   'children' | 'parent'
 > & {
   children?: string | ConstructedDeckElement[];
+  parent?: string;
 };
 
 export type ConstructedDeckSlide = Omit<DeckSlide, 'children' | 'parent'> & {

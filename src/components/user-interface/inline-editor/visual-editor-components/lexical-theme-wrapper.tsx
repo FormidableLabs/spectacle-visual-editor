@@ -8,7 +8,21 @@ import {
   OrderedList,
   UnorderedList
 } from 'spectacle';
-import styled, { StyledComponent, createGlobalStyle } from 'styled-components';
+import styled, {
+  css,
+  StyledComponent,
+  createGlobalStyle
+} from 'styled-components';
+
+/**
+ * @todo: Import prism theme directly from spectacle
+ */
+import dark from 'react-syntax-highlighter/dist/cjs/styles/prism/vs-dark';
+
+const CODE_THEME = dark;
+const CODE_HIGHLIGHT_CLASSES: Record<string, string> = Object.keys(
+  CODE_THEME
+).reduce((acc, cur) => ({ ...acc, [cur]: `editor-token-${cur}` }), {});
 
 const Heading1 = styled(Heading).attrs({ fontSize: 'h1' })``;
 const Heading2 = styled(Heading).attrs({ fontSize: 'h2' })``;
@@ -67,9 +81,12 @@ export const LexicalThemeWrapper = ({
         italic: 'editor-text-italic',
         strikethrough: 'editor-text-strikethrough',
         code: 'editor-text-code'
-      }
+      },
+      code: 'editor-code',
+      codeHighlight: CODE_HIGHLIGHT_CLASSES
     });
   }, []);
+
   return (
     <>
       <GlobalLexicalThemeStyles />
@@ -109,6 +126,28 @@ const GlobalLexicalThemeStyles = createGlobalStyle`
         height: 100%;
         outline: none;
     }
+
+    .editor-code {
+      ${css(CODE_THEME['pre[class*="language-"]'])}
+      display: block;
+      font-size: 20px;
+      margin: 0;
+      padding: 16px;
+    }  
+  
+    .editor-code:before {
+      content: attr(data-gutter);
+      float: left;
+      padding-right: 10px;
+    }
+
+    ${Object.keys(CODE_HIGHLIGHT_CLASSES).map(
+      (key) => `
+      .${CODE_HIGHLIGHT_CLASSES[key]} {
+        ${css(CODE_THEME[key])}
+      }
+    `
+    )}
 `;
 
 const PreloadedStyles = styled.div`

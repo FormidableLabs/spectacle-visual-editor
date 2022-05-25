@@ -11,7 +11,6 @@ export type SPECTACLE_ELEMENTS =
   | 'FlexBox'
   | 'Image'
   | 'Grid'
-  | 'CodePane'
   | 'Progress'
   | 'FullScreen'
   | 'Notes';
@@ -23,7 +22,6 @@ export const FREE_MOVING_ELEMENTS: SPECTACLE_ELEMENTS[] = [
   'FlexBox',
   'Image',
   'Grid',
-  'CodePane',
   'Progress',
   'FullScreen'
 ];

@@ -25,10 +25,9 @@ export const isImageElement = (element: ConstructedDeckElement | null) =>
   Boolean(element?.component?.includes('Image'));
 
 export const isTextElement = (element: ConstructedDeckElement | null) =>
-  Boolean(element && ['Heading', 'Text'].includes(element?.component));
-
-export const isCodePaneElement = (element: ConstructedDeckElement | null) =>
-  Boolean(element && ['CodePane'].includes(element?.component));
+  Boolean(
+    element && ['Heading', 'Text', 'CodePane'].includes(element?.component)
+  );
 
 export const isProgressElement = (element: ConstructedDeckElement | null) =>
   Boolean(element?.component?.includes('Progress'));

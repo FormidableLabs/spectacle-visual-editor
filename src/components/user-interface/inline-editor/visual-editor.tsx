@@ -21,7 +21,8 @@ import { selectedElementSelector } from '../../../slices/deck-slice';
 import {
   LexicalThemeWrapper,
   ToolbarPlugin,
-  StylePlugin
+  StylePlugin,
+  CodeHighlightPlugin
 } from './visual-editor-components';
 
 interface IVisualEditorContext {
@@ -103,6 +104,7 @@ export const VisualEditor = () => {
                     />
                     <ListPlugin />
                     <StylePlugin />
+                    <CodeHighlightPlugin />
                     <LexicalOnChangePlugin onChange={onEditorChange} />
                     <LexicalMarkdownShortcutPlugin
                       transformers={TRANSFORMERS}

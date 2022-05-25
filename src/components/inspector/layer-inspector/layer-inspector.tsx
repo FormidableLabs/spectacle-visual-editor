@@ -127,7 +127,7 @@ const deconstructSlide = (slide: ConstructedDeckElement) => {
 
   const checkChildren = (element: ConstructedDeckElement) => {
     const { id, children, component } = element;
-    if (CONTAINER_ELEMENTS.includes(component)) {
+    if (ALL_CONTAINER_ELEMENTS.includes(component)) {
       const childrenIds: string[] = [];
       if (children && Array.isArray(children)) {
         children.forEach((child) => {
@@ -135,7 +135,7 @@ const deconstructSlide = (slide: ConstructedDeckElement) => {
           checkChildren(child);
         });
       }
-      elements[id] = childrenIds.length ? childrenIds : undefined;
+      elements[id] = childrenIds;
     }
   };
 

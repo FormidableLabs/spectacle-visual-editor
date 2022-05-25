@@ -1,5 +1,6 @@
 import { DeckElement } from '../../types/deck-elements';
 import { FLEX_DIRECTION } from '../../constants/flex-box-options';
+import { indentNormalizer } from 'spectacle';
 
 export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
   HEADING: {
@@ -55,9 +56,15 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     }
   },
   CODEPANE: {
-    component: 'CodePane',
-    props: { language: 'javascript' },
-    children: 'let name = "Carlos";'
+    component: 'Markdown',
+    children: indentNormalizer(`
+      \`\`\`javascript
+      let name = "Carlos";
+      \`\`\`
+    `),
+    props: {
+      componentProps: {}
+    }
   },
   PROGRESS: {
     component: 'Progress',

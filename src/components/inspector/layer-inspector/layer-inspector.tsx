@@ -12,19 +12,24 @@ import { DndProvider } from 'react-dnd';
 import {
   Tree,
   getBackendOptions,
-  MultiBackend
+  MultiBackend,
+  PlaceholderRender
 } from '@minoru/react-dnd-treeview';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { isDeckElement } from '../../../util/is-deck-element';
 import { LayerDragWrapper, Layer } from '../../helpers/layer-drag-wrapper';
-import { ElementCard } from './layers-element-card';
+import {
+  ElementCard,
+  ElementCardTree,
+  ElementCardDisplay
+} from './layers-element-card';
 import { moveArrayItem } from '../../../util/move-array-item';
 import { defaultTheme } from 'evergreen-ui';
 import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
 
-type TreeItem = {
+type TreeNode = {
   id: any;
   parent: any;
   text: string;
@@ -32,10 +37,17 @@ type TreeItem = {
   data?: { [key: string]: any };
 };
 
+type OptionProps = {
+  depth: number;
+  isOpen: boolean;
+  isDragging: boolean;
+  onToggle: () => void;
+};
+
 const isString = (val: any) => typeof val === 'string' || val instanceof String;
 
 const convertSlideToTreeData = (slide: ConstructedDeckElement) => {
-  const treeData: TreeItem[] = [];
+  const treeData: TreeNode[] = [];
   const { children, id } = slide;
   if (!(children && children.length) || isString(children)) {
     // quick return if no children or children is a string
@@ -52,24 +64,15 @@ const convertSlideToTreeData = (slide: ConstructedDeckElement) => {
 
     const { component, id, children } = element as ConstructedDeckElement;
 
-    const childrenIsString = isString(children);
-    // push current element
     const droppable = CONTAINER_ELEMENTS.includes(component);
-    // TODO: refine label
-    const text = childrenIsString ? `${component}: ${children}` : component;
-    // TODO: add data if necessary
+    const text = component;
     const data = { element };
     treeData.push({ id, parent, droppable, text, data });
 
-    if (children && !childrenIsString) {
-      // if (isString(children)) {
-      // TODO: handle string
-      // console.log('CHILDREN IS STRING', children);
-      // } else {
+    if (children && Array.isArray(children)) {
       (children as ConstructedDeckElement[]).forEach((el) => {
         recursivelyCheckElement(el, id);
       });
-      // }
     }
   };
 
@@ -81,11 +84,11 @@ const convertSlideToTreeData = (slide: ConstructedDeckElement) => {
 };
 
 const convertTreeDataToSlide = (
-  treeData: TreeItem[],
+  treeData: TreeNode[],
   activeSlide: ConstructedDeckElement
 ) => {
   const slide: ConstructedDeckElement = { ...activeSlide, children: [] };
-  const groupedByParent: { [key: string]: TreeItem[] } = treeData.reduce(
+  const groupedByParent: { [key: string]: TreeNode[] } = treeData.reduce(
     (acc, curr) => {
       const clonedAcc = { ...acc } as { [key: string]: any };
       const { parent: parentId } = curr;
@@ -376,7 +379,7 @@ export const LayerInspector: FC = () => {
 
   // tree
   const treeRoot = useMemo(() => activeSlide?.id || '', [activeSlide]);
-  const [treeData, setTreeData] = useState<TreeItem[]>([]);
+  const [treeData, setTreeData] = useState<TreeNode[]>([]);
 
   // Keep local children in sync with slide children
   useEffect(() => {
@@ -386,7 +389,7 @@ export const LayerInspector: FC = () => {
   }, [activeSlide]);
 
   const handleDrop = useCallback(
-    (newTreeData: TreeItem[]) => {
+    (newTreeData: TreeNode[]) => {
       if (activeSlide) {
         setTreeData(newTreeData);
         const slideData = convertTreeDataToSlide(newTreeData, activeSlide);
@@ -399,57 +402,103 @@ export const LayerInspector: FC = () => {
     [dispatch, activeSlide]
   );
 
+  const checkIfParentSelected = useCallback(
+    (initialNode: TreeNode, depth: number) => {
+      let traversalNode = initialNode as TreeNode | undefined;
+      let depthIndex = 0;
+      let isParentSelected = false;
+      while (depthIndex < depth && !isParentSelected) {
+        // Check if parent is selected
+        isParentSelected =
+          isParentSelected || traversalNode?.parent === selectedElement?.id;
+
+        // Exit early if parent selected
+        if (isParentSelected) {
+          break;
+        }
+
+        // Find next parent
+        traversalNode = treeData.find(({ id }) => id === traversalNode?.parent);
+
+        // Exit if parent node not found
+        if (!traversalNode) {
+          break;
+        }
+
+        depthIndex++;
+      }
+
+      return isParentSelected;
+    },
+    [treeData, selectedElement]
+  );
+
+  const renderTreeNode = (node: TreeNode, props: OptionProps) => {
+    const { depth, isOpen, isDragging, onToggle } = props;
+    const { element } = node?.data || {};
+    const isHovered = element.id === hoveredElementId;
+    const isSelected = element.id === selectedElement?.id;
+    const isParentSelected = checkIfParentSelected(node, depth);
+
+    return (
+      <ElementCardTree
+        element={element}
+        isHovered={isHovered}
+        isSelected={isSelected}
+        isExpanded={isOpen}
+        isParentSelected={isParentSelected}
+        isDragging={isDragging}
+        handleExpand={onToggle}
+        onClick={() => selectElement(element.id)}
+        onMouseEnter={() => hoverElement(element.id)}
+        onMouseLeave={unhoverElement}
+        depth={depth}
+      />
+    );
+  };
+
+  const renderPlaceholder = (node: TreeNode, props: OptionProps) => {
+    const { depth, isOpen } = props;
+    const { element } = node?.data || {};
+    const isSelected = element.id === selectedElement?.id;
+    const isParentSelected = checkIfParentSelected(node, depth);
+
+    return (
+      <ElementCardDisplay
+        element={element}
+        depth={depth}
+        isSelected={isSelected}
+        isParentSelected={isParentSelected}
+        isExpanded={isOpen}
+      />
+    );
+  };
+
   return (
     <Container>
       <Title>Layers</Title>
-
       <Layers>
         <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-          <Tree
-            tree={treeData}
-            rootId={treeRoot}
-            render={(node, props) => {
-              const { depth, isOpen, onToggle } = props;
-              return (
-                <div style={{ marginLeft: depth * 10 }}>
-                  {node.droppable && (
-                    <span onClick={onToggle}>{isOpen ? '[-]' : '[+]'}</span>
-                  )}
-                  {node.text}
-                </div>
-              );
-            }}
-            dragPreviewRender={(monitorProps) => (
-              <div style={{ border: '1px green solid' }}>
-                PREVIEW: {monitorProps.item.text}
-              </div>
-            )}
-            onDrop={handleDrop}
-            sort={false}
-            insertDroppableFirst={false}
-            initialOpen={true}
-            canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
-              if (dragSource?.parent === dropTargetId) {
-                return true;
+          <TreeWrap>
+            <Tree
+              tree={treeData}
+              rootId={treeRoot}
+              render={renderTreeNode}
+              placeholderRender={
+                renderPlaceholder as PlaceholderRender<{ [key: string]: any }>
               }
-            }}
-            dropTargetOffset={10}
-            placeholderRender={(node, props) => {
-              const { depth } = props;
-              const left = depth * 24;
-              return (
-                <div
-                  style={{
-                    background: 'blue',
-                    position: 'absolute',
-                    width: `calc(100% - ${left}px)`,
-                    height: '2px',
-                    left
-                  }}
-                ></div>
-              );
-            }}
-          />
+              onDrop={handleDrop}
+              sort={false}
+              insertDroppableFirst={false}
+              initialOpen
+              canDrop={(tree, { dragSource, dropTargetId }) => {
+                if (dragSource?.parent === dropTargetId) {
+                  return true;
+                }
+              }}
+              dropTargetOffset={10}
+            />
+          </TreeWrap>
         </DndProvider>
         <DndProvider backend={HTML5Backend}>
           {localElements.map((element, index) => {
@@ -530,7 +579,6 @@ const Container = styled.div`
 const Layers = styled.div`
   flex: 1;
   overflow: auto;
-  position: relative;
 `;
 
 const Title = styled.div`
@@ -538,4 +586,18 @@ const Title = styled.div`
   color: ${defaultTheme.colors.muted};
   font-size: 0.9em;
   font-weight: 500;
+`;
+
+const TreeWrap = styled.div`
+  position: relative;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    > li {
+      padding: 0;
+    }
+  }
 `;

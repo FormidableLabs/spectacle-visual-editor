@@ -19,6 +19,7 @@ import {
 } from '../../../slices/deck-slice';
 import {
   CONTAINER_ELEMENTS,
+  ALL_CONTAINER_ELEMENTS,
   ConstructedDeckElement
 } from '../../../types/deck-elements';
 
@@ -83,7 +84,7 @@ const convertTreeDataToSlide = (
   const slide: ConstructedDeckElement = { ...activeSlide, children: [] };
   const groupedByParent: { [key: string]: TreeNode[] } = treeData.reduce(
     (acc, curr) => {
-      const clonedAcc = { ...acc } as { [key: string]: any };
+      const clonedAcc = { ...acc } as { [key: string]: TreeNode[] };
       const { parent: parentId } = curr;
       if (!clonedAcc[parentId]) {
         clonedAcc[parentId] = [];
@@ -95,18 +96,22 @@ const convertTreeDataToSlide = (
   );
 
   const recursiveFindChildren = (parent: ConstructedDeckElement): void => {
-    const parentID = parent.id;
-    if (groupedByParent[parentID]) {
+    const { id: parentID, component } = parent;
+    if (ALL_CONTAINER_ELEMENTS.includes(component)) {
       parent.children = [];
-      groupedByParent[parentID].forEach((el) => {
-        const { element } = el?.data || {};
-        if (element) {
-          // Recursively find children
-          recursiveFindChildren(element);
-          // Attach to parent
-          (parent.children as ConstructedDeckElement[]).push(element);
-        }
-      });
+
+      if (groupedByParent[parentID]) {
+        parent.children = [];
+        groupedByParent[parentID].forEach((el) => {
+          const { element } = el?.data || {};
+          if (element) {
+            // Recursively find children
+            recursiveFindChildren(element);
+            // Attach to parent
+            (parent.children as ConstructedDeckElement[]).push(element);
+          }
+        });
+      }
     }
   };
 

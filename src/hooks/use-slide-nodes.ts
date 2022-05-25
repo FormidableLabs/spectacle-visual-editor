@@ -4,13 +4,18 @@ import {
   generateInternalSlideTree
 } from '../components';
 import { useSelector } from 'react-redux';
-import { activeSlideSelector, slidesSelector } from '../slices/deck-slice';
+import {
+  activeSlideSelector,
+  slidesSelector,
+  constructedSlideTemplateSelector
+} from '../slices/deck-slice';
 import { ConstructedDeckSlide } from '../types/deck-elements';
 import { GenerateOptions } from '../components/slide/slide-generator';
 
 export const useSlideNodes = () => {
   const slideJson = useSelector(slidesSelector);
   const activeSlideJson = useSelector(activeSlideSelector);
+  const slideTemplateJson = useSelector(constructedSlideTemplateSelector);
 
   const slideNodes = useMemo(
     () =>
@@ -30,5 +35,23 @@ export const useSlideNodes = () => {
     [activeSlideJson]
   );
 
-  return { slideNodes, activeSlideNode };
+  const templateNode = useMemo(
+    () =>
+      slideTemplateJson
+        ? generateInternalSlideTree(slideTemplateJson as GenerateOptions)
+        : [],
+    [slideTemplateJson]
+  );
+
+  const activeTemplateNode = useMemo(
+    () =>
+      slideTemplateJson
+        ? generateInternalEditableSlideTree(
+            slideTemplateJson as GenerateOptions
+          )
+        : [],
+    [slideTemplateJson]
+  );
+
+  return { slideNodes, activeSlideNode, templateNode, activeTemplateNode };
 };

@@ -11,7 +11,6 @@ export type SPECTACLE_ELEMENTS =
   | 'FlexBox'
   | 'Image'
   | 'Grid'
-  | 'CodePane'
   | 'Progress'
   | 'FullScreen'
   | 'Notes';
@@ -28,7 +27,6 @@ export const FREE_MOVING_ELEMENTS: SPECTACLE_ELEMENTS[] = [
   'FlexBox',
   'Image',
   'Grid',
-  'CodePane',
   'Progress',
   'FullScreen'
 ];
@@ -61,6 +59,15 @@ export type ConstructedDeckElement = Omit<
   parent?: string;
 };
 
-export type ConstructedDeckSlide = Omit<DeckSlide, 'children' | 'parent'> & {
+export type ConstructedDeckSlide = Omit<DeckSlide, 'children'> & {
   children: ConstructedDeckElement[];
+};
+
+export type DeckSlideTemplate = DeckSlide;
+
+export type ConstructedDeckSlideTemplate = Omit<
+  DeckSlideTemplate,
+  'component' | 'children'
+> & {
+  component: 'div';
 };

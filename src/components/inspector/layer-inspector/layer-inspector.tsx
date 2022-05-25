@@ -13,6 +13,8 @@ import { ElementCard, ElementCardDisplay } from './layers-element-card';
 import { useRootSelector } from '../../../store';
 import {
   activeSlideSelector,
+  constructedSlideTemplateSelector,
+  slideTemplateOpenSelector,
   selectedElementSelector,
   deckSlice,
   hoveredEditableElementIdSelector
@@ -152,7 +154,15 @@ const deconstructSlide = (slide: ConstructedDeckElement) => {
 
 export const LayerInspector: FC = () => {
   const dispatch = useDispatch();
-  const activeSlide = useRootSelector(activeSlideSelector);
+
+  const activeSlideJson = useRootSelector(activeSlideSelector);
+  const slideTemplateJson = useRootSelector(constructedSlideTemplateSelector);
+  const slideTemplateOpen = useSelector(slideTemplateOpenSelector);
+  const activeSlide = useMemo(
+    () => (slideTemplateOpen ? slideTemplateJson : activeSlideJson),
+    [activeSlideJson, slideTemplateJson, slideTemplateOpen]
+  );
+
   const selectedElement = useSelector(selectedElementSelector);
   const hoveredElementId = useSelector(hoveredEditableElementIdSelector);
 

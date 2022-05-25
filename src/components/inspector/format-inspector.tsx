@@ -7,7 +7,6 @@ import {
   isBoxElement,
   isImageElement,
   isMdElement,
-  isCodePaneElement,
   isGridElement,
   isProgressElement,
   isFullScreenElement
@@ -15,7 +14,6 @@ import {
 import { MdFormatControls } from './md-format-controls';
 import { ImageControls } from './image-controls';
 import { FlexParentControls } from './flex-parent-controls';
-import { CodePaneFormatControls } from './codepane-format-controls';
 import { GridFormatControls } from './grid-format-controls';
 import { ProgressFormatControls } from './progress-format-controls';
 import { FullScreenFormatControls } from './full-screen-format-controls';
@@ -46,8 +44,6 @@ export const FormatInspector = () => {
           return <MdFormatControls {...props} />;
         } else if (isImageElement(selectedElement)) {
           return <ImageControls {...props} />;
-        } else if (isCodePaneElement(selectedElement)) {
-          return <CodePaneFormatControls {...props} />;
         } else if (isProgressElement(selectedElement)) {
           return <ProgressFormatControls {...props} />;
         } else if (isFullScreenElement(selectedElement)) {

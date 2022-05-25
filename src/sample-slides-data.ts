@@ -1,5 +1,9 @@
 import { v4 } from 'uuid';
-import { DeckElement, DeckSlide } from './types/deck-elements';
+import {
+  DeckElement,
+  DeckSlide,
+  DeckSlideTemplate
+} from './types/deck-elements';
 
 const childId1 = v4();
 const childId2 = v4();
@@ -102,3 +106,10 @@ export const sampleElementsData: DeckElement[] = [
     parent: sampleSlidesData[3].id
   }
 ];
+
+export const sampleSlideTemplateData: DeckSlideTemplate = {
+  component: 'Slide',
+  id: v4(),
+  props: {},
+  children: []
+};

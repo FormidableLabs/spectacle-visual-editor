@@ -12,8 +12,16 @@ import {
   ResizablePanes,
   SavedDecks
 } from './components';
-import { sampleElementsData, sampleSlidesData } from './sample-slides-data';
-import { deckSlice, elementsEntitySelector } from './slices/deck-slice';
+import {
+  sampleElementsData,
+  sampleSlidesData,
+  sampleSlideTemplateData
+} from './sample-slides-data';
+import {
+  deckSlice,
+  elementsEntitySelector,
+  slideTemplateOpenSelector
+} from './slices/deck-slice';
 import {
   useEditorActions,
   useSlideNodes,
@@ -35,8 +43,17 @@ import {
 
 export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const dispatch = useDispatch();
-  const { activeSlideNode, slideNodes } = useSlideNodes();
-  const { handleCanvasMouseDown, handleSlideSelected } = useEditorActions();
+  const {
+    activeSlideNode,
+    slideNodes,
+    activeTemplateNode,
+    templateNode
+  } = useSlideNodes();
+  const {
+    handleCanvasMouseDown,
+    handleSlideSelected,
+    handleTemplateSelected
+  } = useEditorActions();
   const [loadedInitialDeck, setLoadedInitialDeck] = useState(false);
   const [loadedFontFamilies, setLoadedFontFamilies] = useState<Array<string>>(
     []
@@ -46,6 +63,7 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
   const slideScale = useSlideScale(canvasRef);
   const { scale } = useSelector(settingsSelector);
   const { savedDecks } = useSelector(editorSelector);
+  const slideTemplateOpen = useSelector(slideTemplateOpenSelector);
   const elements = useSelector(elementsEntitySelector);
 
   const [initialSize, onResize] = useLocallyStoredState(
@@ -77,11 +95,12 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
       deckToLoad = {
         id: v4(),
         title: 'Dummy Deck',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toJSON(),
+        updatedAt: new Date().toJSON(),
         theme: defaultTheme,
         slides: sampleSlidesData,
-        elements: sampleElementsData
+        elements: sampleElementsData,
+        slideTemplate: sampleSlideTemplateData
       };
     }
 
@@ -143,11 +162,17 @@ export const VisualEditor: React.FC<RouteComponentProps> = () => {
           ref={canvasRef}
           onMouseDown={handleCanvasMouseDown}
         >
-          <SlideViewer scale={slideScale}>{activeSlideNode}</SlideViewer>
+          <SlideViewer scale={slideScale}>
+            {slideTemplateOpen ? activeTemplateNode : activeSlideNode}
+          </SlideViewer>
         </EditorCanvas>
         <Inspector />
       </ResizablePanes>
-      <SlideTimeline onSlideClick={handleSlideSelected}>
+      <SlideTimeline
+        onSlideClick={handleSlideSelected}
+        template={templateNode}
+        onTemplateClick={handleTemplateSelected}
+      >
         {slideNodes}
       </SlideTimeline>
     </EditorBody>

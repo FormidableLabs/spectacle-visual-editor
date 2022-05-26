@@ -186,13 +186,15 @@ export const LayerInspector: FC = () => {
 
   const treeRoot = useMemo(() => activeSlide?.id || '', [activeSlide]);
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
+  const [renderCount, setRenderCount] = useState<number>(0);
 
   // Keep local children in sync with slide children
   useEffect(() => {
     if (activeSlide) {
       setTreeData(convertSlideToTreeData(activeSlide));
     }
-  }, [activeSlide]);
+    setRenderCount((curr) => curr + 1);
+  }, [activeSlide, setRenderCount]);
 
   const handleDrop = useCallback(
     (newTreeData: TreeNode[]) => {
@@ -287,6 +289,7 @@ export const LayerInspector: FC = () => {
         <DndProvider backend={MultiBackend} options={getBackendOptions()}>
           <TreeWrap>
             <Tree
+              key={renderCount} // arbitrary value to force rerenders otherwise initialOpen doesn't work
               tree={treeData}
               rootId={treeRoot}
               render={renderTreeNode}

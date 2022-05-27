@@ -7,7 +7,6 @@ import {
   $isRangeSelection,
   RangeSelection
 } from 'lexical';
-import { $wrapLeafNodesInElements } from '@lexical/selection';
 import {
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
@@ -37,6 +36,7 @@ import { ToolbarState } from './toolbar-state';
 import { ToolbarButton } from './toolbar-button';
 import { useVisualEditorContext } from '../visual-editor';
 import { useVisualEditorUpdate } from '../../../../hooks';
+import { $wrapLeafNodesInElements } from './wrap-leaf-nodes-in-elements';
 
 interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   css: CSSObject;

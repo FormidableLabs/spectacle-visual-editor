@@ -50,7 +50,7 @@
     "react-use": "^17.2.1",
     "redux-undo": "^1.0.1",
     "regenerator-runtime": "^0.13.7",
-    "spectacle": "^9.0.1",
+    "spectacle": "^9.1.1",
     "styled-components": "^4.3.2",
     "styled-system": "^5.1.5",
     "use-mousetrap": "^1.0.4",

@@ -1,8 +1,10 @@
-import { LexicalEditor, SELECTION_CHANGE_COMMAND } from 'lexical';
+import {
+  COMMAND_PRIORITY_LOW,
+  LexicalEditor,
+  SELECTION_CHANGE_COMMAND
+} from 'lexical';
 import { mergeRegister } from '@lexical/utils';
 import { useEffect } from 'react';
-
-const LowPriority = 1;
 
 /**
  * Implements a callback parameter that is registered when a LexicalEditor is updated
@@ -24,7 +26,7 @@ export const useVisualEditorUpdate = (
           callback(false);
           return false;
         },
-        LowPriority
+        COMMAND_PRIORITY_LOW
       )
     );
   }, [editor, callback]);

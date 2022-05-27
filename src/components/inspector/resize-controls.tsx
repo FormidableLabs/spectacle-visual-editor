@@ -34,6 +34,7 @@ export const ResizeControls: React.FC<ElementControlsProps> = ({
         let selectedElementWidth;
         let selectedElementHeight;
 
+        // TODO: requires timeline slides, refactor to use refs to element node
         const selectedElementNode = document.getElementById(
           selectedElement?.id || ''
         );

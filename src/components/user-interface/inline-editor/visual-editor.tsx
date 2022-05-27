@@ -22,6 +22,7 @@ import {
   LexicalThemeWrapper,
   ToolbarPlugin,
   StylePlugin,
+  CodeHighlightPlugin,
   LineBreakPlugin,
   $sanitizeLineBreaks,
   $consolidateParagraphNodes
@@ -116,6 +117,7 @@ export const VisualEditor = () => {
                     <ListPlugin />
                     <StylePlugin />
                     <LineBreakPlugin />
+                    <CodeHighlightPlugin />
                     <LexicalOnChangePlugin onChange={onEditorChange} />
                     <LexicalMarkdownShortcutPlugin
                       transformers={TRANSFORMERS}

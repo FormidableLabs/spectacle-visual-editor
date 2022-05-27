@@ -10,7 +10,6 @@ import {
   OrderedList,
   UnorderedList,
   Markdown,
-  CodePane,
   Notes
 } from 'spectacle';
 import { Slide as InternalSlide } from './slide';
@@ -31,7 +30,6 @@ export const SPECTACLE_INTERNAL_OBJECT_MAP = {
   OrderedList,
   UnorderedList,
   Markdown,
-  CodePane,
   Progress,
   FullScreen,
   Notes

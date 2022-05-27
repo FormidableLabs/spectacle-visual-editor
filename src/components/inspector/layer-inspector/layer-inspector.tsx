@@ -4,6 +4,8 @@ import { cloneDeep } from 'lodash-es';
 import { ConstructedDeckElement } from '../../../types/deck-elements';
 import {
   activeSlideSelector,
+  constructedSlideTemplateSelector,
+  slideTemplateOpenSelector,
   selectedElementSelector,
   deckSlice,
   hoveredEditableElementIdSelector
@@ -20,11 +22,14 @@ import { defaultTheme } from 'evergreen-ui';
 import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
 
 export const LayerInspector: FC = () => {
-  const activeSlide = useRootSelector(activeSlideSelector);
-  const activeSlideElements = useMemo(
-    () => (activeSlide?.children || []).filter(isDeckElement),
-    [activeSlide]
-  );
+  const activeSlideJson = useRootSelector(activeSlideSelector);
+  const slideTemplateJson = useRootSelector(constructedSlideTemplateSelector);
+  const slideTemplateOpen = useSelector(slideTemplateOpenSelector);
+  const activeSlideElements = useMemo(() => {
+    const active = slideTemplateOpen ? slideTemplateJson : activeSlideJson;
+    return (active?.children || []).filter(isDeckElement);
+  }, [activeSlideJson, slideTemplateJson, slideTemplateOpen]);
+
   const [localElements, setLocalElements] = useState(activeSlideElements);
   const selectedElement = useSelector(selectedElementSelector);
   const hoveredElementId = useSelector(hoveredEditableElementIdSelector);

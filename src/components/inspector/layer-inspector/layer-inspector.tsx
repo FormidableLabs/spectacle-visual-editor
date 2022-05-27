@@ -42,8 +42,12 @@ type OptionProps = {
 
 const isString = (val: any) => typeof val === 'string' || val instanceof String;
 
-const convertSlideToTreeData = (slide: ConstructedDeckElement) => {
+const convertSlideToTreeData = (slide: ConstructedDeckElement | null) => {
   const treeData: TreeNode[] = [];
+  if (!slide) {
+    return treeData;
+  }
+
   const { children, id } = slide;
   if (!(children && children.length) || isString(children)) {
     // quick return if no children or children is a string
@@ -185,21 +189,18 @@ export const LayerInspector: FC = () => {
   );
 
   const treeRoot = useMemo(() => activeSlide?.id || '', [activeSlide]);
-  const [treeData, setTreeData] = useState<TreeNode[]>([]);
+  const treeData = useMemo(() => convertSlideToTreeData(activeSlide), [
+    activeSlide
+  ]);
   const [renderCount, setRenderCount] = useState<number>(0);
 
-  // Keep local children in sync with slide children
   useEffect(() => {
-    if (activeSlide) {
-      setTreeData(convertSlideToTreeData(activeSlide));
-    }
     setRenderCount((curr) => curr + 1);
   }, [activeSlide, setRenderCount]);
 
   const handleDrop = useCallback(
     (newTreeData: TreeNode[]) => {
       if (activeSlide) {
-        setTreeData(newTreeData);
         const slideData = convertTreeDataToSlide(newTreeData, activeSlide);
         const { activeSlideChildren, elements } = deconstructSlide(slideData);
         dispatch(

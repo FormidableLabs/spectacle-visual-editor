@@ -14,6 +14,7 @@ import {
   $createLineBreakNode
 } from 'lexical';
 import { mergeRegister } from '@lexical/utils';
+import { $isCodeNode } from '@lexical/code';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useEffect } from 'react';
 
@@ -94,7 +95,8 @@ export const $consolidateParagraphNodes = () => {
 export const $sanitizeLineBreaks = () => {
   const rootChildren = $getRoot().getChildren();
   const nonParagraphElementNodes = rootChildren.filter(
-    (node) => $isElementNode(node) && !$isParagraphNode(node)
+    (node) =>
+      $isElementNode(node) && !$isParagraphNode(node) && !$isCodeNode(node)
   ) as ElementNode[];
 
   nonParagraphElementNodes.forEach((node) => {

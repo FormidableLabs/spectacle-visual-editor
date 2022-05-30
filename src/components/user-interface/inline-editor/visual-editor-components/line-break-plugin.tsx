@@ -81,6 +81,7 @@ export const $consolidateParagraphNodes = () => {
       paragraph.forEach((node) => {
         const parentNode = paragraph[0].getParentOrThrow();
         const p = node.getParentOrThrow();
+        if (!p || !parentNode) return;
         parentNode.append(node);
         if (p !== parentNode) p.remove();
       });

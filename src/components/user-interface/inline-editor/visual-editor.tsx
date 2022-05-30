@@ -1,4 +1,4 @@
-import React, { useMemo, createContext, useContext } from 'react';
+import React, { useMemo, createContext, useContext, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { EditorState, LexicalEditor } from 'lexical';
 import LexicalComposer from '@lexical/react/LexicalComposer';
@@ -12,17 +12,20 @@ import { ListItemNode, ListNode } from '@lexical/list';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import {
   $convertFromMarkdownString,
-  $convertToMarkdownString,
-  TRANSFORMERS
+  $convertToMarkdownString
 } from '@lexical/markdown';
 import { Positioner } from 'evergreen-ui';
 import { useEditElement } from '../../../hooks/use-edit-element';
 import { selectedElementSelector } from '../../../slices/deck-slice';
 import {
+  TRANSFORMERS,
   LexicalThemeWrapper,
   ToolbarPlugin,
   StylePlugin,
-  CodeHighlightPlugin
+  CodeHighlightPlugin,
+  LineBreakPlugin,
+  $sanitizeLineBreaks,
+  $consolidateParagraphNodes
 } from './visual-editor-components';
 
 interface IVisualEditorContext {
@@ -52,23 +55,32 @@ export const VisualEditor = () => {
     () => selectedElement?.props?.componentProps || {},
     [selectedElement?.props?.componentProps]
   );
+  const selectedElementMarkdown = useMemo(
+    () => String(selectedElement?.children),
+    [selectedElement?.children]
+  );
 
-  const initialEditorState = () => {
-    $convertFromMarkdownString(String(selectedElement?.children), TRANSFORMERS);
-  };
+  const initialEditorState = useCallback(() => {
+    $convertFromMarkdownString(selectedElementMarkdown, TRANSFORMERS);
+  }, [selectedElementMarkdown]);
 
   const handleElementChanged = useEditElement();
 
-  const onEditorChange = (state: EditorState, editor: LexicalEditor) => {
+  const onEditorChange = (_: EditorState, editor: LexicalEditor) => {
     editor.update(() => {
       const markdown = $convertToMarkdownString(TRANSFORMERS);
       handleElementChanged({ children: markdown });
+      $sanitizeLineBreaks();
+      $consolidateParagraphNodes();
     });
   };
 
   return (
     <VisualEditorContext.Provider
-      value={{ selectedElementComponentProps, handleElementChanged }}
+      value={{
+        selectedElementComponentProps,
+        handleElementChanged
+      }}
     >
       <LexicalThemeWrapper>
         {(theme) =>
@@ -104,6 +116,7 @@ export const VisualEditor = () => {
                     />
                     <ListPlugin />
                     <StylePlugin />
+                    <LineBreakPlugin />
                     <CodeHighlightPlugin />
                     <LexicalOnChangePlugin onChange={onEditorChange} />
                     <LexicalMarkdownShortcutPlugin

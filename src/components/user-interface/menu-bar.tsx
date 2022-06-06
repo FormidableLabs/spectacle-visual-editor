@@ -50,7 +50,6 @@ import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 import { editorSlice } from '../../slices/editor-slice';
 import { useRootSelector } from '../../store';
 import { Tooltip } from '../component-adapter';
-import { AnyAction } from '@reduxjs/toolkit';
 
 const MenuBarContainer = styled.div`
   width: 100%;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { PropsWithChildren, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
 /**
@@ -23,7 +23,7 @@ interface Props extends ElementLocation {
   orientation: 'horizontal' | 'vertical';
 }
 
-export const DragWrapper: React.FC<Props> = ({
+export const DragWrapper = ({
   children,
   index,
   parentIndex,
@@ -31,7 +31,7 @@ export const DragWrapper: React.FC<Props> = ({
   onDrag,
   onDrop,
   orientation
-}) => {
+}: PropsWithChildren<Props>) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
   const [{ handlerId }, drop] = useDrop({

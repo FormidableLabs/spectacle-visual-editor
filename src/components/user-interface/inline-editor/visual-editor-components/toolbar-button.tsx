@@ -3,7 +3,7 @@ import { IconButton, Tooltip } from 'evergreen-ui';
 
 interface Props {
   tooltip: string;
-  icon: React.ElementType | JSX.Element;
+  icon?: React.ReactElement;
   onClick: () => void;
   isSelected: boolean;
 }

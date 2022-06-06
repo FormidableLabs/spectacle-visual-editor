@@ -2,7 +2,6 @@ import {
   createEntityAdapter,
   createSelector,
   createSlice,
-  Dispatch,
   EntityState,
   PayloadAction
 } from '@reduxjs/toolkit';

@@ -66,7 +66,7 @@ export const ImageControls: React.FC<ElementControlsProps> = ({
   }, [dialogImageRef, isCropModalOpen]);
 
   const handleValueChanged = React.useCallback(
-    (propName: string, value) => {
+    (propName: string, value: unknown) => {
       editableElementChanged({ [propName]: value });
     },
     [editableElementChanged]

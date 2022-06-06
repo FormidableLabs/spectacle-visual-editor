@@ -8,7 +8,6 @@ import {
   Pane,
   Dialog,
   toaster,
-  Tooltip,
   IconButton,
   PlusIcon,
   UndoIcon,
@@ -50,6 +49,8 @@ import { useMousetrap } from 'spectacle';
 import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 import { editorSlice } from '../../slices/editor-slice';
 import { useRootSelector } from '../../store';
+import { Tooltip } from '../component-adapter';
+import { AnyAction } from '@reduxjs/toolkit';
 
 const MenuBarContainer = styled.div`
   width: 100%;
@@ -175,7 +176,7 @@ export const MenuBar = () => {
             fill={defaultTheme.colors.selected}
             icon={DocumentIcon}
             appearance="minimal"
-            onClick={() => dispatch(createNewDeck())}
+            onClick={() => dispatch(dispatch<any>(createNewDeck()))}
           />
         </Tooltip>
         <Tooltip content="Save Deck ⌘S">

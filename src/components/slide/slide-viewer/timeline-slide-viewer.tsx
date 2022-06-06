@@ -12,19 +12,13 @@ import {
   slideTemplateOpenSelector
 } from '../../../slices/deck-slice';
 import { SlideViewerWrapper } from './slide-viewer-wrapper';
-import * as ReactDND from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DragWrapper, ElementLocation } from '../../helpers/drag-wrapper';
 import styled, { css } from 'styled-components';
-import {
-  TrashIcon,
-  IconButton,
-  PlusIcon,
-  Tooltip,
-  defaultTheme
-} from 'evergreen-ui';
+import { TrashIcon, IconButton, PlusIcon, defaultTheme } from 'evergreen-ui';
 import { useRootSelector } from '../../../store';
 import { moveArrayItem } from '../../../util/move-array-item';
+import { DndProvider, Tooltip } from '../../component-adapter';
 
 interface Props {
   scale: number;
@@ -32,13 +26,6 @@ interface Props {
   template: React.ReactNode;
   onTemplateClick(): void;
 }
-
-/**
- * We need to retype the import as React.FC no longer includes children
- */
-const DndProvider = ReactDND.DndProvider as React.FC<
-  PropsWithChildren<ReactDND.DndProviderProps<unknown, unknown>>
->;
 
 /**
  * Slide Viewer for timeline

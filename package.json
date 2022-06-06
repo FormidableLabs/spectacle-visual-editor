@@ -32,7 +32,7 @@
     "chrome-aws-lambda": "~10.1.0",
     "colord": "^1.7.0",
     "cropperjs": "^1.5.11",
-    "evergreen-ui": "^6.9.10",
+    "evergreen-ui": "^6.9.11",
     "lexical": "^0.2.9",
     "lodash-es": "^4.17.21",
     "process": "^0.11.10",

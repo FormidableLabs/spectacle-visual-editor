@@ -20,6 +20,6 @@ export const SideSheet = _SideSheet as React.FC<
   Omit<SideSheetProps, 'children'> & {
     children:
       | React.ReactNode
-      | ((close: SlideSheetCallbackOptions) => JSX.Element);
+      | ((options: SlideSheetCallbackOptions) => JSX.Element);
   }
 >;

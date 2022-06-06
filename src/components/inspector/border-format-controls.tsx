@@ -38,7 +38,7 @@ export const BorderFormatControls: React.FC<ElementControlsProps> = ({
   }, [selectedElement]);
 
   const handleValueChanged = useCallback(
-    (propName: string, value) => {
+    (propName: string, value: unknown) => {
       editableElementChanged({ [propName]: value });
     },
     [editableElementChanged]

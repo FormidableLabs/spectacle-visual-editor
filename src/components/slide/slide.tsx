@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import styled, { css, InterpolationValue } from 'styled-components';
 import {
   background,
@@ -70,15 +70,17 @@ interface Props {
   padding?: number | string;
 }
 
-export const Slide: React.FC<Props> = ({
+export const Slide = ({
   id,
   children,
   scale,
   backgroundColor,
   textColor,
   padding,
-  slideProps = {}
-}) => {
+  slideProps = {
+    containerStyle: ''
+  }
+}: PropsWithChildren<Props>) => {
   const { containerStyle, handleKeyPress, onSlideClick, ...rest } = slideProps;
 
   return (

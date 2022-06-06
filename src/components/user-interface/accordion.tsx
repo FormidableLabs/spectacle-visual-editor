@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { PropsWithChildren, useState } from 'react';
 import styled from 'styled-components';
 import {
   ChevronDownIcon,
@@ -37,7 +37,7 @@ interface Props {
   label: string;
 }
 
-export const Accordion: React.FC<Props> = ({ children, label }) => {
+export const Accordion = ({ children, label }: PropsWithChildren<Props>) => {
   const [open, setIsOpen] = useState(true);
   return (
     <AccordionContainer>

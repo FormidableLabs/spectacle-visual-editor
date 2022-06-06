@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { SlideViewerWrapper } from './slide-viewer-wrapper';
 
 interface Props {
@@ -10,11 +10,11 @@ interface Props {
  * SlideViewer is an un-styled wrapper that provides the context data
  * required for rendering slide components.
  */
-export const SlideViewer: React.FC<Props> = ({
+export const SlideViewer = ({
   children,
   scale,
   slideProps
-}) => {
+}: PropsWithChildren<Props>) => {
   // Flatten out slides
   const slides = React.useMemo(() => {
     const slideEls = (children instanceof Array

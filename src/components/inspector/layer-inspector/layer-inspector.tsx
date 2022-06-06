@@ -10,7 +10,6 @@ import {
   deckSlice,
   hoveredEditableElementIdSelector
 } from '../../../slices/deck-slice';
-import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -20,6 +19,7 @@ import { ElementCard } from './layers-element-card';
 import { moveArrayItem } from '../../../util/move-array-item';
 import { defaultTheme } from 'evergreen-ui';
 import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
+import { DndProvider } from '../../component-adapter';
 
 export const LayerInspector: FC = () => {
   const activeSlideJson = useRootSelector(activeSlideSelector);
@@ -222,7 +222,7 @@ export const LayerInspector: FC = () => {
   );
 
   const hoverElement = useCallback(
-    (id) => {
+    (id: string | null) => {
       dispatch(deckSlice.actions.editableElementHovered(id));
     },
     [dispatch]
@@ -233,13 +233,13 @@ export const LayerInspector: FC = () => {
   }, [dispatch]);
 
   const selectElement = useCallback(
-    (id) => {
+    (id: string | null) => {
       dispatch(deckSlice.actions.editableElementSelected(id));
     },
     [dispatch]
   );
 
-  const handleExpand = useCallback((id) => {
+  const handleExpand = useCallback((id: string) => {
     setCollapsedLayers((currentCollapsedLayers) => {
       if (currentCollapsedLayers.includes(id)) {
         return currentCollapsedLayers.filter((layerId) => layerId !== id);

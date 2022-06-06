@@ -7,7 +7,12 @@ import React, {
   MouseEvent
 } from 'react';
 import styled from 'styled-components';
-import Moveable, { OnDrag, OnDragEnd, OnResizeEnd } from 'react-moveable';
+import Moveable, {
+  OnDrag,
+  OnDragEnd,
+  OnResize,
+  OnResizeEnd
+} from 'react-moveable';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   deckSlice,
@@ -60,7 +65,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const imgSrc = children?.props?.src;
   const [elLoaded, setElLoaded] = React.useState(!isImgElement);
 
-  const handleOnResize = useCallback((event) => {
+  const handleOnResize = useCallback((event: OnResize) => {
     //if resizing N, NW, NE, W, or SW
     if (
       event.direction.some((e: number) => {
@@ -203,7 +208,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   }, [imgSrc]);
 
   const hoverElement = useCallback(
-    (id) => (e: MouseEvent<HTMLDivElement>) => {
+    (id: string) => (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
       dispatch(deckSlice.actions.editableElementHovered(id));
     },

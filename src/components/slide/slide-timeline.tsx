@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { PropsWithChildren, useCallback } from 'react';
 import { css } from 'styled-components';
 import { TimelineSlideViewer } from './slide-viewer/timeline-slide-viewer';
 
@@ -17,12 +17,12 @@ interface Props {
 /**
  * SlideTimeline is a vertical strip used to scroll and view all the slides in a deck.
  */
-export const SlideTimeline: React.FC<Props> = ({
+export const SlideTimeline = ({
   children,
   onSlideClick,
   template,
   onTemplateClick
-}) => {
+}: PropsWithChildren<Props>) => {
   const handleKeyPress = useCallback(
     (key: string, id: string) => {
       if (key === 'Enter') {

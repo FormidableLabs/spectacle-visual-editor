@@ -8,7 +8,6 @@ import {
   Pane,
   Dialog,
   toaster,
-  Tooltip,
   IconButton,
   PlusIcon,
   UndoIcon,
@@ -36,8 +35,7 @@ import {
   hasFutureSelector,
   selectedElementSelector,
   slidesSelector,
-  hasPasteElementSelector,
-  createNewDeck
+  hasPasteElementSelector
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
@@ -50,6 +48,7 @@ import { useMousetrap } from 'spectacle';
 import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 import { editorSlice } from '../../slices/editor-slice';
 import { useRootSelector } from '../../store';
+import { Tooltip } from '../component-adapter';
 
 const MenuBarContainer = styled.div`
   width: 100%;
@@ -175,7 +174,10 @@ export const MenuBar = () => {
             fill={defaultTheme.colors.selected}
             icon={DocumentIcon}
             appearance="minimal"
-            onClick={() => dispatch(createNewDeck())}
+            onClick={() => {
+              dispatch(deckSlice.actions.resetDeck());
+              dispatch(deckSlice.actions.newSlideAdded());
+            }}
           />
         </Tooltip>
         <Tooltip content="Save Deck ⌘S">

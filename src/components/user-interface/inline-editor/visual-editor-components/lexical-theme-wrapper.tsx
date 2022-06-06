@@ -46,8 +46,8 @@ const styles: { [key: string]: React.FC } = {
 /**
  * Retrieves a styled-component className
  */
-const getClassName = (component: StyledComponent<any, any>) =>
-  (component as any).componentStyle?.lastClassName;
+const getClassName = (component: unknown) =>
+  (component as StyledComponent<any, any>).componentStyle?.lastClassName;
 
 export const LexicalThemeWrapper = ({
   children

@@ -1,24 +1,24 @@
 import { useDispatch } from 'react-redux';
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  PropsWithChildren
+} from 'react';
 import {
   activeSlideIdSelector,
   deckSlice,
   slideTemplateOpenSelector
 } from '../../../slices/deck-slice';
 import { SlideViewerWrapper } from './slide-viewer-wrapper';
-import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { DragWrapper } from '../../helpers/drag-wrapper';
+import { DragWrapper, ElementLocation } from '../../helpers/drag-wrapper';
 import styled, { css } from 'styled-components';
-import {
-  TrashIcon,
-  IconButton,
-  PlusIcon,
-  Tooltip,
-  defaultTheme
-} from 'evergreen-ui';
+import { TrashIcon, IconButton, PlusIcon, defaultTheme } from 'evergreen-ui';
 import { useRootSelector } from '../../../store';
 import { moveArrayItem } from '../../../util/move-array-item';
+import { DndProvider, Tooltip } from '../../component-adapter';
 
 interface Props {
   scale: number;
@@ -30,13 +30,13 @@ interface Props {
 /**
  * Slide Viewer for timeline
  */
-export const TimelineSlideViewer: React.FC<Props> = ({
+export const TimelineSlideViewer = ({
   children,
   scale,
   slideProps,
   template,
   onTemplateClick
-}) => {
+}: PropsWithChildren<Props>) => {
   const activeSlideId = useRootSelector(activeSlideIdSelector);
   const slideTemplateOpen = useRootSelector(slideTemplateOpenSelector);
   const dispatch = useDispatch();
@@ -109,7 +109,10 @@ export const TimelineSlideViewer: React.FC<Props> = ({
 
   // Move a local item as its dragged.
   const moveItem = React.useCallback(
-    ({ index: dragIndex }, { index: hoverIndex }) => {
+    (
+      { index: dragIndex }: ElementLocation,
+      { index: hoverIndex }: ElementLocation
+    ) => {
       setLocalSlides((items) => moveArrayItem(items, dragIndex, hoverIndex));
     },
     []

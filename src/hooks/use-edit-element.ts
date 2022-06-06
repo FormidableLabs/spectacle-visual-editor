@@ -6,7 +6,8 @@ export const useEditElement = () => {
   const dispatch = useDispatch();
 
   const handleElementChanged = useCallback(
-    (sender) => dispatch(deckSlice.actions.editableElementChanged(sender)),
+    (sender: Record<string, unknown>) =>
+      dispatch(deckSlice.actions.editableElementChanged(sender)),
     [dispatch]
   );
 

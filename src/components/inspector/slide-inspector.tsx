@@ -26,7 +26,7 @@ export const SlideInspector = () => {
   const slideTemplateOpen = useSelector(slideTemplateOpenSelector);
 
   const handleElementChanged = useCallback(
-    (value) =>
+    (value: string) =>
       dispatch(deckSlice.actions.addOrEditNotesToActiveSlide({ value })),
     [dispatch]
   );

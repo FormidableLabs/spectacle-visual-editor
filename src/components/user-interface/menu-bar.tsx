@@ -35,8 +35,7 @@ import {
   hasFutureSelector,
   selectedElementSelector,
   slidesSelector,
-  hasPasteElementSelector,
-  createNewDeck
+  hasPasteElementSelector
 } from '../../slices/deck-slice';
 import { settingsSelector, settingsSlice } from '../../slices/settings-slice';
 import { usePreviewWindow, useToggle } from '../../hooks';
@@ -175,7 +174,10 @@ export const MenuBar = () => {
             fill={defaultTheme.colors.selected}
             icon={DocumentIcon}
             appearance="minimal"
-            onClick={() => dispatch(dispatch<any>(createNewDeck()))}
+            onClick={() => {
+              dispatch(deckSlice.actions.resetDeck());
+              dispatch(deckSlice.actions.newSlideAdded());
+            }}
           />
         </Tooltip>
         <Tooltip content="Save Deck ⌘S">

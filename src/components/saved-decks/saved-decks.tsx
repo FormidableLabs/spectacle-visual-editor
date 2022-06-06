@@ -2,7 +2,7 @@ import React from 'react';
 import { Pane, Heading, Paragraph } from 'evergreen-ui';
 import { useDispatch, useSelector } from 'react-redux';
 import { editorSelector, editorSlice } from '../../slices/editor-slice';
-import { deckSlice, loadSavedDeck } from '../../slices/deck-slice';
+import { deckSlice } from '../../slices/deck-slice';
 import DeckCard from './deck-card';
 import { SideSheet } from '../component-adapter';
 
@@ -46,7 +46,8 @@ const SavedDecks = () => {
                     key={deck.id}
                     {...deck}
                     loadDeck={() => {
-                      dispatch(dispatch<any>(loadSavedDeck(deck)));
+                      dispatch(deckSlice.actions.resetDeck());
+                      dispatch(deckSlice.actions.loadDeck(deck));
                       close();
                     }}
                     deleteDeck={() => {

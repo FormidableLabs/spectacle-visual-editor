@@ -7,18 +7,16 @@ export const useEditorActions = () => {
 
   const handleCanvasMouseDown = useCallback(
     (event: MouseEvent) => {
-      if ((<HTMLElement>event.target).classList.contains('moveable-control')) {
+      if (event.currentTarget.classList.contains('moveable-control')) {
         return;
-      } else if (!(<HTMLElement>event.target).id) {
+      } else if (!event.currentTarget.id) {
         dispatch(deckSlice.actions.editableElementSelected(null));
         return;
       }
       event.preventDefault();
       event.stopPropagation();
       dispatch(
-        deckSlice.actions.editableElementSelected(
-          (<HTMLElement>event?.target).id
-        )
+        deckSlice.actions.editableElementSelected(event.currentTarget.id)
       );
     },
     [dispatch]

@@ -82,17 +82,6 @@ const initialState: DeckState = {
   isSaved: true
 };
 
-export const createNewDeck = () => (dispatch: Dispatch) => {
-  dispatch(deckSlice.actions.resetDeck());
-  // Ensure is at least one slide
-  dispatch(deckSlice.actions.newSlideAdded());
-};
-
-export const loadSavedDeck = (deck: Deck) => (dispatch: Dispatch) => {
-  dispatch(deckSlice.actions.resetDeck());
-  dispatch(deckSlice.actions.loadDeck(deck));
-};
-
 export const deckSlice = createSlice({
   name: 'deck',
   initialState,

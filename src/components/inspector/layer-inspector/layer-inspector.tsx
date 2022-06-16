@@ -155,16 +155,6 @@ const deconstructSlide = (slide: ConstructedDeckElement) => {
 
   return { activeSlideChildren, elements };
 };
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { isDeckElement } from '../../../util/is-deck-element';
-import { LayerDragWrapper, Layer } from '../../helpers/layer-drag-wrapper';
-import { ElementCard } from './layers-element-card';
-import { moveArrayItem } from '../../../util/move-array-item';
-import { defaultTheme } from 'evergreen-ui';
-import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
-import { DndProvider } from '../../component-adapter';
 
 export const LayerInspector: FC = () => {
   const dispatch = useDispatch();
@@ -297,6 +287,7 @@ export const LayerInspector: FC = () => {
     <Container>
       <Title>Layers</Title>
       <Layers>
+        {/* @ts-ignore */}
         <DndProvider backend={MultiBackend} options={getBackendOptions()}>
           <TreeWrap>
             <Tree

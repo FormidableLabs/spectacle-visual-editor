@@ -52,7 +52,7 @@ export interface GenerateOptions {
  * Returns a curried function for generating a slide tree.
  */
 export const generateSlideTreeFromMap = (
-  map: Record<string, React.ReactNode>,
+  map: Record<string, unknown>,
   editable = false
 ) => {
   /**

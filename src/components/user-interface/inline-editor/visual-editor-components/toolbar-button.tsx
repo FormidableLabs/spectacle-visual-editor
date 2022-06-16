@@ -1,9 +1,10 @@
 import React from 'react';
-import { IconButton, Tooltip } from 'evergreen-ui';
+import { IconButton, IconComponent } from 'evergreen-ui';
+import { Tooltip } from '../../../component-adapter';
 
 interface Props {
   tooltip: string;
-  icon: React.ElementType | JSX.Element;
+  icon?: React.ReactElement | IconComponent;
   onClick: () => void;
   isSelected: boolean;
 }

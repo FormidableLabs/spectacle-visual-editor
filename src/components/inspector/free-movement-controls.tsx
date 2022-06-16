@@ -5,7 +5,6 @@ import {
   Pane,
   Group,
   TextInputField,
-  Tooltip,
   Button
 } from 'evergreen-ui';
 import React, {
@@ -25,6 +24,7 @@ import { themeSelector } from '../../slices/deck-slice';
 import { useRootSelector } from '../../store';
 import { isValidCSSSize } from '../../util/is-valid-css-size';
 import { valueWithCSSUnits } from '../../util/value-with-css-units';
+import { Tooltip } from '../component-adapter';
 import { ElementControlsProps } from './element-controls-props';
 
 export const FreeMovementControls: React.FC<ElementControlsProps> = ({

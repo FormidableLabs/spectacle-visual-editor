@@ -1,10 +1,10 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getSelection, $isRangeSelection, ElementFormatType } from 'lexical';
+import { getStyleObjectFromCSS } from '@lexical/selection';
 import { useCallback } from 'react';
 import { css } from 'styled-components';
 import { useVisualEditorContext } from '../visual-editor';
 import { useVisualEditorUpdate } from '../../../../hooks';
-import { getStyleObjectFromString } from '../../../../util/get-style-object-from-string';
 
 /**
  * StylePlugin is a lexical visual editor plugin that applies DeckElement componentProps to rich text elements
@@ -30,7 +30,7 @@ export const StylePlugin = () => {
           if (elementDOM !== null) {
             const componentProps = selectedElementComponentProps;
             const props = {
-              ...getStyleObjectFromString(elementDOM.getAttribute('style')),
+              ...getStyleObjectFromCSS(elementDOM.getAttribute('style') ?? ''),
               ...componentProps
             };
             const style = css(props).join(' ');

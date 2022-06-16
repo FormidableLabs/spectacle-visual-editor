@@ -155,6 +155,16 @@ const deconstructSlide = (slide: ConstructedDeckElement) => {
 
   return { activeSlideChildren, elements };
 };
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
+import { isDeckElement } from '../../../util/is-deck-element';
+import { LayerDragWrapper, Layer } from '../../helpers/layer-drag-wrapper';
+import { ElementCard } from './layers-element-card';
+import { moveArrayItem } from '../../../util/move-array-item';
+import { defaultTheme } from 'evergreen-ui';
+import { CONTAINER_ELEMENTS } from '../../../types/deck-elements';
+import { DndProvider } from '../../component-adapter';
 
 export const LayerInspector: FC = () => {
   const dispatch = useDispatch();
@@ -171,7 +181,7 @@ export const LayerInspector: FC = () => {
   const hoveredElementId = useSelector(hoveredEditableElementIdSelector);
 
   const hoverElement = useCallback(
-    (id) => {
+    (id: string | null) => {
       dispatch(deckSlice.actions.editableElementHovered(id));
     },
     [dispatch]
@@ -182,7 +192,7 @@ export const LayerInspector: FC = () => {
   }, [dispatch]);
 
   const selectElement = useCallback(
-    (id) => {
+    (id: string | null) => {
       dispatch(deckSlice.actions.editableElementSelected(id));
     },
     [dispatch]

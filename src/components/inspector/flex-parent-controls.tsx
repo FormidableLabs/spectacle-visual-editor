@@ -55,7 +55,8 @@ export const FlexParentControls: React.FC<ElementControlsProps> = ({
   };
 
   const handleValueChanged = useCallback(
-    (propName: string, value) => editableElementChanged({ [propName]: value }),
+    (propName: string, value: unknown) =>
+      editableElementChanged({ [propName]: value }),
     [editableElementChanged]
   );
 

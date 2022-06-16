@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { PropsWithChildren, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
 export interface Layer {
@@ -22,7 +22,7 @@ interface Props extends Layer {
   isContainerElement: boolean;
 }
 
-export const LayerDragWrapper: React.FC<Props> = ({
+export const LayerDragWrapper = ({
   children,
   index,
   id,
@@ -32,7 +32,7 @@ export const LayerDragWrapper: React.FC<Props> = ({
   onDragInside,
   onDragOutside,
   isContainerElement
-}) => {
+}: PropsWithChildren<Props>) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
   const [{ handlerId }, drop] = useDrop({

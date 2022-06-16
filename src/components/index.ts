@@ -46,3 +46,8 @@ export { ResizablePanes } from './resizable-panes';
  * Saved Decks
  */
 export { SavedDecks } from './saved-decks';
+
+/**
+ * Component Adapter for React.FC components for use in React 18
+ */
+export { Tooltip, DndProvider } from './component-adapter';

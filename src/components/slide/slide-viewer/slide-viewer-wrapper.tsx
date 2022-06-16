@@ -6,15 +6,15 @@ import {
   themeSelector
 } from '../../../slices/deck-slice';
 import { ThemeProvider } from 'styled-components';
-import React, { useMemo } from 'react';
+import React, { PropsWithChildren, useMemo } from 'react';
 
 /**
  * Wrapper for SlideViewers
  */
-export const SlideViewerWrapper: React.FC<{ slideIndex?: number }> = ({
+export const SlideViewerWrapper = ({
   slideIndex,
   children
-}) => {
+}: PropsWithChildren<{ slideIndex?: number }>) => {
   const theme = useSelector(themeSelector);
   const slides = useSelector(slidesSelector);
   const activeSlide = useSelector(activeSlideSelector);

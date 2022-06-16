@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { PropsWithChildren, useState } from 'react';
 import { Button, Group, Positioner } from 'evergreen-ui';
 import styled, { CSSObject } from 'styled-components';
 import { MarkdownEditor } from './markdown-editor';
@@ -13,7 +13,7 @@ const Toolbar = styled.div<{ css: CSSObject }>`
 /*
  * This component is used for inline rich text and markdown editing.
  */
-export const InlineEditor: React.FC = () => {
+export const InlineEditor: React.FC<PropsWithChildren<{}>> = () => {
   const [editorPreference, setEditorPreference] = useState<EditorTypes>(
     'visual'
   );

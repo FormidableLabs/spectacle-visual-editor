@@ -22,6 +22,7 @@
   "author": "Carlos Kelly",
   "license": "MIT",
   "dependencies": {
+    "@minoru/react-dnd-treeview": "^2.0.0",
     "@lexical/react": "^0.2.9",
     "@netlify/functions": "^0.7.2",
     "@reach/router": "^1.3.4",

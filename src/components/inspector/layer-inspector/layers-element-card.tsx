@@ -29,30 +29,30 @@ const ELEMENT_ICONS = {
   Notes: AnnotationIcon
 };
 
-interface Props {
+type Props = {
+  element: ConstructedDeckElement;
+  depth: number;
   isHovered: boolean;
   isSelected: boolean;
   isParentSelected: boolean;
   isChildElement?: boolean;
   isExpanded?: boolean;
-  element: ConstructedDeckElement;
+  isDragging: boolean;
   onClick: (e: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter: (e: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave: (e: MouseEvent<HTMLDivElement>) => void;
   handleExpand?: () => void;
-}
+};
 
-/**
- * Layers tab element card
- * @param element DeckElement
- */
 export const ElementCard: React.FC<Props> = ({
   element,
+  depth,
   isHovered,
   isSelected,
   isParentSelected,
   isChildElement,
   isExpanded,
+  isDragging,
   onClick,
   onMouseEnter,
   onMouseLeave,
@@ -78,9 +78,11 @@ export const ElementCard: React.FC<Props> = ({
       isSelected={isSelected}
       isParentSelected={isParentSelected}
       isChildElement={isChildElement}
+      isDragging={isDragging}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      depth={depth}
     >
       <Icon
         icon={ELEMENT_ICONS[element.component as keyof typeof ELEMENT_ICONS]}
@@ -106,18 +108,78 @@ export const ElementCard: React.FC<Props> = ({
   );
 };
 
+type DisplayProps = Omit<
+  Props,
+  | 'isHovered'
+  | 'isChildElement'
+  | 'isDragging'
+  | 'onClick'
+  | 'onMouseEnter'
+  | 'onMouseLeave'
+  | 'handleExpand'
+>;
+
+export const ElementCardDisplay: React.FC<DisplayProps> = ({
+  element,
+  depth,
+  isSelected,
+  isParentSelected,
+  isExpanded
+}) => {
+  const hasChildren = Array.isArray(element.children);
+
+  const elementTitle = React.useMemo(() => {
+    if (isMdElement(element)) {
+      return String(element.children);
+    } else if (isImageElement(element)) {
+      return String(element?.props?.src);
+    } else {
+      return element.component;
+    }
+  }, [element]);
+
+  return (
+    <Layer
+      isSelected={isSelected}
+      isParentSelected={isParentSelected}
+      depth={depth}
+      transparent
+    >
+      <Icon
+        icon={ELEMENT_ICONS[element.component as keyof typeof ELEMENT_ICONS]}
+        size={14}
+      />
+      <Title>{elementTitle}</Title>
+
+      {hasChildren && (
+        <IconButton
+          icon={isExpanded ? ChevronDownIcon : ChevronLeftIcon}
+          height={24}
+          appearance="minimal"
+          marginLeft="auto"
+        />
+      )}
+    </Layer>
+  );
+};
+
 const Layer = styled.div<{
   isSelected?: boolean;
   isHovered?: boolean;
   isParentSelected?: boolean;
   isChildElement?: boolean;
+  isDragging?: boolean;
+  transparent?: boolean;
+  depth: number;
 }>`
   cursor: grab;
   display: flex;
   align-items: center;
   overflow: hidden;
   height: 36px;
-  padding: 0 10px 0 ${(props) => (props.isChildElement ? '34px' : '10px')};
+  padding-left: ${(props) => `${props.depth * 24 + 10}px`};
+  padding-right: 10px;
+
   color: ${(props) =>
     props.isSelected || props.isParentSelected
       ? defaultTheme.colors.selected
@@ -130,6 +192,10 @@ const Layer = styled.div<{
       : props.isParentSelected
       ? defaultTheme.colors.blue50
       : 'none'};
+
+  opacity: ${(props) => (props.transparent ? 0.2 : 1)};
+  max-height: ${(props) => (props.isDragging ? '0px' : 'none')}
+  overflow: hidden;
 
   &:focus {
     border: 1px solid ${defaultTheme.colors.selected};

@@ -17,6 +17,11 @@ export type SPECTACLE_ELEMENTS =
 
 export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];
 export const CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Grid'];
+// To check whether a constructed element is allowed to have child elements
+export const ALL_CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = [
+  ...CONTAINER_ELEMENTS,
+  'Slide'
+];
 export const FREE_MOVING_ELEMENTS: SPECTACLE_ELEMENTS[] = [
   'Markdown',
   'FlexBox',
@@ -51,6 +56,7 @@ export type ConstructedDeckElement = Omit<
   'children' | 'parent'
 > & {
   children?: string | ConstructedDeckElement[];
+  parent?: string;
 };
 
 export type ConstructedDeckSlide = Omit<DeckSlide, 'children'> & {

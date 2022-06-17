@@ -47,7 +47,7 @@ export default (env, argv) => {
     },
     plugins: [
       new webpack.ProvidePlugin({
-        process: 'process/browser'
+        process: 'process/browser.js'
       }),
       new HtmlWebpackPlugin({
         template: './src/index.html'

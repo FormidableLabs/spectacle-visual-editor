@@ -1,7 +1,6 @@
 import React, { ChangeEvent, FocusEvent, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-// @ts-ignore
 import capitalize from 'lodash.capitalize';
 import { deckSlice, themeSelector } from '../../slices/deck-slice';
 import { ColorPickerInput } from '../inputs/color';

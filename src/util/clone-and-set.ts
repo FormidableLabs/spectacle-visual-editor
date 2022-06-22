@@ -1,4 +1,5 @@
-import { cloneDeep, set } from 'lodash-es';
+import cloneDeep from 'lodash.clonedeep';
+import set from 'lodash.set';
 
 export const cloneAndSet: typeof set = (
   obj: Parameters<typeof set>[0],

@@ -1,28 +1,34 @@
-import React from 'react';
-import styled from 'styled-components';
-import AceEditor from 'react-ace';
+import React, { Suspense } from 'react';
 import { useSelector } from 'react-redux';
 import { useEditElement } from '../../../hooks/use-edit-element';
 import { selectedElementSelector } from '../../../slices/deck-slice';
 
-const MdEditor = styled(AceEditor)`
-  min-width: 500px;
-`;
+const AceEditor = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "react-ace" */
+      /* webpackMode: "lazy" */
+      'react-ace'
+    )
+);
 
 export const MarkdownEditor = () => {
   const handleElementChanged = useEditElement();
   const selectedElement = useSelector(selectedElementSelector);
 
   return (
-    <MdEditor
-      mode="markdown"
-      theme="textmate"
-      value={String(selectedElement?.children)}
-      onChange={(val) => handleElementChanged({ children: val })}
-      width="auto"
-      height="150px"
-      showGutter={false}
-      focus
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <AceEditor
+        style={{ minWidth: '500px' }}
+        mode="markdown"
+        theme="textmate"
+        value={String(selectedElement?.children)}
+        onChange={(val) => handleElementChanged({ children: val })}
+        width="auto"
+        height="150px"
+        showGutter={false}
+        focus
+      />
+    </Suspense>
   );
 };

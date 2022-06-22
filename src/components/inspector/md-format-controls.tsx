@@ -45,7 +45,9 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
         <MdInput
           label="Content"
           value={String(selectedElement?.children)}
-          onValueChange={(val) => editableElementChanged({ children: val })}
+          onValueChange={(val: unknown) =>
+            editableElementChanged({ children: val })
+          }
         />
       </Accordion>
       {doesContentContainList && (

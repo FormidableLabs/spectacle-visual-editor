@@ -23,5 +23,5 @@ const THEME_COLORS_BY_TYPE = Object.values(
 // Flatten sorted object so that colors can be mapped over
 export const DEFAULT_COLORS = Object.values(THEME_COLORS_BY_TYPE).reduce(
   (allColors: string[], colorType: string[]) => [...allColors, ...colorType],
-  []
+  ['transparent']
 );

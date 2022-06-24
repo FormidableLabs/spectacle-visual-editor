@@ -8,7 +8,7 @@ import { isValidCSSColor } from '../../util/is-valid-css-color';
 import { useRootSelector } from '../../store';
 import { themeSelector } from '../../slices/deck-slice';
 import { SWATCH_NAMES, DEFAULT_COLORS } from '../../constants/color-swatches';
-import TransSVG from './transparentSVG';
+import { TransSVG } from './transparentSVG';
 
 extend([namesPlugin]); // convert CSS colors to RGBA strings
 

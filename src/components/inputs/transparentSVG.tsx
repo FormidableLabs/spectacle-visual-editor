@@ -4,7 +4,7 @@ interface Props extends SVGProps<SVGSVGElement> {
   size?: number;
 }
 
-const TransSVG = ({ size = 18, ...props }: Props) => (
+export const TransSVG = ({ size = 18, ...props }: Props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -20,5 +20,3 @@ const TransSVG = ({ size = 18, ...props }: Props) => (
     />
   </svg>
 );
-
-export default TransSVG;

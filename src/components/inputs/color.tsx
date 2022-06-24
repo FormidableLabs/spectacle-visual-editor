@@ -8,6 +8,7 @@ import { isValidCSSColor } from '../../util/is-valid-css-color';
 import { useRootSelector } from '../../store';
 import { themeSelector } from '../../slices/deck-slice';
 import { SWATCH_NAMES, DEFAULT_COLORS } from '../../constants/color-swatches';
+import { TransSVG } from './transparentSVG';
 
 extend([namesPlugin]); // convert CSS colors to RGBA strings
 
@@ -73,6 +74,7 @@ const Swatch = styled.button`
   border: 1px solid hsla(0, 0%, 0%, 0.5);
   box-shadow: inset 0 0 0 1px white;
   height: 22px;
+  padding: 1px;
   cursor: pointer;
 `;
 
@@ -164,7 +166,9 @@ export const ColorPickerInput: React.FC<Props> = ({
                 key={`${selectedSwatch}-${color}-${i}`}
                 color={color}
                 onClick={() => setColor(color)}
-              />
+              >
+                {color === 'transparent' && <TransSVG />}
+              </Swatch>
             ))}
           </SwatchGrid>
         </PopoverContainer>

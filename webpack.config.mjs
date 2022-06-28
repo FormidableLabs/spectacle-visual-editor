@@ -1,6 +1,7 @@
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
+import BundleAnalyzer from 'webpack-bundle-analyzer';
 
 const __dirname = path.resolve();
 
@@ -11,7 +12,7 @@ export default (env, argv) => {
     devtool: isDevelopment ? 'cheap-module-source-map' : false,
     output: {
       path: path.resolve(__dirname, 'build'),
-      filename: '[name].js',
+      filename: '[name].js'
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
@@ -52,7 +53,7 @@ export default (env, argv) => {
         cacheGroups: {
           default: {
             minChunks: 2,
-            reuseExistingChunk: true,
+            reuseExistingChunk: true
           },
           vendor: {
             test(module) {
@@ -62,7 +63,9 @@ export default (env, argv) => {
               if (!module.context.includes('node_modules')) {
                 return false;
               }
-              return !['react-ace', 'ace-builds'].some(moduleContext => module.context.includes(moduleContext));
+              return !['react-ace', 'ace-builds'].some((moduleContext) =>
+                module.context.includes(moduleContext)
+              );
             },
             name: 'vendors',
             chunks: 'all'
@@ -71,6 +74,9 @@ export default (env, argv) => {
       }
     },
     plugins: [
+      new BundleAnalyzer.BundleAnalyzerPlugin({
+        analyzerMode: process.env.STATS || 'disabled'
+      }),
       new webpack.ProvidePlugin({
         process: 'process/browser.js'
       }),

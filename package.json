@@ -6,6 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "netlify dev",
+    "stats": " STATS=server netlify dev",
     "dev": "webpack serve --mode=development --hot",
     "build": "webpack --mode=production",
     "prettier-check": "yarn prettier --check src/**",

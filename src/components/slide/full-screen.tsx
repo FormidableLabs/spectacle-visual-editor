@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { FullScreen } from 'spectacle';
 import styled from 'styled-components';
 import { position } from 'styled-system';
-import { useLocation } from '@reach/router';
+import { useLocation } from 'react-router-dom';
 import { PATHS } from '../../constants/paths';
 
 const InternalFullScreen = forwardRef<

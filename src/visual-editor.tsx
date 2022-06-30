@@ -28,7 +28,6 @@ import {
   useSlideScale,
   useLocallyStoredState
 } from './hooks';
-import { RouteComponentProps } from '@reach/router';
 import { settingsSelector } from './slices/settings-slice';
 import { LocalStorage } from './types/local-storage';
 import { defaultTheme } from 'spectacle';
@@ -41,7 +40,7 @@ import {
   FONT_FAMILY_WEIGHTS
 } from './constants/md-style-options';
 
-export const VisualEditor: React.FC<RouteComponentProps> = () => {
+export const VisualEditor: React.FC = () => {
   const dispatch = useDispatch();
   const {
     activeSlideNode,

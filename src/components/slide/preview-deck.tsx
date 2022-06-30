@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { navigate, RouteComponentProps } from '@reach/router';
+import { useNavigate } from 'react-router-dom';
 import { Deck } from 'spectacle';
 import { generatePreviewSlideTree } from './slide-generator';
 import { useSelector } from 'react-redux';
@@ -16,13 +16,13 @@ import {
 import { toaster } from 'evergreen-ui';
 import { PATHS } from '../../constants/paths';
 
-export const PreviewDeck: React.FC<RouteComponentProps> = () => {
+export const PreviewDeck: React.FC = () => {
   const [slideNodes, setSlideNodes] = useState<React.ReactNode>();
   const slideJson = useRootSelector(slidesSelector);
   const [slideTemplateNode, setSlideTemplateNode] = useState<React.ReactNode>();
   const slideTemplateJson = useRootSelector(constructedSlideTemplateSelector);
   const theme = useSelector(themeSelector);
-
+  const navigate = useNavigate();
   useEffect(() => {
     try {
       const slideTree = slideJson.map(
@@ -77,7 +77,7 @@ export const PreviewDeck: React.FC<RouteComponentProps> = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [navigate]);
 
   return (
     <div>

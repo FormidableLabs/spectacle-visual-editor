@@ -12,6 +12,27 @@ import { TransSVG } from './transparentSVG';
 
 extend([namesPlugin]); // convert CSS colors to RGBA strings
 
+const ColorSwatchContainer = styled.div`
+  position: relative;
+  margin-left: 8px;
+  display: inline-block;
+  border: 1px solid #c1c4d6;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px white;
+  overflow: clip;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+
+  svg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 32px;
+    width: 32px;
+  }
+`;
+
 export const Container = styled.div<{ isDisabled: boolean }>`
   display: flex;
   flex-direction: row;
@@ -22,18 +43,18 @@ export const Container = styled.div<{ isDisabled: boolean }>`
   div {
     flex: 1;
   }
+
+  ${ColorSwatchContainer} {
+    flex: initial;
+  }
 `;
 
 const ColorSwatch = styled.span`
-  display: inline-block;
-  border: 1px solid hsla(0, 0%, 0%, 0.5);
-  border-radius: 24px;
-  margin-left: 8px;
-  margin-bottom: 3px;
-  box-shadow: inset 0 0 0 1px white;
+  display: block;
+  height: 32px;
+  width: 32px;
   background: ${({ color }) => color};
-  width: 24px;
-  height: 24px;
+  position: absolute;
 `;
 
 export const PopoverContainer = styled.div`
@@ -195,7 +216,10 @@ export const ColorPickerInput: React.FC<Props> = ({
             onUpdateValue(updatedValue);
           }}
         />
-        <ColorSwatch color={validValue || ''} />
+        <ColorSwatchContainer>
+          <TransSVG />
+          <ColorSwatch color={validValue || ''} />
+        </ColorSwatchContainer>
       </Container>
     </Popover>
   );

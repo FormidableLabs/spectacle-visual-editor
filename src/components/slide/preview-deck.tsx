@@ -53,9 +53,11 @@ export const PreviewDeck: React.FC = () => {
         }
       };
 
-      const node = (generatePreviewSlideTree as (
-        opt: ConstructedDeckSlideTemplate
-      ) => React.ReactElement)(adjusted);
+      const node = (
+        generatePreviewSlideTree as (
+          opt: ConstructedDeckSlideTemplate
+        ) => React.ReactElement
+      )(adjusted);
 
       setSlideTemplateNode(node);
     } catch (e) {}

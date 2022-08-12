@@ -6,10 +6,9 @@ Spectacle Visual Editor is a platform for building Spectacle decks visually usin
 ## Getting Started with UI Editor
 
 ```shell
-$ yarn
-$ yarn start
+$ pnpm i
+$ pnpm start
 ```
-
 
 ## Maintenance Status
 

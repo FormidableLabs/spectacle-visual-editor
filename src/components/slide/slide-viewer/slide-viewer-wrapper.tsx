@@ -27,20 +27,22 @@ export const SlideViewerWrapper = ({
   );
 
   return (
-    <DeckContext.Provider
-      value={
-        {
-          theme,
-          slideCount: slides.length,
-          activeView: { slideIndex: activeSlideIndex }
-        } as any
-      }
-    >
-      <SlideContext.Provider
-        value={{ activeStepIndex: 0, activationThresholds: [] } as any}
+    <ThemeProvider theme={theme}>
+      <DeckContext.Provider
+        value={
+          {
+            theme,
+            slideCount: slides.length,
+            activeView: { slideIndex: activeSlideIndex }
+          } as any
+        }
       >
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
-      </SlideContext.Provider>
-    </DeckContext.Provider>
+        <SlideContext.Provider
+          value={{ activeStepIndex: 0, activationThresholds: [] } as any}
+        >
+          {children}
+        </SlideContext.Provider>
+      </DeckContext.Provider>
+    </ThemeProvider>
   );
 };

@@ -7,6 +7,9 @@
 [[plugins]]
     package = './plugins/copy-chromium-binaries'
 
+[build]
+  command = "npx pnpm i --store=node_modules/.pnpm-store && npx pnpm run build"
+
 [dev]
     command= "pnpm dev"
     targetPort= 3000

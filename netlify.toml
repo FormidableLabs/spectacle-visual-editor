@@ -5,6 +5,6 @@
     package = './plugins/copy-chromium-binaries'
 
 [dev]
-    command= "yarn dev"
+    command= "pnpm dev"
     targetPort= 3000
     port = 8080

@@ -8,6 +8,7 @@
     "start": "netlify dev",
     "stats": " STATS=server netlify dev",
     "dev": "webpack serve --mode=development --hot",
+    "prebuild": "test \"$CI\" = true && npx pnpm install -r --store=node_modules/.pnpm-store || echo skipping pnpm install",
     "build": "webpack --mode=production",
     "prettier-check": "pnpm prettier --check src/**",
     "prettier-fix": "pnpm prettier --write src/**",

@@ -39,9 +39,8 @@ export const TextControls: React.FC<Props> = ({
         MD_COMPONENT_PROPS.MARGIN_HORIZONTAL
       ]
   );
-  const [marginDoubleValue, toggleMarginDoubleValue] = useToggle(
-    isSingleMargin
-  );
+  const [marginDoubleValue, toggleMarginDoubleValue] =
+    useToggle(isSingleMargin);
   const [inputState, setInputState] = useState({
     margin,
     horizontalMargin,

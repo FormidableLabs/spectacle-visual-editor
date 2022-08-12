@@ -189,9 +189,10 @@ export const LayerInspector: FC = () => {
   );
 
   const treeRoot = useMemo(() => activeSlide?.id || '', [activeSlide]);
-  const treeData = useMemo(() => convertSlideToTreeData(activeSlide), [
-    activeSlide
-  ]);
+  const treeData = useMemo(
+    () => convertSlideToTreeData(activeSlide),
+    [activeSlide]
+  );
   const [renderCount, setRenderCount] = useState<number>(0);
 
   useEffect(() => {

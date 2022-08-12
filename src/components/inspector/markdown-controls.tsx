@@ -103,9 +103,8 @@ export const MarkdownControls: FC<Props> = ({
 
   // Reset the fontWeight if it does not exist on fontFamily
   useEffect(() => {
-    const fontDoesNotHaveWeight = !FONT_FAMILY_WEIGHTS?.[
-      fontFamily
-    ]?.weights?.includes(fontWeight);
+    const fontDoesNotHaveWeight =
+      !FONT_FAMILY_WEIGHTS?.[fontFamily]?.weights?.includes(fontWeight);
 
     if (fontDoesNotHaveWeight) {
       onChangeComponentProps(

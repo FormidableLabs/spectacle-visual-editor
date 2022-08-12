@@ -52,10 +52,8 @@ export const ImageControls: React.FC<ElementControlsProps> = ({
     desiredSrc
   });
   const [isCropModalOpen, setCropModalOpen] = React.useState<boolean>(false);
-  const [
-    dialogImageRef,
-    setDialogImageRef
-  ] = React.useState<HTMLImageElement | null>();
+  const [dialogImageRef, setDialogImageRef] =
+    React.useState<HTMLImageElement | null>();
   const cropperInstance = React.useRef<Cropper | undefined>();
   React.useEffect(() => {
     if (dialogImageRef && isCropModalOpen) {

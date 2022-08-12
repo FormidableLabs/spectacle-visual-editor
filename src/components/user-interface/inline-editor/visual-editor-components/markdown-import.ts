@@ -31,9 +31,7 @@ export function indexBy<T>(
   return index;
 }
 
-export function transformersByType(
-  transformers: Array<Transformer>
-): Readonly<{
+export function transformersByType(transformers: Array<Transformer>): Readonly<{
   element: Array<ElementTransformer>;
   textFormat: Array<TextFormatTransformer>;
   textMatch: Array<TextMatchTransformer>;

@@ -45,9 +45,8 @@ export const TimelineSlideViewer = ({
 
   // Flatten out slides, tweak for active slide
   const slides = useMemo(() => {
-    const slideEls = (children instanceof Array
-      ? Array.from(children)
-      : [children]
+    const slideEls = (
+      children instanceof Array ? Array.from(children) : [children]
     ).flat() as React.ReactElement[];
 
     return slideEls.map((slide) => {

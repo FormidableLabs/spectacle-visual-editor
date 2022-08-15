@@ -14,9 +14,8 @@ const Toolbar = styled.div<{ css: CSSObject }>`
  * This component is used for inline rich text and markdown editing.
  */
 export const InlineEditor: React.FC<PropsWithChildren<{}>> = () => {
-  const [editorPreference, setEditorPreference] = useState<EditorTypes>(
-    'visual'
-  );
+  const [editorPreference, setEditorPreference] =
+    useState<EditorTypes>('visual');
 
   return (
     <Positioner

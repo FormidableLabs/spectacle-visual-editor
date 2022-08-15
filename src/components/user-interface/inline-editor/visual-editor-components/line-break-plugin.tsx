@@ -38,9 +38,11 @@ const indexOfParagraphMatrix = (
  */
 export const $consolidateParagraphNodes = () => {
   const rootChildren = $getRoot().getChildren();
-  const paragraphElementNodes: Paragraph[] = (rootChildren.filter(
-    (node) => $isElementNode(node) && $isParagraphNode(node)
-  ) as ParagraphNode[]).map((node) => ({
+  const paragraphElementNodes: Paragraph[] = (
+    rootChildren.filter(
+      (node) => $isElementNode(node) && $isParagraphNode(node)
+    ) as ParagraphNode[]
+  ).map((node) => ({
     node,
     index: node.getIndexWithinParent()
   }));

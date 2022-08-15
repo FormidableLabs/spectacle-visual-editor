@@ -30,9 +30,7 @@ import {
 
 interface IVisualEditorContext {
   selectedElementComponentProps: any;
-  handleElementChanged: (
-    sender: any
-  ) => {
+  handleElementChanged: (sender: any) => {
     payload: {
       [key: string]: any;
     } & {
@@ -120,7 +118,7 @@ export const VisualEditor = () => {
                     <CodeHighlightPlugin />
                     <LexicalOnChangePlugin onChange={onEditorChange} />
                     <LexicalMarkdownShortcutPlugin
-                      transformers={TRANSFORMERS}
+                      transformers={TRANSFORMERS as any}
                     />
                   </div>
                 )}

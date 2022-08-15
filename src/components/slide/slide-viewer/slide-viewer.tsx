@@ -16,10 +16,10 @@ export const SlideViewer = ({
   slideProps
 }: PropsWithChildren<Props>) => {
   // Flatten out slides
+
   const slides = React.useMemo(() => {
-    const slideEls = (children instanceof Array
-      ? children
-      : [children]
+    const slideEls = (
+      children instanceof Array ? children : [children]
     ).flat() as React.ReactElement[];
 
     return slideEls.map((slide) => {

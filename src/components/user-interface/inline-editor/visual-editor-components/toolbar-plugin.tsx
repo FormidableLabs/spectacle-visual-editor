@@ -59,10 +59,8 @@ export const ToolbarPlugin = React.forwardRef<
   ToolbarProps
 >(function ToolbarPlugin(props, ref) {
   const [editor] = useLexicalComposerContext();
-  const {
-    selectedElementComponentProps,
-    handleElementChanged
-  } = useVisualEditorContext();
+  const { selectedElementComponentProps, handleElementChanged } =
+    useVisualEditorContext();
   const [toolbarState, setToolbarState] = useState<ToolbarState>(
     new ToolbarState(editor, null)
   );

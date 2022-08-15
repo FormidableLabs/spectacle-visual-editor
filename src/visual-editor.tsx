@@ -42,17 +42,10 @@ import {
 
 export const VisualEditor: React.FC = () => {
   const dispatch = useDispatch();
-  const {
-    activeSlideNode,
-    slideNodes,
-    activeTemplateNode,
-    templateNode
-  } = useSlideNodes();
-  const {
-    handleCanvasMouseDown,
-    handleSlideSelected,
-    handleTemplateSelected
-  } = useEditorActions();
+  const { activeSlideNode, slideNodes, activeTemplateNode, templateNode } =
+    useSlideNodes();
+  const { handleCanvasMouseDown, handleSlideSelected, handleTemplateSelected } =
+    useEditorActions();
   const [loadedInitialDeck, setLoadedInitialDeck] = useState(false);
   const [loadedFontFamilies, setLoadedFontFamilies] = useState<Array<string>>(
     []

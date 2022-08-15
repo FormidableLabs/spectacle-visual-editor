@@ -68,9 +68,10 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
     });
   }, [selectedElement]);
 
-  const freeMovement = useMemo(() => !!inputState.freeMovement, [
-    inputState.freeMovement
-  ]);
+  const freeMovement = useMemo(
+    () => !!inputState.freeMovement,
+    [inputState.freeMovement]
+  );
 
   const handleComponentElementChanged = useCallback(
     (propName: string, val?: string | number | boolean) => {

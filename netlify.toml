@@ -8,6 +8,6 @@
   command = "pnpm build || ( npm install pnpm && pnpm build )"
 
 [dev]
-    command= "pnpm dev"
+    command= "pnpm dev || ( npm install pnpm && pnpm dev )"
     targetPort= 3000
     port = 8080

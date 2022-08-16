@@ -26,7 +26,6 @@ import undoable from 'redux-undo';
 import { getChildren } from '../util/get-children';
 import { LocalStorage } from '../types/local-storage';
 import { Deck } from '../types/deck';
-import { toaster } from 'evergreen-ui';
 import { parseJSON } from '../util/parse-json';
 
 type DeckState = {
@@ -97,8 +96,6 @@ export const deckSlice = createSlice({
       slidesAdapter.addMany(state.slides, action.payload.slides);
       elementsAdapter.addMany(state.elements, action.payload.elements);
 
-      toaster.success(`Loaded ${action.payload.title || 'Untitled Deck'}`);
-
       state.isSaved = true;
     },
 
@@ -153,8 +150,6 @@ export const deckSlice = createSlice({
         JSON.stringify(newStoredDecks)
       );
 
-      toaster.success(`Saved ${state.title || 'Untitled Deck'}`);
-
       state.isSaved = true;
     },
 
@@ -175,8 +170,9 @@ export const deckSlice = createSlice({
         (storedDeck) => storedDeck.id !== deckId
       );
 
+      // Disabled as we will need to pull the deck to tell the user which one was deleted
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const deck = storedDecks.find((storedDeck) => storedDeck.id === deckId);
-      toaster.success(`Deleted ${deck?.title || 'Untitled Deck'}`);
 
       localStorage.setItem(
         LocalStorage.SavedDecks,

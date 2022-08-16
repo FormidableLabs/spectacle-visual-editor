@@ -7,7 +7,6 @@ import {
   Position,
   Pane,
   Dialog,
-  toaster,
   IconButton,
   PlusIcon,
   UndoIcon,
@@ -100,10 +99,8 @@ export const MenuBar = () => {
   const { handleOpenPreviewWindow } = usePreviewWindow();
   const [dialogOpen, toggleDialog] = useToggle();
   const slideJson = useRootSelector(slidesSelector);
-  const copyElement = (message: string) => {
-    dispatch(deckSlice.actions.copyElement());
-    toaster.success(message);
-  };
+  const copyElement = () => dispatch(deckSlice.actions.copyElement());
+
   useMousetrap(
     {
       [KEYBOARD_SHORTCUTS.OPEN]: (e) => {
@@ -115,10 +112,10 @@ export const MenuBar = () => {
         dispatch(deckSlice.actions.saveDeck(id));
       },
       [KEYBOARD_SHORTCUTS.CUT]: () => {
-        copyElement('Element cut!');
+        copyElement();
         dispatch(deckSlice.actions.deleteElement());
       },
-      [KEYBOARD_SHORTCUTS.COPY]: () => copyElement('Element copied!'),
+      [KEYBOARD_SHORTCUTS.COPY]: () => copyElement(),
       [KEYBOARD_SHORTCUTS.PASTE]: () =>
         dispatch(deckSlice.actions.pasteElement()),
       [KEYBOARD_SHORTCUTS.UNDO]: () => dispatch(UndoActionCreators.undo()),
@@ -216,7 +213,7 @@ export const MenuBar = () => {
 
                   saveFile(html, 'deck.html');
                 } catch {
-                  toaster.danger(
+                  console.warn(
                     'Something went wrong while trying to export your deck.'
                   );
                 }
@@ -352,7 +349,7 @@ export const MenuBar = () => {
               appearance="minimal"
               disabled={!selectedElement}
               onClick={() => {
-                copyElement('Element cut!');
+                copyElement();
                 dispatch(deckSlice.actions.deleteElement());
               }}
             />
@@ -365,9 +362,7 @@ export const MenuBar = () => {
               icon={DuplicateIcon}
               appearance="minimal"
               disabled={!selectedElement}
-              onClick={() => {
-                copyElement('Element copied!');
-              }}
+              onClick={copyElement}
             />
           </div>
         </Tooltip>

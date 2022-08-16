@@ -13,7 +13,6 @@ import {
   ConstructedDeckSlide,
   ConstructedDeckSlideTemplate
 } from '../../types/deck-elements';
-import { toaster } from 'evergreen-ui';
 import { PATHS } from '../../constants/paths';
 
 export const PreviewDeck: React.FC = () => {
@@ -62,12 +61,6 @@ export const PreviewDeck: React.FC = () => {
       setSlideTemplateNode(node);
     } catch (e) {}
   }, [slideTemplateJson]);
-
-  useEffect(() => {
-    toaster.notify('Press Esc to quit the presentation preview.', {
-      duration: 3
-    });
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {

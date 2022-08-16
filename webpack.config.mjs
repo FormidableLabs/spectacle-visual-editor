@@ -2,7 +2,7 @@ import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 import BundleAnalyzer from 'webpack-bundle-analyzer';
-
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 const __dirname = path.resolve();
 
 export default (env, argv) => {
@@ -37,8 +37,8 @@ export default (env, argv) => {
           }
         },
         {
-          test: /\.css$/i,
-          use: ['style-loader', 'css-loader']
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader']
         }
       ]
     },
@@ -80,6 +80,7 @@ export default (env, argv) => {
       new webpack.ProvidePlugin({
         process: 'process/browser.js'
       }),
+      new MiniCssExtractPlugin(),
       new HtmlWebpackPlugin({
         template: './src/index.html'
       })

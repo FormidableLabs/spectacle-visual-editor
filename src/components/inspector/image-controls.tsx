@@ -6,8 +6,7 @@ import {
   IconButton,
   Popover,
   TextInputField,
-  TickIcon,
-  toaster
+  TickIcon
 } from 'evergreen-ui';
 import { isValidUrl } from '../../util/is-valid-url';
 import { FreeMovementControls } from './free-movement-controls';
@@ -115,7 +114,7 @@ export const ImageControls: React.FC<ElementControlsProps> = ({
                   const e = cropperInstance.current?.getCroppedCanvas();
 
                   if (!e) {
-                    return toaster.warning('Could not crop the image.');
+                    return console.warn('Could not crop the image.');
                   }
                   handleValueChanged('croppedSrc', e.toDataURL());
                 }}

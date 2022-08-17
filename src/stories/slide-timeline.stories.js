@@ -2,20 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Heading, SpectacleLogo, FlexBox } from 'spectacle';
 import { SlideTimeline, Slide } from '../components';
-import { configureStore } from '@reduxjs/toolkit';
-import { deckSlice } from '../slices/deck-slice';
-import { Provider } from 'react-redux';
 
 export default {
   title: 'Components/SlideTimeline',
   component: SlideTimeline
 };
-
-const store = configureStore({
-  reducer: {
-    deck: deckSlice.reducer
-  }
-});
 
 export const Primary = ({ slideCount }) => {
   const slides = [...Array(slideCount)].map((_, index) => (
@@ -27,11 +18,7 @@ export const Primary = ({ slideCount }) => {
       <Heading fontSize="h2">Slide {index}</Heading>
     </Slide>
   ));
-  return (
-    <Provider store={store}>
-      <SlideTimeline onSlideClick={console.warn}>{slides}</SlideTimeline>
-    </Provider>
-  );
+  return <SlideTimeline onSlideClick={console.warn}>{slides}</SlideTimeline>;
 };
 
 Primary.args = { slideCount: 20 };

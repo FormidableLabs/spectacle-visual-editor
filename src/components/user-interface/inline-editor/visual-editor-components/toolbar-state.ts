@@ -5,13 +5,15 @@ import { $isCodeNode, getDefaultCodeLanguage } from '@lexical/code';
 import { TEXT_ALIGN_TYPES } from '../../../../constants/md-style-options';
 
 export class ToolbarState {
-  private _blockType: string = 'paragraph';
-  private _codeLanguage: string = '';
-  private _textAlignType: number = 0;
+  _blockType: string = 'paragraph';
+  _codeLanguage: string = '';
+  _textAlignType: number = 0;
+  selection?: RangeSelection;
 
-  constructor(editor: LexicalEditor, public selection: RangeSelection | null) {
+  constructor(editor: LexicalEditor, selection: RangeSelection | null) {
     if (!selection) return;
 
+    this.selection = selection;
     const anchorNode = selection.anchor.getNode();
     const element =
       anchorNode.getKey() === 'root'
@@ -34,15 +36,15 @@ export class ToolbarState {
     this._textAlignType = node.getFormat();
   }
 
-  public get blockType() {
+  get blockType() {
     return this._blockType;
   }
 
-  public get codeLanguage() {
+  get codeLanguage() {
     return this._codeLanguage;
   }
 
-  public get textAlignType() {
+  get textAlignType() {
     switch (this._textAlignType) {
       case 3:
         return TEXT_ALIGN_TYPES.RIGHT;
@@ -53,23 +55,23 @@ export class ToolbarState {
     }
   }
 
-  public get isBold() {
+  get isBold() {
     return !!this.selection?.hasFormat('bold');
   }
 
-  public get isItalic() {
+  get isItalic() {
     return !!this.selection?.hasFormat('italic');
   }
 
-  public get isUnderline() {
+  get isUnderline() {
     return !!this.selection?.hasFormat('underline');
   }
 
-  public get isStrikethrough() {
+  get isStrikethrough() {
     return !!this.selection?.hasFormat('strikethrough');
   }
 
-  public get isCode() {
+  get isCode() {
     return !!this.selection?.hasFormat('code');
   }
 }

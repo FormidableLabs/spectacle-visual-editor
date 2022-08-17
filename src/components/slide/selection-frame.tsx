@@ -25,7 +25,7 @@ import {
   SELF_RESIZING_ELEMENTS
 } from '../../types/deck-elements';
 import { isMdElement } from '../inspector/validators';
-import { InlineEditor } from '../user-interface/inline-editor';
+import { VisualEditor } from '../user-interface/visual-editor/visual-editor';
 
 const Wrapper = styled.div<{ isHovered: boolean; isSelected: boolean }>`
   display: contents;
@@ -244,7 +244,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
         }}
       >
         {isSelectedAndMarkdown ? (
-          <InlineEditor>{children}</InlineEditor>
+          <VisualEditor />
         ) : (
           cloneElement(children, {
             ref,

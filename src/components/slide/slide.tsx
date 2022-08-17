@@ -35,14 +35,24 @@ const SlideWrapper = styled('div').attrs<SlideWrapperProps>(
       )}px`
     }
   })
-)<SlideWrapperProps>(color, space, background, ({ theme }) => ({
-  width: `${theme.size.width}px`,
-  height: `${theme.size.height}px`,
-  transformOrigin: `left top`,
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column'
-}));
+)<SlideWrapperProps>(color, space, background, ({ theme }) => [
+  {
+    width: `${theme.size.width}px`,
+    height: `${theme.size.height}px`,
+    transformOrigin: `left top`,
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  css`
+    ul {
+      list-style-type: disc;
+    }
+    ol {
+      list-style-type: decimal;
+    }
+  `
+]);
 
 const ContentWrapper = styled('div')<SpaceProps>(
   space,

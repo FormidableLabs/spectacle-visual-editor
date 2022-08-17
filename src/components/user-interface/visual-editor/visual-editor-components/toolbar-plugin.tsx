@@ -108,11 +108,11 @@ export const ToolbarPlugin = React.forwardRef<
     (blockType: BLOCK_TYPES) => {
       formatBlock('paragraph');
       if (toolbarState.blockType === blockType) {
-        editor.dispatchCommand(REMOVE_LIST_COMMAND, () => {});
+        editor.dispatchCommand(REMOVE_LIST_COMMAND, (() => {})());
       } else if (blockType === BLOCK_TYPES.UL) {
-        editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, () => {});
+        editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, (() => {})());
       } else if (blockType === BLOCK_TYPES.OL) {
-        editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, () => {});
+        editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, (() => {})());
       }
     },
     [editor, toolbarState, formatBlock]

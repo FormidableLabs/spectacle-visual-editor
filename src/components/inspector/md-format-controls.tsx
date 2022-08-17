@@ -1,5 +1,4 @@
 import React from 'react';
-import { MdInput } from '../inputs/md';
 import { useThrottleFn } from 'react-use';
 import { doesMdContainList } from '../../util/does-md-contain-list';
 import { doesMdContainHeader } from '../../util/does-md-contain-heading';
@@ -41,15 +40,6 @@ export const MdFormatControls: React.FC<ElementControlsProps> = ({
     <>
       <FreeMovementControls {...{ selectedElement, editableElementChanged }} />
       <ResizeControls {...{ selectedElement, editableElementChanged }} />
-      <Accordion label="Markdown Content">
-        <MdInput
-          label="Content"
-          value={String(selectedElement?.children)}
-          onValueChange={(val: unknown) =>
-            editableElementChanged({ children: val })
-          }
-        />
-      </Accordion>
       {doesContentContainList && (
         <>
           <MarkdownControls {...{ selectedElement, editableElementChanged }} />

@@ -6,7 +6,7 @@ import React, {
   useState,
   MouseEvent
 } from 'react';
-import styled from 'styled-components';
+import clsx from 'clsx';
 import Moveable, {
   OnDrag,
   OnDragEnd,
@@ -26,21 +26,7 @@ import {
 } from '../../types/deck-elements';
 import { isMdElement } from '../inspector/validators';
 import { VisualEditor } from '../user-interface/visual-editor/visual-editor';
-
-const Wrapper = styled.div<{ isHovered: boolean; isSelected: boolean }>`
-  display: contents;
-
-  > div,
-  > img,
-  > pre {
-    outline: ${(props) =>
-      props.isSelected
-        ? `2px solid ${props.theme.colors.secondary}`
-        : props.isHovered
-        ? `1px solid ${props.theme.colors.primary}`
-        : ''};
-  }
-`;
+import './selection-frame.css';
 
 interface Props {
   children: React.ReactElement;
@@ -152,12 +138,14 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   );
 
   useEffect(() => {
-    window.addEventListener('keydown', (event) =>
-      handleUserKeyPress(event, true)
-    );
-    window.addEventListener('keyup', (event) =>
-      handleUserKeyPress(event, false)
-    );
+    const handleKeyDown = (e: KeyboardEvent) => handleUserKeyPress(e, true);
+    const handleKeyUp = (e: KeyboardEvent) => handleUserKeyPress(e, false);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
   }, [handleUserKeyPress]);
 
   /**
@@ -225,9 +213,11 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
 
   return (
     <>
-      <Wrapper
-        isHovered={isHovered}
-        isSelected={isSelected}
+      <div
+        className={clsx({
+          'wrapper selected': isSelected,
+          'wrapper hovered': isHovered
+        })}
         onMouseOver={hoverElement(children.props.id)}
         onMouseLeave={unhoverElement}
         onMouseDown={(e: MouseEvent<HTMLDivElement>) => {
@@ -243,7 +233,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           );
         }}
       >
-        {isSelectedAndMarkdown ? (
+        {/*isSelectedAndMarkdown ? (
           <VisualEditor />
         ) : (
           cloneElement(children, {
@@ -251,8 +241,13 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
             onLoad: () => setElLoaded(true),
             isSelected
           })
-        )}
-      </Wrapper>
+        )*/}
+        {cloneElement(children, {
+          ref,
+          onLoad: () => setElLoaded(true),
+          isSelected
+        })}
+      </div>
       {elLoaded && (
         <Moveable
           ref={moveableRef}

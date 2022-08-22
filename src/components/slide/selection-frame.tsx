@@ -80,10 +80,6 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           }
         })
       );
-      event.target.style.left = '';
-      event.target.style.top = '';
-      event.target.style.width = '';
-      event.target.style.height = '';
     },
     [dispatch]
   );
@@ -107,8 +103,6 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
             }
           })
         );
-        event.target.style.top = '';
-        event.target.style.left = '';
       }
     },
     [dispatch]
@@ -195,6 +189,8 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     }
   }, [imgSrc]);
 
+  const [doubleClickedElement, setDoubleClickedElement] = useState(false);
+
   const hoverElement = useCallback(
     (id: string) => (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
@@ -209,7 +205,41 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
 
   const isHovered = hoveredElementId === children.props.id;
   const isSelected = editableElementId === children.props.id;
-  const isSelectedAndMarkdown = isSelected && isMdElement(selectedElement);
+
+  const handleMouseDown = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (
+        (event.target as HTMLElement).classList.contains('moveable-control')
+      ) {
+        return;
+      }
+      event.stopPropagation();
+      dispatch(deckSlice.actions.editableElementSelected(children.props.id));
+
+      if (event.detail === 2) {
+        setDoubleClickedElement(true);
+      }
+    },
+    [children.props.id, dispatch]
+  );
+
+  useEffect(() => {
+    if (doubleClickedElement && selectedElement?.id !== children.props.id) {
+      setDoubleClickedElement(false);
+    }
+  }, [children.props.id, doubleClickedElement, selectedElement?.id]);
+
+  const isEditingMarkdown =
+    doubleClickedElement && isMdElement(selectedElement);
+
+  const editingFrameMetrics = children.props.componentProps?.isFreeMovement
+    ? {
+        left: children?.props?.componentProps?.positionX || 0,
+        top: children?.props?.componentProps?.positionY || 0,
+        width: children?.props?.width,
+        height: children?.props?.height
+      }
+    : {};
 
   return (
     <>
@@ -220,44 +250,38 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
         })}
         onMouseOver={hoverElement(children.props.id)}
         onMouseLeave={unhoverElement}
-        onMouseDown={(e: MouseEvent<HTMLDivElement>) => {
-          if (
-            (e.target as HTMLElement).classList.contains('moveable-control')
-          ) {
-            return;
-          }
-
-          e.stopPropagation();
-          dispatch(
-            deckSlice.actions.editableElementSelected(children.props.id)
-          );
-        }}
+        onMouseDown={handleMouseDown}
       >
-        {/*isSelectedAndMarkdown ? (
-          <VisualEditor />
+        {isEditingMarkdown ? (
+          <div
+            className="markdown-editor-container"
+            style={editingFrameMetrics}
+          >
+            <VisualEditor />
+          </div>
         ) : (
           cloneElement(children, {
             ref,
             onLoad: () => setElLoaded(true),
             isSelected
           })
-        )*/}
-        {cloneElement(children, {
-          ref,
-          onLoad: () => setElLoaded(true),
-          isSelected
-        })}
+        )}
       </div>
       {elLoaded && (
         <Moveable
           ref={moveableRef}
           target={target}
           origin={false}
-          resizable={RESIZABLE_ELEMENTS.includes(children.props.type)}
+          resizable={
+            RESIZABLE_ELEMENTS.includes(children.props.type) &&
+            !isEditingMarkdown
+          }
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
           keepRatio={isShiftDown}
-          draggable={children.props.componentProps?.isFreeMovement}
+          draggable={
+            children.props.componentProps?.isFreeMovement && !isEditingMarkdown
+          }
           onDrag={handleOnDragMovement}
           onDragEnd={handleOnDragMovementEnd}
           key={treeId}

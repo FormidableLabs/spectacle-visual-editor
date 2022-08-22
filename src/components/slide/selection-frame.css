@@ -9,3 +9,11 @@
 .wrapper.hovered > pre {
   outline: 2px solid #fef08a;
 }
+
+.wrapper {
+  user-select: none;
+}
+
+.markdown-editor-container {
+  position: absolute;
+}

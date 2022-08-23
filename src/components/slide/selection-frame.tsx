@@ -6,7 +6,7 @@ import React, {
   useState,
   MouseEvent
 } from 'react';
-import styled from 'styled-components';
+import clsx from 'clsx';
 import Moveable, {
   OnDrag,
   OnDragEnd,
@@ -25,22 +25,8 @@ import {
   SELF_RESIZING_ELEMENTS
 } from '../../types/deck-elements';
 import { isMdElement } from '../inspector/validators';
-import { InlineEditor } from '../user-interface/inline-editor';
-
-const Wrapper = styled.div<{ isHovered: boolean; isSelected: boolean }>`
-  display: contents;
-
-  > div,
-  > img,
-  > pre {
-    outline: ${(props) =>
-      props.isSelected
-        ? `2px solid ${props.theme.colors.secondary}`
-        : props.isHovered
-        ? `1px solid ${props.theme.colors.primary}`
-        : ''};
-  }
-`;
+import { VisualEditor } from '../user-interface/visual-editor/visual-editor';
+import './selection-frame.css';
 
 interface Props {
   children: React.ReactElement;
@@ -94,10 +80,6 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           }
         })
       );
-      event.target.style.left = '';
-      event.target.style.top = '';
-      event.target.style.width = '';
-      event.target.style.height = '';
     },
     [dispatch]
   );
@@ -121,8 +103,6 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
             }
           })
         );
-        event.target.style.top = '';
-        event.target.style.left = '';
       }
     },
     [dispatch]
@@ -152,12 +132,14 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   );
 
   useEffect(() => {
-    window.addEventListener('keydown', (event) =>
-      handleUserKeyPress(event, true)
-    );
-    window.addEventListener('keyup', (event) =>
-      handleUserKeyPress(event, false)
-    );
+    const handleKeyDown = (e: KeyboardEvent) => handleUserKeyPress(e, true);
+    const handleKeyUp = (e: KeyboardEvent) => handleUserKeyPress(e, false);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
   }, [handleUserKeyPress]);
 
   /**
@@ -207,6 +189,8 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     }
   }, [imgSrc]);
 
+  const [doubleClickedElement, setDoubleClickedElement] = useState(false);
+
   const hoverElement = useCallback(
     (id: string) => (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
@@ -221,30 +205,60 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
 
   const isHovered = hoveredElementId === children.props.id;
   const isSelected = editableElementId === children.props.id;
-  const isSelectedAndMarkdown = isSelected && isMdElement(selectedElement);
+
+  const handleMouseDown = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (
+        (event.target as HTMLElement).classList.contains('moveable-control')
+      ) {
+        return;
+      }
+      event.stopPropagation();
+      dispatch(deckSlice.actions.editableElementSelected(children.props.id));
+
+      if (event.detail === 2) {
+        setDoubleClickedElement(true);
+      }
+    },
+    [children.props.id, dispatch]
+  );
+
+  useEffect(() => {
+    if (doubleClickedElement && selectedElement?.id !== children.props.id) {
+      setDoubleClickedElement(false);
+    }
+  }, [children.props.id, doubleClickedElement, selectedElement?.id]);
+
+  const isEditingMarkdown =
+    doubleClickedElement && isMdElement(selectedElement);
+
+  const editingFrameMetrics = children.props.componentProps?.isFreeMovement
+    ? {
+        left: children?.props?.componentProps?.positionX || 0,
+        top: children?.props?.componentProps?.positionY || 0,
+        width: children?.props?.width,
+        height: children?.props?.height
+      }
+    : {};
 
   return (
     <>
-      <Wrapper
-        isHovered={isHovered}
-        isSelected={isSelected}
+      <div
+        className={clsx('wrapper', {
+          selected: isSelected,
+          hovered: isHovered
+        })}
         onMouseOver={hoverElement(children.props.id)}
         onMouseLeave={unhoverElement}
-        onMouseDown={(e: MouseEvent<HTMLDivElement>) => {
-          if (
-            (e.target as HTMLElement).classList.contains('moveable-control')
-          ) {
-            return;
-          }
-
-          e.stopPropagation();
-          dispatch(
-            deckSlice.actions.editableElementSelected(children.props.id)
-          );
-        }}
+        onMouseDown={handleMouseDown}
       >
-        {isSelectedAndMarkdown ? (
-          <InlineEditor>{children}</InlineEditor>
+        {isEditingMarkdown ? (
+          <div
+            className="markdown-editor-container"
+            style={editingFrameMetrics}
+          >
+            <VisualEditor />
+          </div>
         ) : (
           cloneElement(children, {
             ref,
@@ -252,17 +266,22 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
             isSelected
           })
         )}
-      </Wrapper>
+      </div>
       {elLoaded && (
         <Moveable
           ref={moveableRef}
           target={target}
           origin={false}
-          resizable={RESIZABLE_ELEMENTS.includes(children.props.type)}
+          resizable={
+            RESIZABLE_ELEMENTS.includes(children.props.type) &&
+            !isEditingMarkdown
+          }
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
           keepRatio={isShiftDown}
-          draggable={children.props.componentProps?.isFreeMovement}
+          draggable={
+            children.props.componentProps?.isFreeMovement && !isEditingMarkdown
+          }
           onDrag={handleOnDragMovement}
           onDragEnd={handleOnDragMovementEnd}
           key={treeId}

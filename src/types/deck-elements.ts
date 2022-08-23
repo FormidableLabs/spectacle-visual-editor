@@ -15,7 +15,11 @@ export type SPECTACLE_ELEMENTS =
   | 'FullScreen'
   | 'Notes';
 
-export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Image'];
+export const RESIZABLE_ELEMENTS: SPECTACLE_ELEMENTS[] = [
+  'FlexBox',
+  'Image',
+  'Markdown'
+];
 export const CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = ['FlexBox', 'Grid'];
 // To check whether a constructed element is allowed to have child elements
 export const ALL_CONTAINER_ELEMENTS: SPECTACLE_ELEMENTS[] = [

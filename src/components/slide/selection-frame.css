@@ -1,0 +1,19 @@
+.wrapper.selected > div,
+.wrapper.selected > img,
+.wrapper.selected > pre {
+  outline: 2px solid #e7e5e4;
+}
+
+.wrapper.hovered > div,
+.wrapper.hovered > img,
+.wrapper.hovered > pre {
+  outline: 2px solid #fef08a;
+}
+
+.wrapper {
+  user-select: none;
+}
+
+.markdown-editor-container {
+  position: absolute;
+}

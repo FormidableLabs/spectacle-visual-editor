@@ -5,7 +5,8 @@ import {
   $getSelection,
   $createParagraphNode,
   $isRangeSelection,
-  RangeSelection
+  RangeSelection,
+  LexicalCommand
 } from 'lexical';
 import {
   INSERT_ORDERED_LIST_COMMAND,
@@ -108,11 +109,20 @@ export const ToolbarPlugin = React.forwardRef<
     (blockType: BLOCK_TYPES) => {
       formatBlock('paragraph');
       if (toolbarState.blockType === blockType) {
-        editor.dispatchCommand(REMOVE_LIST_COMMAND, (() => {})());
+        editor.dispatchCommand<LexicalCommand<null>, null>(
+          REMOVE_LIST_COMMAND,
+          null
+        );
       } else if (blockType === BLOCK_TYPES.UL) {
-        editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, (() => {})());
+        editor.dispatchCommand<LexicalCommand<null>, null>(
+          INSERT_UNORDERED_LIST_COMMAND,
+          null
+        );
       } else if (blockType === BLOCK_TYPES.OL) {
-        editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, (() => {})());
+        editor.dispatchCommand<LexicalCommand<null>, null>(
+          INSERT_ORDERED_LIST_COMMAND,
+          null
+        );
       }
     },
     [editor, toolbarState, formatBlock]

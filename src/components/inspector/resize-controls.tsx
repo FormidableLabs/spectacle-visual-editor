@@ -57,9 +57,6 @@ export const ResizeControls: React.FC<ElementControlsProps> = ({
     }
   }, [selectedElement]);
 
-  //   const [freeMovement, setFreeMovement] = useState(inputState.freeMovement);
-  const freeMovement = selectedElement?.props?.componentProps?.isFreeMovement;
-
   const handleComponentElementChanged = useCallback(
     (propName: string, val: string | number | boolean) => {
       if (selectedElement) {
@@ -122,72 +119,66 @@ export const ResizeControls: React.FC<ElementControlsProps> = ({
   );
 
   return (
-    <>
-      {freeMovement ? (
-        <SplitContainer>
-          <TextInputField
-            label="Width:"
-            value={inputState.width}
-            onBlur={(e: FocusEvent<HTMLInputElement>) => {
-              const { value } = e.target;
-              handleOnEvent({
-                value: value,
-                shouldSetInputState: true,
-                valueToChangeName: 'width',
-                displayValueToChangeName: 'width',
-                valueToChangeCSSName: 'width',
-                valueAsCSSValue: value,
-                validator: isValidCSSSize
-              });
-            }}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              const { value } = e.target;
-              setInputState({ ...inputState, width: value });
-              handleOnEvent({
-                value,
-                shouldSetInputState: false,
-                valueToChangeName: 'width',
-                displayValueToChangeName: 'width',
-                valueToChangeCSSName: 'width',
-                valueAsCSSValue: value,
-                validator: isValidCSSSize
-              });
-            }}
-          />
-          <TextInputField
-            label="Height:"
-            value={inputState.height}
-            onBlur={(e: FocusEvent<HTMLInputElement>) => {
-              const { value } = e.target;
-              handleOnEvent({
-                value: value,
-                shouldSetInputState: true,
-                valueToChangeName: 'height',
-                displayValueToChangeName: 'height',
-                valueToChangeCSSName: 'height',
-                valueAsCSSValue: value,
-                validator: isValidCSSSize
-              });
-            }}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              const { value } = e.target;
-              setInputState({ ...inputState, height: value });
-              handleOnEvent({
-                value,
-                shouldSetInputState: false,
-                valueToChangeName: 'height',
-                displayValueToChangeName: 'height',
-                valueToChangeCSSName: 'height',
-                valueAsCSSValue: value,
-                validator: isValidCSSSize
-              });
-            }}
-          />
-        </SplitContainer>
-      ) : (
-        <></>
-      )}
-    </>
+    <SplitContainer>
+      <TextInputField
+        label="Width:"
+        value={inputState.width}
+        onBlur={(e: FocusEvent<HTMLInputElement>) => {
+          const { value } = e.target;
+          handleOnEvent({
+            value: value,
+            shouldSetInputState: true,
+            valueToChangeName: 'width',
+            displayValueToChangeName: 'width',
+            valueToChangeCSSName: 'width',
+            valueAsCSSValue: value,
+            validator: isValidCSSSize
+          });
+        }}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          const { value } = e.target;
+          setInputState({ ...inputState, width: value });
+          handleOnEvent({
+            value,
+            shouldSetInputState: false,
+            valueToChangeName: 'width',
+            displayValueToChangeName: 'width',
+            valueToChangeCSSName: 'width',
+            valueAsCSSValue: value,
+            validator: isValidCSSSize
+          });
+        }}
+      />
+      <TextInputField
+        label="Height:"
+        value={inputState.height}
+        onBlur={(e: FocusEvent<HTMLInputElement>) => {
+          const { value } = e.target;
+          handleOnEvent({
+            value: value,
+            shouldSetInputState: true,
+            valueToChangeName: 'height',
+            displayValueToChangeName: 'height',
+            valueToChangeCSSName: 'height',
+            valueAsCSSValue: value,
+            validator: isValidCSSSize
+          });
+        }}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          const { value } = e.target;
+          setInputState({ ...inputState, height: value });
+          handleOnEvent({
+            value,
+            shouldSetInputState: false,
+            valueToChangeName: 'height',
+            displayValueToChangeName: 'height',
+            valueToChangeCSSName: 'height',
+            valueAsCSSValue: value,
+            validator: isValidCSSSize
+          });
+        }}
+      />
+    </SplitContainer>
   );
 };
 

@@ -3,17 +3,14 @@ import {
   IconButton,
   Label,
   Pane,
-  Group,
-  TextInputField,
-  Button
+  TextInputField
 } from 'evergreen-ui';
 import React, {
   ChangeEvent,
   FocusEvent,
   useCallback,
   useEffect,
-  useState,
-  useMemo
+  useState
 } from 'react';
 import styled from 'styled-components';
 import {
@@ -33,7 +30,6 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
 }) => {
   const themeValues = useRootSelector(themeSelector);
   const [inputState, setInputState] = useState({
-    freeMovement: !!selectedElement?.props?.componentProps?.isFreeMovement,
     displayPositionX: selectedElement?.props?.componentProps?.positionX || 0,
     displayPositionY: selectedElement?.props?.componentProps?.positionY || 0,
     positionX: selectedElement?.props?.componentProps?.positionX || 0,
@@ -55,10 +51,9 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
       height: propsHeight = 0
     } = selectedElement.props;
 
-    const { isFreeMovement, positionX = 0, positionY = 0 } = componentProps;
+    const { positionX = 0, positionY = 0 } = componentProps;
 
     setInputState({
-      freeMovement: !!isFreeMovement,
       displayPositionX: positionX,
       displayPositionY: positionY,
       positionX: positionX,
@@ -67,11 +62,6 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
       height: propsHeight
     });
   }, [selectedElement]);
-
-  const freeMovement = useMemo(
-    () => !!inputState.freeMovement,
-    [inputState.freeMovement]
-  );
 
   const handleComponentElementChanged = useCallback(
     (propName: string, val?: string | number | boolean) => {
@@ -133,47 +123,6 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
     },
     [handleComponentElementChanged, handleDefaultElementChanged, inputState]
   );
-
-  /**
-   * @param fmStatus absolute/free movement status
-   */
-  const setFreeMovement = (fmStatus: boolean) => {
-    if (fmStatus) {
-      handleOnEvent({
-        value: 'absolute',
-        shouldSetInputState: false,
-        valueToChangeName: 'position',
-        displayValueToChangeName: 'position',
-        valueToChangeCSSName: 'position',
-        valueAsCSSValue: 'absolute',
-        validator: () => {
-          return true;
-        }
-      });
-    } else {
-      // clear freeMovement. Set horizontal & vertical positions to last input values
-      editableElementChanged({
-        componentProps: {
-          ...selectedElement?.props?.componentProps,
-          positionX: inputState.positionX,
-          positionY: inputState.positionY
-        }
-      });
-
-      handleOnEvent({
-        value: 'static',
-        shouldSetInputState: false,
-        valueToChangeName: 'position',
-        displayValueToChangeName: 'position',
-        valueToChangeCSSName: 'position',
-        valueAsCSSValue: 'static',
-        validator: () => {
-          return true;
-        }
-      });
-    }
-    handleComponentElementChanged('isFreeMovement', fmStatus);
-  };
 
   const alignHorizontally = useCallback(
     (value: string) => {
@@ -250,115 +199,89 @@ export const FreeMovementControls: React.FC<ElementControlsProps> = ({
 
   return (
     <Container label="Object Placement">
-      <Group marginBottom={8}>
-        <Button
-          flex={1}
-          isActive={!freeMovement}
-          onClick={() => {
-            setFreeMovement(false);
+      <Pane display="flex" alignItems="center" marginBottom={8}>
+        <Label minWidth={54}>Align:</Label>
+        <Pane display="flex">
+          {Object.keys(ALIGNMENT_OPTIONS).map((alignmentType, i) => {
+            const option = ALIGNMENT_OPTIONS[alignmentType as ALIGNMENT_TYPES];
+            return (
+              <Tooltip content={option.tooltip} key={alignmentType}>
+                <IconButton
+                  flex={1}
+                  icon={option.icon}
+                  marginLeft={i === 0 ? 0 : 7}
+                  onClick={() =>
+                    handleAlignment(alignmentType as ALIGNMENT_TYPES)
+                  }
+                />
+              </Tooltip>
+            );
+          })}
+        </Pane>
+      </Pane>
+
+      <SplitContainer>
+        <TextInputField
+          label="X:"
+          value={inputState.positionX}
+          onBlur={(e: FocusEvent<HTMLInputElement>) => {
+            const value = valueWithCSSUnits(e.target.value);
+
+            handleOnEvent({
+              value: value,
+              shouldSetInputState: true,
+              valueToChangeName: 'positionX',
+              displayValueToChangeName: 'displayPositionX',
+              valueToChangeCSSName: 'left',
+              valueAsCSSValue: value,
+              validator: isValidCSSSize
+            });
           }}
-        >
-          In-line
-        </Button>
-        <Button
-          flex={1}
-          isActive={freeMovement}
-          onClick={() => {
-            setFreeMovement(true);
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            const { value } = e.target;
+            setInputState({ ...inputState, positionX: value });
+            handleOnEvent({
+              value,
+              shouldSetInputState: false,
+              valueToChangeName: 'positionX',
+              displayValueToChangeName: 'displayPositionX',
+              valueToChangeCSSName: 'left',
+              valueAsCSSValue: value,
+              validator: isValidCSSSize
+            });
           }}
-        >
-          Absolute
-        </Button>
-      </Group>
+        />
+        <TextInputField
+          label="Y:"
+          value={inputState.positionY}
+          onBlur={(e: FocusEvent<HTMLInputElement>) => {
+            const value = valueWithCSSUnits(e.target.value);
 
-      {freeMovement && (
-        <>
-          <Pane display="flex" alignItems="center" marginBottom={8}>
-            <Label minWidth={54}>Align:</Label>
-            <Pane display="flex">
-              {Object.keys(ALIGNMENT_OPTIONS).map((alignmentType, i) => {
-                const option =
-                  ALIGNMENT_OPTIONS[alignmentType as ALIGNMENT_TYPES];
-                return (
-                  <Tooltip content={option.tooltip} key={alignmentType}>
-                    <IconButton
-                      flex={1}
-                      icon={option.icon}
-                      marginLeft={i === 0 ? 0 : 7}
-                      onClick={() =>
-                        handleAlignment(alignmentType as ALIGNMENT_TYPES)
-                      }
-                    />
-                  </Tooltip>
-                );
-              })}
-            </Pane>
-          </Pane>
-
-          <SplitContainer>
-            <TextInputField
-              label="X:"
-              value={inputState.positionX}
-              onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                const value = valueWithCSSUnits(e.target.value);
-
-                handleOnEvent({
-                  value: value,
-                  shouldSetInputState: true,
-                  valueToChangeName: 'positionX',
-                  displayValueToChangeName: 'displayPositionX',
-                  valueToChangeCSSName: 'left',
-                  valueAsCSSValue: value,
-                  validator: isValidCSSSize
-                });
-              }}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const { value } = e.target;
-                setInputState({ ...inputState, positionX: value });
-                handleOnEvent({
-                  value,
-                  shouldSetInputState: false,
-                  valueToChangeName: 'positionX',
-                  displayValueToChangeName: 'displayPositionX',
-                  valueToChangeCSSName: 'left',
-                  valueAsCSSValue: value,
-                  validator: isValidCSSSize
-                });
-              }}
-            />
-            <TextInputField
-              label="Y:"
-              value={inputState.positionY}
-              onBlur={(e: FocusEvent<HTMLInputElement>) => {
-                const value = valueWithCSSUnits(e.target.value);
-
-                handleOnEvent({
-                  value: value,
-                  shouldSetInputState: true,
-                  valueToChangeName: 'positionY',
-                  displayValueToChangeName: 'displayPositionY',
-                  valueToChangeCSSName: 'top',
-                  valueAsCSSValue: value,
-                  validator: isValidCSSSize
-                });
-              }}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const { value } = e.target;
-                setInputState({ ...inputState, positionY: value });
-                handleOnEvent({
-                  value,
-                  shouldSetInputState: false,
-                  valueToChangeName: 'positionY',
-                  displayValueToChangeName: 'displayPositionY',
-                  valueToChangeCSSName: 'top',
-                  valueAsCSSValue: value,
-                  validator: isValidCSSSize
-                });
-              }}
-            />
-          </SplitContainer>
-        </>
-      )}
+            handleOnEvent({
+              value: value,
+              shouldSetInputState: true,
+              valueToChangeName: 'positionY',
+              displayValueToChangeName: 'displayPositionY',
+              valueToChangeCSSName: 'top',
+              valueAsCSSValue: value,
+              validator: isValidCSSSize
+            });
+          }}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            const { value } = e.target;
+            setInputState({ ...inputState, positionY: value });
+            handleOnEvent({
+              value,
+              shouldSetInputState: false,
+              valueToChangeName: 'positionY',
+              displayValueToChangeName: 'displayPositionY',
+              valueToChangeCSSName: 'top',
+              valueAsCSSValue: value,
+              validator: isValidCSSSize
+            });
+          }}
+        />
+      </SplitContainer>
     </Container>
   );
 };

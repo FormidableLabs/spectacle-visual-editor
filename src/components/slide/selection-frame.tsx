@@ -132,7 +132,6 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           width: event.target.style.width,
           height: event.target.style.height,
           componentProps: {
-            isFreeMovement: true,
             positionX: `${Math.round(event.lastEvent.drag.left)}px`,
             positionY: `${Math.round(event.lastEvent.drag.top)}px`
           }
@@ -201,7 +200,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     if (moveableRef.current?.props.target) {
       moveableRef.current.moveable.updateTarget();
     }
-  }, [childIsFreeMovement, childPositionX, childPositionY]);
+  }, [childPositionX, childPositionY]);
 
   /**
    * If img src changes, we need to reset to unloaded state

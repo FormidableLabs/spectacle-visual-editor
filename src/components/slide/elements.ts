@@ -7,15 +7,15 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     component: 'Markdown',
     children: '# Oh Hello There',
     props: {
-      componentProps: {
-        textAlign: 'left'
-      }
+      position: 'absolute',
+      componentProps: {}
     }
   },
   TEXT: {
     component: 'Markdown',
     children: 'I am text',
     props: {
+      position: 'absolute',
       componentProps: {}
     }
   },
@@ -23,6 +23,7 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     component: 'Markdown',
     children: `- one\n- two\n- three`,
     props: {
+      position: 'absolute',
       componentProps: {}
     }
   },
@@ -34,6 +35,7 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
       height: 100,
       width: 200,
       flexDirection: FLEX_DIRECTION.column,
+      position: 'absolute',
       componentProps: {}
     },
     children: []
@@ -63,6 +65,7 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
       \`\`\`
     `),
     props: {
+      position: 'absolute',
       componentProps: {}
     }
   },
@@ -70,18 +73,14 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     component: 'Progress',
     props: {
       position: 'absolute',
-      componentProps: {
-        isFreeMovement: true
-      }
+      componentProps: {}
     }
   },
   FULL_SCREEN: {
     component: 'FullScreen',
     props: {
       position: 'absolute',
-      componentProps: {
-        isFreeMovement: true
-      }
+      componentProps: {}
     }
   }
 };

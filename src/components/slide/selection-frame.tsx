@@ -22,7 +22,8 @@ import {
 } from '../../slices/deck-slice';
 import {
   RESIZABLE_ELEMENTS,
-  SELF_RESIZING_ELEMENTS
+  SELF_RESIZING_ELEMENTS,
+  SPECTACLE_ELEMENTS
 } from '../../types/deck-elements';
 import { isMdElement } from '../inspector/validators';
 import { VisualEditor } from '../user-interface/visual-editor/visual-editor';
@@ -34,7 +35,7 @@ interface Props {
 }
 
 export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
-  const ref = useRef<HTMLElement>();
+  const ref = useRef<HTMLElement>(null);
   const moveableRef = useRef<Moveable>(null);
   const dispatch = useDispatch();
   const editableElementId = useSelector(selectedEditableElementIdSelector);
@@ -42,13 +43,41 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const hoveredElementId = useSelector(hoveredEditableElementIdSelector);
 
+  // Retrieve all the child props here to contain all their ambiguity in one
+  // spot and avoid `any` types as much as possible.
+  const {
+    type: childType,
+    src: imgSrc,
+    id: childId = 'should-not-see-this-id',
+    width: childWidth,
+    height: childHeight,
+    position: childPosition,
+    children: childChildren
+  } = (children?.props || {}) as {
+    type?: SPECTACLE_ELEMENTS;
+    src?: string;
+    id?: string;
+    width?: number;
+    height?: number;
+    position?: number;
+    children?: any;
+  };
+  const {
+    isFreeMovement: childIsFreeMovement,
+    positionX: childPositionX,
+    positionY: childPositionY
+  } = (children?.props?.componentProps || {}) as {
+    isFreeMovement?: boolean;
+    positionX?: number;
+    positionY?: number;
+  };
+
   /**
    * Moveable can't detect size of image until it is loaded,
    *  so we'll keep track of the loaded state for images.
    * Non-Image components are assumed to be loaded from the start.
    */
-  const isImgElement = children?.props?.type === 'Image';
-  const imgSrc = children?.props?.src;
+  const isImgElement = childType === 'Image';
   const [elLoaded, setElLoaded] = React.useState(!isImgElement);
 
   const handleOnResize = useCallback((event: OnResize) => {
@@ -109,12 +138,12 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   );
 
   useEffect(() => {
-    if (editableElementId === children.props.id) {
-      setTarget(ref.current || null);
+    if (editableElementId === childId) {
+      setTarget(ref.current);
     } else {
       setTarget(null);
     }
-  }, [children, editableElementId]);
+  }, [childId, editableElementId]);
 
   /**
    * If shift is held down, the image should keep its ratio when resizing
@@ -146,39 +175,31 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
    *  If the child's dimensions or css position change, let the moveable instance know
    */
   useEffect(() => {
-    if (moveableRef?.current?.props?.target) {
+    if (moveableRef.current?.props.target) {
       moveableRef.current.updateRect();
     }
-  }, [
-    children?.props?.width,
-    children?.props?.height,
-    children?.props?.position
-  ]);
+  }, [childWidth, childHeight, childPosition]);
 
   /**
    *  If the child's content changes and can cause resizing, let the moveable instance know
    */
   useEffect(() => {
     if (
-      SELF_RESIZING_ELEMENTS.includes(children?.props?.type) &&
-      moveableRef?.current?.props?.target
+      SELF_RESIZING_ELEMENTS.includes(childType!) &&
+      moveableRef.current?.props.target
     ) {
       moveableRef.current.updateRect();
     }
-  }, [children?.props?.children, children?.props?.type]);
+  }, [childChildren, childType]);
 
   /**
    *  If the child's positions change from manually entering coordinate, update the target frame
    */
   useEffect(() => {
-    if (moveableRef?.current?.props?.target) {
+    if (moveableRef.current?.props.target) {
       moveableRef.current.moveable.updateTarget();
     }
-  }, [
-    children?.props?.componentProps?.isFreeMovement,
-    children?.props?.componentProps?.positionX,
-    children?.props?.componentProps?.positionY
-  ]);
+  }, [childIsFreeMovement, childPositionX, childPositionY]);
 
   /**
    * If img src changes, we need to reset to unloaded state
@@ -203,8 +224,8 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     dispatch(deckSlice.actions.editableElementHovered(null));
   }, [dispatch]);
 
-  const isHovered = hoveredElementId === children.props.id;
-  const isSelected = editableElementId === children.props.id;
+  const isHovered = hoveredElementId === childId;
+  const isSelected = editableElementId === childId;
 
   const handleMouseDown = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
@@ -214,30 +235,30 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
         return;
       }
       event.stopPropagation();
-      dispatch(deckSlice.actions.editableElementSelected(children.props.id));
+      dispatch(deckSlice.actions.editableElementSelected(childId));
 
       if (event.detail === 2) {
         setDoubleClickedElement(true);
       }
     },
-    [children.props.id, dispatch]
+    [childId, dispatch]
   );
 
   useEffect(() => {
-    if (doubleClickedElement && selectedElement?.id !== children.props.id) {
+    if (doubleClickedElement && selectedElement?.id !== childId) {
       setDoubleClickedElement(false);
     }
-  }, [children.props.id, doubleClickedElement, selectedElement?.id]);
+  }, [childId, doubleClickedElement, selectedElement?.id]);
 
   const isEditingMarkdown =
     doubleClickedElement && isMdElement(selectedElement);
 
-  const editingFrameMetrics = children.props.componentProps?.isFreeMovement
+  const editingFrameMetrics = childIsFreeMovement
     ? {
-        left: children?.props?.componentProps?.positionX || 0,
-        top: children?.props?.componentProps?.positionY || 0,
-        width: children?.props?.width,
-        height: children?.props?.height
+        left: childPositionX || 0,
+        top: childPositionY || 0,
+        width: childWidth,
+        height: childHeight
       }
     : {};
 
@@ -248,7 +269,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           selected: isSelected,
           hovered: isHovered
         })}
-        onMouseOver={hoverElement(children.props.id)}
+        onMouseOver={hoverElement(childId)}
         onMouseLeave={unhoverElement}
         onMouseDown={handleMouseDown}
       >
@@ -273,15 +294,12 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           target={target}
           origin={false}
           resizable={
-            RESIZABLE_ELEMENTS.includes(children.props.type) &&
-            !isEditingMarkdown
+            RESIZABLE_ELEMENTS.includes(childType!) && !isEditingMarkdown
           }
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
           keepRatio={isShiftDown}
-          draggable={
-            children.props.componentProps?.isFreeMovement && !isEditingMarkdown
-          }
+          draggable={childIsFreeMovement && !isEditingMarkdown}
           onDrag={handleOnDragMovement}
           onDragEnd={handleOnDragMovementEnd}
           key={treeId}

@@ -244,9 +244,9 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   return (
     <>
       <div
-        className={clsx({
-          'wrapper selected': isSelected,
-          'wrapper hovered': isHovered
+        className={clsx('wrapper', {
+          selected: isSelected,
+          hovered: isHovered
         })}
         onMouseOver={hoverElement(children.props.id)}
         onMouseLeave={unhoverElement}

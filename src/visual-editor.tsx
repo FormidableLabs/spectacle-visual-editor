@@ -81,7 +81,6 @@ export const VisualEditor: React.FC = () => {
 
       deckToLoad = decksSortedByLastSaved[0];
     } else {
-      // Dummy deck
       deckToLoad = {
         id: v4(),
         title: 'Untitled Deck',

@@ -5,7 +5,7 @@ import { indentNormalizer } from 'spectacle';
 export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
   HEADING: {
     component: 'Markdown',
-    children: '# Oh Hello There',
+    children: '# Heading',
     props: {
       position: 'absolute',
       componentProps: {}
@@ -13,7 +13,7 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
   },
   TEXT: {
     component: 'Markdown',
-    children: 'I am text',
+    children: 'Text',
     props: {
       position: 'absolute',
       componentProps: {}
@@ -40,21 +40,13 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     },
     children: []
   },
-  GRID: {
-    component: 'Grid',
-    props: {
-      width: '100%',
-      height: '100%',
-      gridTemplateColumns: '100%',
-      gridTemplateRows: '100%'
-    }
-  },
   IMAGE: {
     component: 'Image',
     props: {
       src: 'https://source.unsplash.com/WLUHO9A_xik/1600x900',
-      width: '500px',
-      height: `auto`
+      width: 500,
+      position: 'absolute',
+      height: 400
     }
   },
   CODEPANE: {

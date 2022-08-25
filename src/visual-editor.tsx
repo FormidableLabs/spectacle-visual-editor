@@ -13,7 +13,6 @@ import {
   SavedDecks
 } from './components';
 import {
-  sampleElementsData,
   sampleSlidesData,
   sampleSlideTemplateData
 } from './sample-slides-data';
@@ -85,12 +84,12 @@ export const VisualEditor: React.FC = () => {
       // Dummy deck
       deckToLoad = {
         id: v4(),
-        title: 'Dummy Deck',
+        title: 'Untitled Deck',
         createdAt: new Date().toJSON(),
         updatedAt: new Date().toJSON(),
         theme: defaultTheme,
         slides: sampleSlidesData,
-        elements: sampleElementsData,
+        elements: [],
         slideTemplate: sampleSlideTemplateData
       };
     }

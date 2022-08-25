@@ -263,7 +263,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
       >
         {isEditingMarkdown ? (
           <div
-            className="markdown-editor-container"
+            className="markdown-editor-container outline outline-neutral-500"
             style={editingFrameMetrics}
           >
             <VisualEditor />

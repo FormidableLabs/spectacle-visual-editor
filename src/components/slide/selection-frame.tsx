@@ -267,7 +267,9 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           target={ref.current}
           origin={false}
           resizable={
-            RESIZABLE_ELEMENTS.includes(childType!) && !isEditingMarkdown
+            RESIZABLE_ELEMENTS.includes(childType!) &&
+            isSelected &&
+            !isEditingMarkdown
           }
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}

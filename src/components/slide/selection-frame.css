@@ -1,16 +1,16 @@
-.wrapper.selected > div,
-.wrapper.selected > img,
-.wrapper.selected > pre {
+.selection-wrapper.selected > div,
+.selection-wrapper.selected > img,
+.selection-wrapper.selected > pre {
   outline: 2px solid #e7e5e4;
 }
 
-.wrapper.hovered > div,
-.wrapper.hovered > img,
-.wrapper.hovered > pre {
+.selection-wrapper.hovered > div,
+.selection-wrapper.hovered > img,
+.selection-wrapper.hovered > pre {
   outline: 2px solid #fef08a;
 }
 
-.wrapper {
+.selection-wrapper {
   user-select: none;
 }
 

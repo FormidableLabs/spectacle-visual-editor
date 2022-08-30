@@ -3,8 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useRef,
-  useState,
-  MouseEvent
+  useState
 } from 'react';
 import clsx from 'clsx';
 import Moveable, {
@@ -40,7 +39,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const dispatch = useDispatch();
   const editableElementId = useSelector(selectedEditableElementIdSelector);
   const selectedElement = useSelector(selectedElementSelector);
-  const [target, setTarget] = useState<HTMLElement | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const hoveredElementId = useSelector(hoveredEditableElementIdSelector);
 
   // Retrieve all the child props here to contain all their ambiguity in one
@@ -54,12 +53,12 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     position: childPosition,
     children: childChildren
   } = (children?.props || {}) as {
-    type?: SPECTACLE_ELEMENTS;
+    type: SPECTACLE_ELEMENTS;
     src?: string;
-    id?: string;
-    width?: number;
-    height?: number;
-    position?: number;
+    id: string;
+    width?: string;
+    height?: string;
+    position?: string;
     children?: any;
   };
   const {
@@ -68,8 +67,8 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     positionY: childPositionY
   } = (children?.props?.componentProps || {}) as {
     isFreeMovement?: boolean;
-    positionX?: number;
-    positionY?: number;
+    positionX?: string;
+    positionY?: string;
   };
 
   /**
@@ -96,6 +95,8 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
 
   const handleOnResizeEnd = useCallback(
     (event: OnResizeEnd) => {
+      if (!event.lastEvent) return;
+
       dispatch(
         deckSlice.actions.editableElementChanged({
           left: `${Math.round(event.lastEvent.drag.left)}px`,
@@ -118,32 +119,26 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     event.target.style.left = `${event.left}px`;
   };
 
-  const handleOnDragMovementEnd = useCallback(
-    (event: OnDragEnd) => {
-      if (event.lastEvent) {
-        dispatch(
-          deckSlice.actions.editableElementChanged({
-            left: `${Math.round(event.lastEvent.left)}px`,
-            top: `${Math.round(event.lastEvent.top)}px`,
-            componentProps: {
-              isFreeMovement: true,
-              positionX: `${Math.round(event.lastEvent.left)}px`,
-              positionY: `${Math.round(event.lastEvent.top)}px`
-            }
-          })
-        );
-      }
-    },
-    [dispatch]
-  );
+  const handleOnDragMovementEnd = (event: OnDragEnd) => {
+    if (!event.lastEvent) return;
 
-  useEffect(() => {
-    if (editableElementId === childId) {
-      setTarget(ref.current);
-    } else {
-      setTarget(null);
+    if (selectedElement?.id !== childId) {
+      dispatch(deckSlice.actions.editableElementSelected(childId));
     }
-  }, [childId, editableElementId]);
+
+    setIsEditing(false);
+    dispatch(
+      deckSlice.actions.editableElementChanged({
+        left: `${Math.round(event.lastEvent.left)}px`,
+        top: `${Math.round(event.lastEvent.top)}px`,
+        componentProps: {
+          isFreeMovement: true,
+          positionX: `${Math.round(event.lastEvent.left)}px`,
+          positionY: `${Math.round(event.lastEvent.top)}px`
+        }
+      })
+    );
+  };
 
   /**
    * If shift is held down, the image should keep its ratio when resizing
@@ -210,50 +205,22 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     }
   }, [imgSrc]);
 
-  const [doubleClickedElement, setDoubleClickedElement] = useState(false);
-
-  const hoverElement = useCallback(
-    (id: string) => (e: MouseEvent<HTMLDivElement>) => {
-      e.stopPropagation();
-      dispatch(deckSlice.actions.editableElementHovered(id));
-    },
-    [dispatch]
-  );
-
-  const unhoverElement = useCallback(() => {
-    dispatch(deckSlice.actions.editableElementHovered(null));
-  }, [dispatch]);
-
   const isHovered = hoveredElementId === childId;
   const isSelected = editableElementId === childId;
 
-  const handleMouseDown = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      if (
-        (event.target as HTMLElement).classList.contains('moveable-control')
-      ) {
-        return;
-      }
-      event.stopPropagation();
+  const handleClick = () => {
+    if (selectedElement?.id !== childId) {
+      setIsEditing(false);
       dispatch(deckSlice.actions.editableElementSelected(childId));
-
-      if (event.detail === 2) {
-        setDoubleClickedElement(true);
-      }
-    },
-    [childId, dispatch]
-  );
-
-  useEffect(() => {
-    if (doubleClickedElement && selectedElement?.id !== childId) {
-      setDoubleClickedElement(false);
+    } else if (!isEditing) {
+      setIsEditing(true);
     }
-  }, [childId, doubleClickedElement, selectedElement?.id]);
+  };
 
   const isEditingMarkdown =
-    doubleClickedElement && isMdElement(selectedElement);
+    isSelected && isMdElement(selectedElement) && isEditing;
 
-  const editingFrameMetrics = childIsFreeMovement
+  const editingFrameMetrics: React.CSSProperties = childIsFreeMovement
     ? {
         left: childPositionX || 0,
         top: childPositionY || 0,
@@ -265,13 +232,19 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   return (
     <>
       <div
-        className={clsx('wrapper', {
+        className={clsx('selection-wrapper', {
           selected: isSelected,
           hovered: isHovered
         })}
-        onMouseOver={hoverElement(childId)}
-        onMouseLeave={unhoverElement}
-        onMouseDown={handleMouseDown}
+        onMouseOver={() => {
+          if (hoveredElementId !== childId) {
+            dispatch(deckSlice.actions.editableElementHovered(childId));
+          }
+        }}
+        onMouseLeave={() => {
+          dispatch(deckSlice.actions.editableElementHovered(null));
+        }}
+        onClick={handleClick}
       >
         {isEditingMarkdown ? (
           <div
@@ -291,7 +264,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
       {elLoaded && (
         <Moveable
           ref={moveableRef}
-          target={target}
+          target={ref.current}
           origin={false}
           resizable={
             RESIZABLE_ELEMENTS.includes(childType!) && !isEditingMarkdown

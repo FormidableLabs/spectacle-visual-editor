@@ -44,8 +44,7 @@ export const VisualEditor: React.FC = () => {
   const dispatch = useDispatch();
   const { activeSlideNode, slideNodes, activeTemplateNode, templateNode } =
     useSlideNodes();
-  const { handleCanvasMouseDown, handleSlideSelected, handleTemplateSelected } =
-    useEditorActions();
+  const { handleSlideSelected, handleTemplateSelected } = useEditorActions();
   const [loadedInitialDeck, setLoadedInitialDeck] = useState(false);
   const [loadedFontFamilies, setLoadedFontFamilies] = useState<Array<string>>(
     []
@@ -149,11 +148,7 @@ export const VisualEditor: React.FC = () => {
         minSize={300}
         onResize={onResize}
       >
-        <EditorCanvas
-          scale={scale}
-          ref={canvasRef}
-          onMouseDown={handleCanvasMouseDown}
-        >
+        <EditorCanvas scale={scale} ref={canvasRef}>
           <SlideViewer scale={slideScale}>
             {slideTemplateOpen ? activeTemplateNode : activeSlideNode}
           </SlideViewer>

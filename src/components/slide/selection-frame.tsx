@@ -266,6 +266,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           ref={moveableRef}
           target={ref.current}
           origin={false}
+          hideDefaultLines
           resizable={
             RESIZABLE_ELEMENTS.includes(childType!) &&
             isSelected &&

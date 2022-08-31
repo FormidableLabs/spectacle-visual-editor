@@ -33,6 +33,33 @@ interface Props {
   treeId: string;
 }
 
+/**
+ * Detects when the shift key is pressed inside the window
+ */
+const useIsShiftKeyDown = () => {
+  const [isShiftDown, setIsShiftDown] = useState(false);
+
+  useEffect(() => {
+    const handleUserKeyPress =
+      (isKeyDown: boolean) => (event: KeyboardEvent) => {
+        const { key } = event;
+        if (key === 'Shift') {
+          setIsShiftDown(isKeyDown);
+        }
+      };
+    const handleKeyDown = handleUserKeyPress(true);
+    const handleKeyUp = handleUserKeyPress(false);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
+
+  return isShiftDown;
+};
+
 export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const ref = useRef<HTMLElement>(null);
   const moveableRef = useRef<Moveable>(null);
@@ -40,6 +67,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const editableElementId = useSelector(selectedEditableElementIdSelector);
   const selectedElement = useSelector(selectedElementSelector);
   const [isEditing, setIsEditing] = useState(false);
+  const [isResizingViaCorner, setIsResizingViaCorner] = useState(false);
   const hoveredElementId = useSelector(hoveredEditableElementIdSelector);
 
   // Retrieve all the child props here to contain all their ambiguity in one
@@ -143,28 +171,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   /**
    * If shift is held down, the image should keep its ratio when resizing
    */
-  const [isShiftDown, setIsShiftDown] = useState(false);
-
-  const handleUserKeyPress = useCallback(
-    (event: KeyboardEvent, isKeyDown: boolean) => {
-      const { key } = event;
-      if (key === 'Shift') {
-        setIsShiftDown(isKeyDown);
-      }
-    },
-    []
-  );
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => handleUserKeyPress(e, true);
-    const handleKeyUp = (e: KeyboardEvent) => handleUserKeyPress(e, false);
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
-  }, [handleUserKeyPress]);
+  const isShiftDown = useIsShiftKeyDown();
 
   /**
    *  If the child's dimensions or css position change, let the moveable instance know
@@ -281,9 +288,12 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
             isSelected &&
             !isEditingMarkdown
           }
+          onResizeStart={(event) => {
+            setIsResizingViaCorner(event.direction.every((d) => d !== 0));
+          }}
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
-          keepRatio={isShiftDown}
+          keepRatio={isShiftDown || (isImgElement && isResizingViaCorner)}
           draggable={childIsFreeMovement && !isEditingMarkdown}
           onDragStart={(event) => {
             // Prevent parent elements from starting a drag

@@ -208,7 +208,10 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const isHovered = hoveredElementId === childId;
   const isSelected = editableElementId === childId;
 
-  const handleClick = () => {
+  const handleClick = (event: React.MouseEvent) => {
+    // Prevent parent elements from handling the same click event
+    event.stopPropagation();
+
     if (selectedElement?.id !== childId) {
       setIsEditing(false);
       dispatch(deckSlice.actions.editableElementSelected(childId));
@@ -236,12 +239,18 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           selected: isSelected,
           hovered: isHovered
         })}
-        onMouseOver={() => {
+        onMouseOver={(event) => {
+          // Prevent parent elements from changing their hover state
+          event.stopPropagation();
+
           if (hoveredElementId !== childId) {
             dispatch(deckSlice.actions.editableElementHovered(childId));
           }
         }}
-        onMouseLeave={() => {
+        onMouseLeave={(event) => {
+          // Prevent parent elements from changing their hover state
+          event.stopPropagation();
+
           dispatch(deckSlice.actions.editableElementHovered(null));
         }}
         onClick={handleClick}
@@ -276,6 +285,10 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           onResizeEnd={handleOnResizeEnd}
           keepRatio={isShiftDown}
           draggable={childIsFreeMovement && !isEditingMarkdown}
+          onDragStart={(event) => {
+            // Prevent parent elements from starting a drag
+            event.inputEvent.stopPropagation();
+          }}
           onDrag={handleOnDragMovement}
           onDragEnd={handleOnDragMovementEnd}
           key={treeId}

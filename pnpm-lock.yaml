@@ -94,7 +94,7 @@ specifiers:
   react-dnd-html5-backend: ^14.0.0
   react-dom: ^18.2.0
   react-is: ^18.2.0
-  react-moveable: ^0.36.0
+  react-moveable: ^0.38.4
   react-redux: ^8.0.2
   react-router: ^6.3.0
   react-router-dom: ^6.3.0
@@ -156,7 +156,7 @@ dependencies:
   react-dnd-html5-backend: 14.1.0
   react-dom: 18.2.0_react@18.2.0
   react-is: 18.2.0
-  react-moveable: 0.36.0
+  react-moveable: 0.38.4
   react-redux: 8.0.2_76am3hp3mjvgy3cckgdecixdi4
   react-router: 6.3.0_react@18.2.0
   react-router-dom: 6.3.0_biqbaboplfbrettd7655fr4n2y
@@ -4233,24 +4233,6 @@ packages:
     resolution: {integrity: sha512-JVKBhN0tm2Srl+Yt+Ywqu0oLgLcdemDQlD1OxmN9jaCTwaFPZ7tY8n6dhVgMEaR9qcR7r+kAlMXnSfNyYdE+Vg==}
     dependencies:
       '@daybrush/utils': 1.7.1
-    dev: false
-
-  /@scena/react-guides/0.17.1:
-    resolution: {integrity: sha512-qmVKDw681kdsLvirevHPQ9jQy7aenQDy8VNsMdFgsak9GS/GcZz6wBT8lqp6otmQ5oEFjS7+4ZyFsH3tpMiDSQ==}
-    dependencies:
-      '@daybrush/utils': 1.7.1
-      '@scena/react-ruler': 0.9.1
-      css-to-mat: 1.0.3
-      framework-utils: 1.1.0
-      gesto: 1.12.0
-      react-css-styled: 1.0.3
-    dev: false
-
-  /@scena/react-ruler/0.9.1:
-    resolution: {integrity: sha512-OO3KvUWrY1Wi9JL8uVVf7BLM4UyqEWFkJ0CHVcAWmbKWyDaOCWi4cnqb0s7mOtb57jftylUM56U1vaXdQ+51OQ==}
-    dependencies:
-      '@daybrush/utils': 1.7.1
-      framework-utils: 1.1.0
     dev: false
 
   /@segment/react-tiny-virtual-list/2.2.1_react@18.2.0:
@@ -11989,8 +11971,8 @@ packages:
     engines: {node: '>=6.9.0'}
     dev: true
 
-  /gesto/1.12.0:
-    resolution: {integrity: sha512-SWQuDmgGMAxdkoeP+pwl10xx4B8GImbXUjOdNGxLNgF6HR2MaXX/VyL6wINpPjy1nz4ylliskwC0hKGGURcUDQ==}
+  /gesto/1.13.0:
+    resolution: {integrity: sha512-7eRJvkCKzZavuquZUVKocmILw10uAVUJsA8NkA1vmDSSlb+sf9EWmV71SnTzbnUOD3NrWIBNTwn0RaprEyO6Cw==}
     dependencies:
       '@daybrush/utils': 1.7.1
       '@scena/event-emitter': 1.0.5
@@ -17781,8 +17763,8 @@ packages:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
     dev: true
 
-  /react-moveable/0.36.0:
-    resolution: {integrity: sha512-1NmwIBjU30Hm7JfVCp+RTcoZ9Wh1faii3VYatcVFNdHUqxHnr4XqTHs6C7RcrTdZHeNJ3Lx1B6g7Y4F2MGkfgQ==}
+  /react-moveable/0.38.4:
+    resolution: {integrity: sha512-+5s9RGulX1b1QZsa95bmy2LcdXOjtLZIUT9OW0kEBnwKwY4EnHoC8VEawmmRmB7lEKKDiwxWj5Nwt99tutC8qQ==}
     dependencies:
       '@daybrush/utils': 1.7.1
       '@egjs/agent': 2.4.2
@@ -17790,10 +17772,9 @@ packages:
       '@scena/dragscroll': 1.2.1
       '@scena/event-emitter': 1.0.5
       '@scena/matrix': 1.1.1
-      '@scena/react-guides': 0.17.1
       css-to-mat: 1.0.3
       framework-utils: 1.1.0
-      gesto: 1.12.0
+      gesto: 1.13.0
       overlap-area: 1.1.0
       react-css-styled: 1.0.3
     dev: false

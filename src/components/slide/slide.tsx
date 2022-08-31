@@ -1,4 +1,5 @@
 import React, { PropsWithChildren } from 'react';
+import { useDispatch } from 'react-redux';
 import styled, { css, InterpolationValue } from 'styled-components';
 import {
   background,
@@ -8,6 +9,7 @@ import {
   PaddingProps,
   SpaceProps
 } from 'styled-system';
+import { deckSlice } from '../../slices/deck-slice';
 
 export const SlideScaleWrapper = styled.div<{
   containerStyle: InterpolationValue;
@@ -92,6 +94,7 @@ export const Slide = ({
   }
 }: PropsWithChildren<Props>) => {
   const { containerStyle, handleKeyPress, onSlideClick, ...rest } = slideProps;
+  const dispatch = useDispatch();
 
   return (
     <SlideScaleWrapper
@@ -105,7 +108,18 @@ export const Slide = ({
         color={textColor}
         scale={scale}
       >
-        <ContentWrapper padding={padding}>{children}</ContentWrapper>
+        <ContentWrapper
+          padding={padding}
+          onMouseDown={(event) => {
+            // Catch clicks on the slide and clear the selected state for any of
+            // the components appearing in the slide
+            if (event.target === event.currentTarget) {
+              dispatch(deckSlice.actions.editableElementSelected(null));
+            }
+          }}
+        >
+          {children}
+        </ContentWrapper>
       </SlideWrapper>
     </SlideScaleWrapper>
   );

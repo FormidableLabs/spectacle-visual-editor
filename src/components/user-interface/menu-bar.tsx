@@ -437,7 +437,7 @@ export const MenuBar = () => {
                 title="Preview Size"
                 options={[
                   { label: 'To fit', value: 'fit' },
-                  { label: 'Actual size', value: '1' }
+                  { label: 'Actual size', value: 1 }
                 ]}
                 selected={scale}
                 onChange={(selected) => {

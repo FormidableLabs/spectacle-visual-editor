@@ -1,15 +1,15 @@
 import { useEffect, useState, useRef, useCallback, RefObject } from 'react';
 import { useSelector } from 'react-redux';
 import { themeSelector } from '../slices/deck-slice';
-import { settingsSelector } from '../slices/settings-slice';
+import { settingsSelector, SettingsState } from '../slices/settings-slice';
 import { SpectacleTheme } from '../types/theme';
 
 function getScale(
   canvasEl: HTMLDivElement,
   size: SpectacleTheme['size'],
-  scaleSetting: string
-) {
-  if (scaleSetting !== 'fit') return Number(scaleSetting);
+  scaleSetting: SettingsState['scale']
+): number {
+  if (scaleSetting !== 'fit') return scaleSetting;
 
   // We use the parent element here as a stable reference for the
   // constrained area we have to show the canvas element in. The canvas element

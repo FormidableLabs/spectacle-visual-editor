@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { SlideScaleWrapper } from '../slide/slide';
 import { defaultTheme } from 'evergreen-ui';
+import { SettingsState } from '../../slices/settings-slice';
 
 export const EditorBody = styled.div`
   background: ${defaultTheme.colors.gray300};
@@ -19,7 +20,7 @@ export const EditorContent = styled.div`
   flex-direction: row;
 `;
 
-export const EditorCanvas = styled.div<{ scale: string }>`
+export const EditorCanvas = styled.div<{ scale: SettingsState['scale'] }>`
   display: flex;
   flex: 1;
   align-items: ${(props) => (props.scale === 'fit' ? 'center' : 'flex-start')};

@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-type SettingsState = {
-  scale: string;
+export type SettingsState = {
+  scale: 'fit' | number;
 };
 
 const initialState: SettingsState = {

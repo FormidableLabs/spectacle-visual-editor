@@ -28,6 +28,6 @@ export const EditorCanvas = styled.div<{ scale: string }>`
 
   ${SlideScaleWrapper} {
     box-shadow: ${defaultTheme.shadows[2]};
-    overflow: scroll;
+    overflow: auto;
   }
 `;

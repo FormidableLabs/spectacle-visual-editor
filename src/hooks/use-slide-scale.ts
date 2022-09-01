@@ -5,15 +5,16 @@ import { settingsSelector } from '../slices/settings-slice';
 import { SpectacleTheme } from '../types/theme';
 
 function getScale(
-  element: HTMLDivElement | null,
+  canvasEl: HTMLDivElement,
   size: SpectacleTheme['size'],
   scaleSetting: string
 ) {
-  if (!element) return 0;
-
   if (scaleSetting !== 'fit') return Number(scaleSetting);
 
-  const { offsetWidth, offsetHeight } = element;
+  // We use the parent element here as a stable reference for the
+  // constrained area we have to show the canvas element in. The canvas element
+  // itself is subject to resizing, so it is not suitable.
+  const { offsetWidth, offsetHeight } = canvasEl.parentElement as HTMLElement;
   const { width, height } = size;
 
   const scale = Math.min(offsetWidth / width, offsetHeight / height);
@@ -24,7 +25,7 @@ function getScale(
 /**
  * Returns a scale that can be applied to fit slide within a container
  */
-export const useSlideScale = (ref: RefObject<HTMLDivElement>) => {
+export const useSlideScale = (canvasElRef: RefObject<HTMLDivElement>) => {
   const { scale: scaleSetting } = useSelector(settingsSelector);
   const theme = useSelector(themeSelector);
   const [scale, setScale] = useState(0);
@@ -32,34 +33,26 @@ export const useSlideScale = (ref: RefObject<HTMLDivElement>) => {
 
   // Update scale
   const resizeCallback = useCallback(() => {
-    if (ref.current) {
-      const scale = getScale(ref.current, theme.size, scaleSetting);
+    if (!canvasElRef.current) return;
 
-      if (rAF.current) cancelAnimationFrame(rAF.current);
+    const scale = getScale(canvasElRef.current, theme.size, scaleSetting);
 
-      rAF.current = requestAnimationFrame(() => {
-        setScale(scale);
-      });
-    }
-  }, [ref, theme.size, scaleSetting]);
-
-  // Set initial scale value and recompute when theme.size changes
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => {
-      setScale(getScale(ref.current, theme.size, scaleSetting));
+    if (rAF.current) cancelAnimationFrame(rAF.current);
+    rAF.current = requestAnimationFrame(() => {
+      setScale(scale);
     });
-    return () => cancelAnimationFrame(raf);
-  }, [ref, theme.size, scaleSetting]);
+  }, [canvasElRef, theme.size, scaleSetting]);
 
-  // Trigger resizeCallback on window resize
+  // Set initial scale value and recompute when element size, theme.size or
+  // scaleSetting changes
   useEffect(() => {
-    window.addEventListener('resize', resizeCallback, { passive: true });
+    if (!canvasElRef.current) return;
 
-    return () => {
-      if (rAF.current) cancelAnimationFrame(rAF.current);
-      window.removeEventListener('resize', resizeCallback);
-    };
-  }, [resizeCallback]);
+    const resizeObserver = new ResizeObserver(resizeCallback);
+    resizeObserver.observe(canvasElRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, [canvasElRef, resizeCallback]);
 
   return scale;
 };

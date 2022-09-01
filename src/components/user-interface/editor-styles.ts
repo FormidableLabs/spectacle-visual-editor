@@ -24,10 +24,8 @@ export const EditorCanvas = styled.div<{ scale: string }>`
   flex: 1;
   align-items: ${(props) => (props.scale === 'fit' ? 'center' : 'flex-start')};
   justify-content: center;
-  overflow: auto;
 
   ${SlideScaleWrapper} {
     box-shadow: ${defaultTheme.shadows[2]};
-    overflow: auto;
   }
 `;

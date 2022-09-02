@@ -1,49 +1,31 @@
 import React from 'react';
 import { Image as SpectacleImage } from 'spectacle';
+
 const Image = React.forwardRef<
-  {},
+  HTMLImageElement,
   {
     src: string;
     isSelected: boolean;
     croppedSrc?: string;
     onLoad?: React.ReactEventHandler<Record<string, unknown>>;
-    componentProps?: any;
+    style?: React.CSSProperties;
+    componentProps?: { [key: string]: any };
   }
->(function InternalImageWithRef(props, forwardedRef) {
-  const { onLoad } = props;
-
-  const imageSource = React.useMemo(() => {
-    return props.croppedSrc || props.src;
-  }, [props.src, props.croppedSrc]);
-
-  const interceptRef = React.useCallback(
-    (ref: HTMLImageElement | null) => {
-      if (typeof forwardedRef === 'function') {
-        forwardedRef(ref);
-      } else if (typeof forwardedRef === 'object' && forwardedRef) {
-        forwardedRef.current = ref;
-      }
-    },
-    [forwardedRef]
-  );
-
-  const interceptOnLoad = React.useCallback(
-    (e: React.SyntheticEvent<Record<string, unknown>, Event>) => {
-      onLoad && onLoad(e);
-    },
-    [onLoad]
-  );
-
+>(function InternalImageWithRef(
+  { src, croppedSrc, style, ...otherProps },
+  forwardedRef
+) {
   return (
-    <>
-      <SpectacleImage
-        {...props}
-        //  @ts-ignore
-        ref={interceptRef}
-        src={imageSource}
-        onLoad={interceptOnLoad}
-      />
-    </>
+    <SpectacleImage
+      {...otherProps}
+      src={croppedSrc || src}
+      style={{ maxWidth: 'none', ...style } as CSSStyleDeclaration}
+      // We expect an error here because Spectacle's Image component forces a
+      // different type on the ref, in spite of it being just a plain ref to an
+      // HTMLImageElement
+      // @ts-expect-error
+      ref={forwardedRef}
+    />
   );
 });
 

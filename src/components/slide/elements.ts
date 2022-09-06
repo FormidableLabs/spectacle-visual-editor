@@ -5,17 +5,17 @@ import { indentNormalizer } from 'spectacle';
 export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
   HEADING: {
     component: 'Markdown',
-    children: '# Oh Hello There',
+    children: '# Heading',
     props: {
-      componentProps: {
-        textAlign: 'left'
-      }
+      position: 'absolute',
+      componentProps: {}
     }
   },
   TEXT: {
     component: 'Markdown',
-    children: 'I am text',
+    children: 'Text',
     props: {
+      position: 'absolute',
       componentProps: {}
     }
   },
@@ -23,6 +23,7 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     component: 'Markdown',
     children: `- one\n- two\n- three`,
     props: {
+      position: 'absolute',
       componentProps: {}
     }
   },
@@ -34,25 +35,18 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
       height: 100,
       width: 200,
       flexDirection: FLEX_DIRECTION.column,
+      position: 'absolute',
       componentProps: {}
     },
     children: []
-  },
-  GRID: {
-    component: 'Grid',
-    props: {
-      width: '100%',
-      height: '100%',
-      gridTemplateColumns: '100%',
-      gridTemplateRows: '100%'
-    }
   },
   IMAGE: {
     component: 'Image',
     props: {
       src: 'https://source.unsplash.com/WLUHO9A_xik/1600x900',
-      width: '500px',
-      height: `auto`
+      width: 500,
+      position: 'absolute',
+      height: 400
     }
   },
   CODEPANE: {
@@ -63,6 +57,7 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
       \`\`\`
     `),
     props: {
+      position: 'absolute',
       componentProps: {}
     }
   },
@@ -70,18 +65,14 @@ export const ELEMENTS: Record<string, Omit<DeckElement, 'id' | 'parent'>> = {
     component: 'Progress',
     props: {
       position: 'absolute',
-      componentProps: {
-        isFreeMovement: true
-      }
+      componentProps: {}
     }
   },
   FULL_SCREEN: {
     component: 'FullScreen',
     props: {
       position: 'absolute',
-      componentProps: {
-        isFreeMovement: true
-      }
+      componentProps: {}
     }
   }
 };

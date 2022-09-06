@@ -1,13 +1,13 @@
 .selection-wrapper.hovered > div,
 .selection-wrapper.hovered > img,
 .selection-wrapper.hovered > pre {
-  outline: 2px solid #fef08a;
+  @apply outline outline-2 outline-pink-500;
 }
 
 .selection-wrapper.selected > div,
 .selection-wrapper.selected > img,
 .selection-wrapper.selected > pre {
-  outline: 2px solid #e7e5e4;
+  @apply outline outline-neutral-500;
 }
 
 .selection-wrapper {

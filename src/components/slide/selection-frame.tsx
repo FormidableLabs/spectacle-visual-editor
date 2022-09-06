@@ -89,11 +89,8 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     position?: string;
     children?: any;
   };
-  const {
-    isFreeMovement: childIsFreeMovement,
-    positionX: childPositionX,
-    positionY: childPositionY
-  } = (children?.props?.componentProps || {}) as {
+  const { positionX: childPositionX, positionY: childPositionY } = (children
+    ?.props?.componentProps || {}) as {
     isFreeMovement?: boolean;
     positionX?: string;
     positionY?: string;
@@ -132,7 +129,6 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           width: event.target.style.width,
           height: event.target.style.height,
           componentProps: {
-            isFreeMovement: true,
             positionX: `${Math.round(event.lastEvent.drag.left)}px`,
             positionY: `${Math.round(event.lastEvent.drag.top)}px`
           }
@@ -201,7 +197,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     if (moveableRef.current?.props.target) {
       moveableRef.current.moveable.updateTarget();
     }
-  }, [childIsFreeMovement, childPositionX, childPositionY]);
+  }, [childPositionX, childPositionY]);
 
   /**
    * If img src changes, we need to reset to unloaded state
@@ -230,14 +226,12 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const isEditingMarkdown =
     isSelected && isMdElement(selectedElement) && isEditing;
 
-  const editingFrameMetrics: React.CSSProperties = childIsFreeMovement
-    ? {
-        left: childPositionX || 0,
-        top: childPositionY || 0,
-        width: childWidth,
-        height: childHeight
-      }
-    : {};
+  const editingFrameMetrics: React.CSSProperties = {
+    left: childPositionX || 0,
+    top: childPositionY || 0,
+    width: childWidth,
+    height: childHeight
+  };
 
   return (
     <>
@@ -264,7 +258,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
       >
         {isEditingMarkdown ? (
           <div
-            className="markdown-editor-container"
+            className="markdown-editor-container outline outline-neutral-500"
             style={editingFrameMetrics}
           >
             <VisualEditor />
@@ -294,7 +288,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
           keepRatio={isShiftDown || (isImgElement && isResizingViaCorner)}
-          draggable={childIsFreeMovement && !isEditingMarkdown}
+          draggable={!isEditingMarkdown}
           onDragStart={(event) => {
             // Prevent parent elements from starting a drag
             event.inputEvent.stopPropagation();

@@ -424,9 +424,7 @@ export const MenuBar = () => {
             fill={defaultTheme.colors.selected}
             icon={FullscreenIcon}
             appearance="minimal"
-            onClick={() => {
-              handleOpenPreviewWindow();
-            }}
+            onClick={handleOpenPreviewWindow}
           />
         </Tooltip>
         <Popover
@@ -467,7 +465,6 @@ const InsertItems: { title: string; element: typeof ELEMENTS[number] }[] = [
   { title: 'List', element: ELEMENTS.LIST },
   { title: 'Image', element: ELEMENTS.IMAGE },
   { title: 'Box', element: ELEMENTS.BOX },
-  { title: 'Grid', element: ELEMENTS.GRID },
   { title: 'CodePane', element: ELEMENTS.CODEPANE },
   { title: 'Progress', element: ELEMENTS.PROGRESS },
   { title: 'FullScreen', element: ELEMENTS.FULL_SCREEN }

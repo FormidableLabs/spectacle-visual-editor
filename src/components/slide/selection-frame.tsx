@@ -89,11 +89,8 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
     position?: string;
     children?: any;
   };
-  const {
-    isFreeMovement: childIsFreeMovement,
-    positionX: childPositionX,
-    positionY: childPositionY
-  } = (children?.props?.componentProps || {}) as {
+  const { positionX: childPositionX, positionY: childPositionY } = (children
+    ?.props?.componentProps || {}) as {
     isFreeMovement?: boolean;
     positionX?: string;
     positionY?: string;
@@ -229,14 +226,12 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
   const isEditingMarkdown =
     isSelected && isMdElement(selectedElement) && isEditing;
 
-  const editingFrameMetrics: React.CSSProperties = childIsFreeMovement
-    ? {
-        left: childPositionX || 0,
-        top: childPositionY || 0,
-        width: childWidth,
-        height: childHeight
-      }
-    : {};
+  const editingFrameMetrics: React.CSSProperties = {
+    left: childPositionX || 0,
+    top: childPositionY || 0,
+    width: childWidth,
+    height: childHeight
+  };
 
   return (
     <>
@@ -293,7 +288,7 @@ export const SelectionFrame: React.FC<Props> = ({ children, treeId }) => {
           onResize={handleOnResize}
           onResizeEnd={handleOnResizeEnd}
           keepRatio={isShiftDown || (isImgElement && isResizingViaCorner)}
-          draggable={childIsFreeMovement && !isEditingMarkdown}
+          draggable={!isEditingMarkdown}
           onDragStart={(event) => {
             // Prevent parent elements from starting a drag
             event.inputEvent.stopPropagation();

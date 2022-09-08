@@ -48,6 +48,7 @@ import { KEYBOARD_SHORTCUTS } from '../../constants/keyboard-shortcuts';
 import { editorSlice } from '../../slices/editor-slice';
 import { useRootSelector } from '../../store';
 import { Tooltip } from '../component-adapter';
+import { KeyboardShortcut } from './keyboard-shortcut';
 
 const MenuBarContainer = styled.div`
   width: 100%;
@@ -66,6 +67,14 @@ const DeckTitleInput = styled(TextInput)`
 
 const LogoContainer = styled.div`
   margin: 0 2px 0 16px;
+`;
+
+const TooltipContent = styled.p`
+  color: ${defaultTheme.colors.white};
+
+  kbd {
+    color: ${defaultTheme.colors.gray400};
+  }
 `;
 
 function useSaveFile() {
@@ -168,7 +177,13 @@ export const MenuBar = () => {
       </MenuSection>
       <SectionDivider />
       <MenuSection>
-        <Tooltip content="Open Deck ⌘O">
+        <Tooltip
+          content={
+            <TooltipContent>
+              Open Deck <KeyboardShortcut sequence={KEYBOARD_SHORTCUTS.OPEN} />
+            </TooltipContent>
+          }
+        >
           <StyledIconButton
             fill={defaultTheme.colors.selected}
             icon={FolderCloseIcon}
@@ -178,7 +193,7 @@ export const MenuBar = () => {
             }}
           />
         </Tooltip>
-        <Tooltip content="New Deck ⌘S">
+        <Tooltip content="New Deck">
           <StyledIconButton
             fill={defaultTheme.colors.selected}
             icon={DocumentIcon}
@@ -189,7 +204,13 @@ export const MenuBar = () => {
             }}
           />
         </Tooltip>
-        <Tooltip content="Save Deck ⌘S">
+        <Tooltip
+          content={
+            <TooltipContent>
+              Save Deck <KeyboardShortcut sequence={KEYBOARD_SHORTCUTS.SAVE} />
+            </TooltipContent>
+          }
+        >
           <div>
             <StyledIconButton
               fill={defaultTheme.colors.selected}
@@ -326,7 +347,13 @@ export const MenuBar = () => {
       </MenuSection>
       <SectionDivider />
       <MenuSection>
-        <Tooltip content="Undo ⌘Z">
+        <Tooltip
+          content={
+            <TooltipContent>
+              Undo <KeyboardShortcut sequence={KEYBOARD_SHORTCUTS.UNDO} />
+            </TooltipContent>
+          }
+        >
           <div>
             <StyledIconButton
               fill={defaultTheme.colors.selected}
@@ -339,7 +366,14 @@ export const MenuBar = () => {
             />
           </div>
         </Tooltip>
-        <Tooltip content="Redo ⇧⌘Z">
+
+        <Tooltip
+          content={
+            <TooltipContent>
+              Redo <KeyboardShortcut sequence={KEYBOARD_SHORTCUTS.REDO} />
+            </TooltipContent>
+          }
+        >
           <div>
             <StyledIconButton
               fill={defaultTheme.colors.selected}
@@ -352,7 +386,14 @@ export const MenuBar = () => {
             />
           </div>
         </Tooltip>
-        <Tooltip content="Cut ⌘X">
+
+        <Tooltip
+          content={
+            <TooltipContent>
+              Cut <KeyboardShortcut sequence={KEYBOARD_SHORTCUTS.CUT} />
+            </TooltipContent>
+          }
+        >
           <div>
             <StyledIconButton
               fill={defaultTheme.colors.selected}
@@ -366,7 +407,14 @@ export const MenuBar = () => {
             />
           </div>
         </Tooltip>
-        <Tooltip content="Copy ⌘C">
+
+        <Tooltip
+          content={
+            <TooltipContent>
+              Copy <KeyboardShortcut sequence={KEYBOARD_SHORTCUTS.COPY} />
+            </TooltipContent>
+          }
+        >
           <div>
             <StyledIconButton
               fill={defaultTheme.colors.selected}
@@ -377,7 +425,14 @@ export const MenuBar = () => {
             />
           </div>
         </Tooltip>
-        <Tooltip content="Paste ⌘P">
+
+        <Tooltip
+          content={
+            <TooltipContent>
+              Paste <KeyboardShortcut sequence={KEYBOARD_SHORTCUTS.PASTE} />
+            </TooltipContent>
+          }
+        >
           <div>
             <StyledIconButton
               fill={defaultTheme.colors.selected}
@@ -391,40 +446,32 @@ export const MenuBar = () => {
           </div>
         </Tooltip>
 
-        <Pane>
-          <Dialog
-            isShown={dialogOpen}
-            intent="danger"
-            onConfirm={(close) => {
-              dispatch(deckSlice.actions.deleteElement());
-              close();
-            }}
-            onCloseComplete={toggleDialog}
-            hasHeader={false}
-            confirmLabel="Delete"
-          >
-            Deleting this container from the slide will also delete the elements
-            inside it. Do you wish to delete this container?
-          </Dialog>
-        </Pane>
-
-        <Tooltip content="Delete ⌘D">
-          <StyledIconButton
-            fill={defaultTheme.intents.danger.icon}
-            icon={TrashIcon}
-            appearance="minimal"
-            intent="danger"
-            onClick={() => {
-              if (
-                selectedElement &&
-                CONTAINER_ELEMENTS.includes(selectedElement.component)
-              ) {
-                toggleDialog();
-              } else {
-                dispatch(deckSlice.actions.deleteElement());
-              }
-            }}
-          />
+        <Tooltip
+          content={
+            <TooltipContent>
+              Delete <KeyboardShortcut sequence={KEYBOARD_SHORTCUTS.DELETE} />
+            </TooltipContent>
+          }
+        >
+          <div>
+            <StyledIconButton
+              fill={defaultTheme.intents.danger.icon}
+              icon={TrashIcon}
+              appearance="minimal"
+              intent="danger"
+              disabled={!selectedElement}
+              onClick={() => {
+                if (
+                  selectedElement &&
+                  CONTAINER_ELEMENTS.includes(selectedElement.component)
+                ) {
+                  toggleDialog();
+                } else {
+                  dispatch(deckSlice.actions.deleteElement());
+                }
+              }}
+            />
+          </div>
         </Tooltip>
       </MenuSection>
 
@@ -466,6 +513,22 @@ export const MenuBar = () => {
           </Tooltip>
         </Popover>
       </MenuSection>
+      <Pane>
+        <Dialog
+          isShown={dialogOpen}
+          intent="danger"
+          onConfirm={(close) => {
+            dispatch(deckSlice.actions.deleteElement());
+            close();
+          }}
+          onCloseComplete={toggleDialog}
+          hasHeader={false}
+          confirmLabel="Delete"
+        >
+          Deleting this container from the slide will also delete the elements
+          inside it. Do you wish to delete this container?
+        </Dialog>
+      </Pane>
     </MenuBarContainer>
   );
 };

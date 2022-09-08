@@ -1,9 +1,11 @@
+// "mod" is Command on macOS and Ctrl on Windows
 export const KEYBOARD_SHORTCUTS = {
-  CUT: 'command+x',
-  COPY: 'command+c',
-  PASTE: 'command+v',
-  UNDO: 'command+z',
-  REDO: 'command+shift+z',
-  SAVE: 'command+s',
-  OPEN: 'command+o'
+  CUT: 'mod+x',
+  COPY: 'mod+c',
+  DELETE: 'mod+d',
+  PASTE: 'mod+v',
+  UNDO: 'mod+z',
+  REDO: 'shift+mod+z',
+  SAVE: 'mod+s',
+  OPEN: 'mod+o'
 };

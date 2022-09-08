@@ -111,6 +111,17 @@ export const MenuBar = () => {
         e?.preventDefault();
         dispatch(deckSlice.actions.saveDeck(id));
       },
+      [KEYBOARD_SHORTCUTS.DELETE]: (e) => {
+        e?.preventDefault();
+        if (
+          selectedElement &&
+          CONTAINER_ELEMENTS.includes(selectedElement.component)
+        ) {
+          toggleDialog();
+        } else {
+          dispatch(deckSlice.actions.deleteElement());
+        }
+      },
       [KEYBOARD_SHORTCUTS.CUT]: () => {
         copyElement();
         dispatch(deckSlice.actions.deleteElement());

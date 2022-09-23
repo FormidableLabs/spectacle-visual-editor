@@ -65,7 +65,7 @@
     "redux-undo": "^1.0.1",
     "regenerator-runtime": "^0.13.7",
     "require-from-string": "^2.0.2",
-    "spectacle": "^9.4.0",
+    "spectacle": "^9.5.1",
     "styled-components": "^4.3.2",
     "styled-system": "^5.1.5",
     "use-mousetrap": "^1.0.4",

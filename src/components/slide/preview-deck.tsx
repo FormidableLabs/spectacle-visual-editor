@@ -22,6 +22,7 @@ export const PreviewDeck: React.FC = () => {
   const slideTemplateJson = useRootSelector(constructedSlideTemplateSelector);
   const theme = useSelector(themeSelector);
   const navigate = useNavigate();
+
   useEffect(() => {
     try {
       const slideTree = slideJson.map(
@@ -35,7 +36,8 @@ export const PreviewDeck: React.FC = () => {
 
   useEffect(() => {
     try {
-      if (!slideTemplateJson) {
+      if (!slideTemplateJson || slideTemplateJson.children.length === 0) {
+        navigate(PATHS.VISUAL_EDITOR);
         return;
       }
 
@@ -60,7 +62,7 @@ export const PreviewDeck: React.FC = () => {
 
       setSlideTemplateNode(node);
     } catch (e) {}
-  }, [slideTemplateJson]);
+  }, [navigate, slideTemplateJson]);
 
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {

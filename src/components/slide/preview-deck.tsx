@@ -37,7 +37,8 @@ export const PreviewDeck: React.FC = () => {
   useEffect(() => {
     try {
       if (!slideTemplateJson || slideTemplateJson.children.length === 0) {
-        return navigate(PATHS.VISUAL_EDITOR);
+        navigate(PATHS.VISUAL_EDITOR);
+        return;
       }
 
       // Slide component non-nestable, adjust as div
@@ -61,7 +62,7 @@ export const PreviewDeck: React.FC = () => {
 
       setSlideTemplateNode(node);
     } catch (e) {}
-  }, [slideTemplateJson]);
+  }, [navigate, slideTemplateJson]);
 
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {

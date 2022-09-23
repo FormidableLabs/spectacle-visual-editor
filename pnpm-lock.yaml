@@ -103,7 +103,7 @@ specifiers:
   redux-undo: ^1.0.1
   regenerator-runtime: ^0.13.7
   require-from-string: ^2.0.2
-  spectacle: ^9.4.0
+  spectacle: ^9.5.1
   style-loader: ^2.0.0
   styled-components: ^4.3.2
   styled-system: ^5.1.5
@@ -165,7 +165,7 @@ dependencies:
   redux-undo: 1.0.1
   regenerator-runtime: 0.13.9
   require-from-string: 2.0.2
-  spectacle: 9.4.0_biqbaboplfbrettd7655fr4n2y
+  spectacle: 9.5.1_biqbaboplfbrettd7655fr4n2y
   styled-components: 4.4.1_biqbaboplfbrettd7655fr4n2y
   styled-system: 5.1.5
   use-mousetrap: 1.0.4_react@18.2.0
@@ -231,7 +231,7 @@ devDependencies:
   prettier: 2.7.1
   prop-types: 15.8.1
   style-loader: 2.0.0_webpack@5.74.0
-  tailwindcss: 3.1.8
+  tailwindcss: 3.1.8_postcss@8.4.16
   ts-jest: 26.5.6_rnfpnlbz3wqspag7uftsmccrvy
   ts-loader: 9.3.1_xnp4kzegbjokq62cajex2ovgkm
   typescript: 4.7.4
@@ -3491,9 +3491,11 @@ packages:
       tslib: 1.14.1
     dev: true
 
-  /@oclif/command/1.8.11:
+  /@oclif/command/1.8.11_@oclif+config@1.18.3:
     resolution: {integrity: sha512-2fGLMvi6J5+oNxTaZfdWPMWY8oW15rYj0V8yLzmZBAEjfzjLqLIzJE9IlNccN1zwRqRHc1bcISSRDdxJ56IS/Q==}
     engines: {node: '>=12.0.0'}
+    peerDependencies:
+      '@oclif/config': ^1
     dependencies:
       '@oclif/config': 1.18.3
       '@oclif/errors': 1.3.5
@@ -3685,16 +3687,17 @@ packages:
       - supports-color
     dev: true
 
-  /@oclif/plugin-not-found/1.2.6:
+  /@oclif/plugin-not-found/1.2.6_@oclif+config@1.18.3:
     resolution: {integrity: sha512-cfkDub79I9EpselfU/W8FTXhslrkOgfqjaa25tyGo99dAX5UVr6BWL2wbUobsU+rUcm4HN3byzdHDcqfu6hoAw==}
     engines: {node: '>=8.0.0'}
     dependencies:
       '@oclif/color': 0.1.2
-      '@oclif/command': 1.8.11
+      '@oclif/command': 1.8.11_@oclif+config@1.18.3
       cli-ux: 5.6.6
       fast-levenshtein: 3.0.0
       lodash: 4.17.21
     transitivePeerDependencies:
+      - '@oclif/config'
       - supports-color
     dev: true
 
@@ -9378,8 +9381,10 @@ packages:
       nth-check: 2.1.1
     dev: true
 
-  /css-styled/1.0.0:
+  /css-styled/1.0.0_@daybrush+utils@1.7.1:
     resolution: {integrity: sha512-lDdPvM2/djv+La110zVY3RGQ7X4OOlzLS+IEjRcn8UlUmJd1+GNcGfDFmsKWwnLBupsY1w0QM1gRgV4RdcCjfw==}
+    peerDependencies:
+      '@daybrush/utils': '>=1.0.0'
     dependencies:
       '@daybrush/utils': 1.7.1
       string-hash: 1.1.3
@@ -15687,7 +15692,7 @@ packages:
       '@oclif/errors': 1.3.5
       '@oclif/parser': 3.8.7
       '@oclif/plugin-help': 3.3.1
-      '@oclif/plugin-not-found': 1.2.6
+      '@oclif/plugin-not-found': 1.2.6_@oclif+config@1.18.3
       '@oclif/plugin-plugins': 1.10.11
       '@octokit/rest': 18.12.0
       '@sindresorhus/slugify': 1.1.2
@@ -17614,11 +17619,13 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-css-styled/1.0.3:
+  /react-css-styled/1.0.3_@daybrush+utils@1.7.1:
     resolution: {integrity: sha512-6H3aZPO66PYmYg9wx12WzOJpPlBEdA7O5JefCh+4SldlihVKBCxA6mityfWSGWL5ldOkJdHJWGwHR6nGPcVm+A==}
     dependencies:
-      css-styled: 1.0.0
+      css-styled: 1.0.0_@daybrush+utils@1.7.1
       framework-utils: 1.1.0
+    transitivePeerDependencies:
+      - '@daybrush/utils'
     dev: false
 
   /react-dnd-html5-backend/14.1.0:
@@ -17776,7 +17783,7 @@ packages:
       framework-utils: 1.1.0
       gesto: 1.13.0
       overlap-area: 1.1.0
-      react-css-styled: 1.0.3
+      react-css-styled: 1.0.3_@daybrush+utils@1.7.1
     dev: false
 
   /react-redux/8.0.2_76am3hp3mjvgy3cckgdecixdi4:
@@ -19184,8 +19191,8 @@ packages:
       - supports-color
     dev: true
 
-  /spectacle/9.4.0_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-D1tAR1YIzDW8DxltfWaIX3CTAXJsjuKlyER9f4HCFus4Nwvu3TjMx22dhtKh6AQ8K0uTwfoIg5/tHpeoTDJ3Nw==}
+  /spectacle/9.5.1_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-LBwfLBmTL2KZLiKMO9BmBXkzwvCYSND2TPsp8qORUXy/w0LxS6NwQkBfnD/F6H+dLnPYDgpwxlKxFQKvOrYw3w==}
     peerDependencies:
       react: '>=17.0.2'
       react-dom: '>=17.0.2'
@@ -19759,10 +19766,12 @@ packages:
       strip-ansi: 6.0.1
     dev: true
 
-  /tailwindcss/3.1.8:
+  /tailwindcss/3.1.8_postcss@8.4.16:
     resolution: {integrity: sha512-YSneUCZSFDYMwk+TGq8qYFdCA3yfBRdBlS7txSq0LUmzyeqRe3a8fBQzbz9M3WS/iFT4BNf/nmw9mEzrnSaC0g==}
     engines: {node: '>=12.13.0'}
     hasBin: true
+    peerDependencies:
+      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -20519,6 +20528,7 @@ packages:
   /unified/9.2.0:
     resolution: {integrity: sha512-vx2Z0vY+a3YoTj8+pttM3tiJHCwY5UFbYdiWrwBEbHmK8pvsPj2rtAX2BFfgXen8T39CJWblWRDT4L5WGXtDdg==}
     dependencies:
+      '@types/unist': 2.0.6
       bail: 1.0.5
       extend: 3.0.2
       is-buffer: 2.0.5
@@ -20530,6 +20540,7 @@ packages:
   /unified/9.2.2:
     resolution: {integrity: sha512-Sg7j110mtefBD+qunSLO1lqOEKdrwBFBrR6Qd8f4uwkhWNlbkaqwHse6e7QvD3AP/MNoJdEDLaf8OxYyoWgorQ==}
     dependencies:
+      '@types/unist': 2.0.6
       bail: 1.0.5
       extend: 3.0.2
       is-buffer: 2.0.5

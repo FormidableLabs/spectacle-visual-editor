@@ -22,6 +22,7 @@ export const PreviewDeck: React.FC = () => {
   const slideTemplateJson = useRootSelector(constructedSlideTemplateSelector);
   const theme = useSelector(themeSelector);
   const navigate = useNavigate();
+
   useEffect(() => {
     try {
       const slideTree = slideJson.map(
@@ -35,8 +36,8 @@ export const PreviewDeck: React.FC = () => {
 
   useEffect(() => {
     try {
-      if (!slideTemplateJson) {
-        return;
+      if (!slideTemplateJson || slideTemplateJson.children.length === 0) {
+        return navigate(PATHS.VISUAL_EDITOR);
       }
 
       // Slide component non-nestable, adjust as div
